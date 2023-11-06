@@ -1,0 +1,108 @@
+<? session_start()?>
+@extends('layout.promoteur')
+    @section('content')
+   
+        <div class="container">
+            <form action="{{route('chronogramme.store')}}" method="post">
+                @csrf
+
+                <input type="hidden" name="evenement_id" value="{{$evenement_id}}">
+                
+
+                <div class="col-12 mb-3">
+                    <label for="date_heure_debut">Date et heure de début</label>
+                    <input type="datetime-local" name="date_heure_debut" id="date_heure_debut" class="form-control" >
+                </div>
+                
+                <div class="col-12 mb-3">
+                    <label for="date_heure_fin">Date et heure de fin</label>
+                    <input type="datetime-local" name="date_heure_fin" id="date_heure_fin" class="form-control">
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-sm-6">Ajouter un chronogramme</div>
+                    <div class="col-sm-6">
+                        <a class="btn btn-primary" data-bs-toggle="collapse" href="#date_activite_fields" role="button" aria-expanded="false" aria-controls="chronogramme" id="">
+                            <svg class="bi bi-plus" width="1em" height="1em">
+                                <use xlink:href="#plus"></use>
+                            </svg>
+                        </a>
+                    </div>
+                </div>                
+                <div class="row g-3 mb-4">
+                    <div class="col-12">
+                        <div id="date_activite_fields" class="collapse" >
+                        </div>
+
+                    </div>
+                </div>
+                
+                <script>
+                    document.getElementById('date_heure_debut').addEventListener('change', function () {
+                        generateDateFields();
+                    });
+                
+                    document.getElementById('date_heure_fin').addEventListener('change', function () {
+                        generateDateFields();
+                    });
+                
+                    function generateDateFields() {
+                        var dateDebut = new Date(document.getElementById('date_heure_debut').value);
+                        var dateFin = new Date(document.getElementById('date_heure_fin').value);
+                        var dateActiviteFields = document.getElementById('date_activite_fields');
+                
+                        dateActiviteFields.innerHTML = ''; // Nettoyer le contenu existant
+                
+                        while (dateDebut <= dateFin) {
+                            var dateActiviteField = document.createElement('div');
+                            dateActiviteField.innerHTML = `
+                                <div class="row g-3 mb-4">
+                                    <div class="col-12">
+                                        <label for="date_activite" class="fw-bold">Date</label>
+                                        <input type="date" name="date_activite" class="form-control fw-bold" readonly value="${dateDebut.toISOString().split('T')[0]}">
+                                    </div>
+                                </div>
+                            `;
+                            dateActiviteFields.appendChild(dateActiviteField);
+                
+                            for (let hour = 0; hour < 24; hour++) {
+                                const formattedHour = hour.toString().padStart(2, '0');
+                                const debut = `${formattedHour}:00`;
+                                const finHour = (hour + 1) % 24;
+                                const finFormattedHour = finHour.toString().padStart(2, '0');
+                                let fin = `${finFormattedHour}:00`;
+                
+                                var heureActiviteField = document.createElement('div');
+                                heureActiviteField.innerHTML = `
+                                    <div class="row g-3 mb-4 ms-4">
+                                        <div class="col-sm-4">
+                                            <label for="heure_debut">Heure de début de l'activité</label>
+                                            <input type="time" name="heure_debut" class="form-control" value="${debut}" readonly>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="heure_fin">Heure de fin de l'activité</label>
+                                            <input type="time" name="heure_fin" class="form-control" value="${fin}" readonly>
+                                        </div>
+                                        <div class="col-sm-4">
+                                            <label for="nom_activite">Nom de l'activité</label>
+                                            <input type="text" name="nom_activite[]" class="form-control">
+                                        </div>
+                                    </div>
+                                `;
+                                dateActiviteFields.appendChild(heureActiviteField);
+                            }
+                
+                            // Incrémenter d'un jour
+                            dateDebut.setDate(dateDebut.getDate() + 1);
+                        }
+                    }
+                </script>
+                
+                
+                
+                
+                               
+                <button type="submit" class="btn btn-primary">Suivant</button>
+            </form>
+            
+        </div>
+    @endsection
