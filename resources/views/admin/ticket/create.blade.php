@@ -1,6 +1,6 @@
 @extends('layout.utilisateur')
     @section('content')
-        <form action="{{route('ticket.store')}}" method="post">
+        <form action="{{route('paiementKkia')}}" method="post">
             @csrf
             <label for="prix_ticket">Prix_ticket</label>
             <input type="text" name="prix_ticket" id="prix_ticket" class="form-control" value="{{$type_ticket->prix_ticket}}" readonly>
@@ -33,4 +33,12 @@
                 
             }
         </script>
+        <kkiapay-widget amount="3000" 
+            key="d996a8407a9111eea7c1213b731c024f"
+            position="center"
+            sandbox="true"
+            data=""
+            callback="<url-de-redirection-quand-le-paiement-est-reussi>">
+        </kkiapay-widget>
+        <script src="https://cdn.kkiapay.me/k.js"></script>
     @endsection

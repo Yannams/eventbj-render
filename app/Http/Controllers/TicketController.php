@@ -33,6 +33,8 @@ class TicketController extends Controller
     public function store(StoreticketRequest $request)
     {
         $user=auth()->user()->id;
+        $transaction_id=$_GET('transaction_id');
+        dd($transaction_id);
         $ticket = new Ticket();
         $ticket->save();
         $ticket->users()->attach($user);
