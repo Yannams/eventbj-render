@@ -79,17 +79,17 @@
                                 <div class="col-12 card ms-3 mb-3">
                                    <div class="fw-bold fs-1">{{$tickets->nom_ticket}} </div>
 
-                                    <!--<form action="{route('ticket.create')}}" method="get">
-                                        <input type="hidden" name="ticket" value="{$tickets->id}}">
+                                    <form action="{{route('ticket.create')}}" method="get">
+                                        <input type="hidden" name="ticket" value="{{$tickets->id}}">
                                         <button type="submit" class="btn btn-primary">Obtenir du ticket</button>
-                                    </form> -->
-                                    <kkiapay-widget amount="{{$tickets->prix_ticket}}" 
+                                    </form>
+                                     {{-- <kkiapay-widget amount="{{$tickets->prix_ticket}}" 
                                         key="d996a8407a9111eea7c1213b731c024f"
                                         position="center"
                                         sandbox="true"
                                         data=""
                                         callback="{{route('ticket.store')}}">
-                                    </kkiapay-widget>
+                                    </kkiapay-widget>  --}}
                             @endforeach
                            
                         </div>

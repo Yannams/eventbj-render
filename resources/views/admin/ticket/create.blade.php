@@ -26,19 +26,21 @@
 
                 if(!isNaN(prixTicket) && !isNaN(nombreTicket)){
                     var resultat = prixTicket * nombreTicket;
-                    netApayerinput.value=resultat.toFixed(2);
+                    netApayerinput.value=resultat
+                    document.querySelector('kkiapay-widget').setAttribute('amount', netApayerinput.value);
                 }else{
                     netApayerinput.value="";
                 }
                 
             }
         </script>
-        <kkiapay-widget amount="3000" 
+        <kkiapay-widget 
+            amount="" 
             key="d996a8407a9111eea7c1213b731c024f"
             position="center"
             sandbox="true"
             data=""
-            callback="<url-de-redirection-quand-le-paiement-est-reussi>">
+            callback="{{route('ticket.store')}}">
         </kkiapay-widget>
         <script src="https://cdn.kkiapay.me/k.js"></script>
     @endsection
