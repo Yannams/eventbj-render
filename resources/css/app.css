@@ -1,0 +1,36 @@
+.active-link
+{
+    background-color: #308747;
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+.active-link:hover
+{
+    color: white;
+}
+
+.non-active{
+    color: #308747;
+    text-decoration: none;
+    transition: 0.3ms;
+    border:solid;
+    border-width: 1px;
+}
+
+.non-active:hover{
+    background-color: #308747;
+    color: white;
+}
+
+.scrolling-wrapper {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .color-svg{
+    color: #308747;
+  }
+  .rotation{
+    transform: rotate(-45deg);
+  }

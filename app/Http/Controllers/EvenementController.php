@@ -142,9 +142,14 @@ class EvenementController extends Controller
     }
 
     public function filteredByTypeEvents($type){
-         $evenement = evenement::where('isOnline', true)
-                    ->where('type_evenement_id', $type)
-                    ->get();
+        if($type==1){
+            $evenement = evenement::where('isOnline', true)->get();
+        } else {
+            $evenement = evenement::where('isOnline', true)
+            ->where('type_evenement_id', $type)
+            ->get();
+        }
+        
         $type_evenement=type_evenement::all();
         return view('admin.evenement.index', compact('evenement', 'type_evenement'));
 
