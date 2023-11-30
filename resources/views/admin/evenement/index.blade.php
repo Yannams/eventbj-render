@@ -1,7 +1,7 @@
 @extends('layout.utilisateur')
     @section('content')
    
-    <h1 class="p-2 flex-grow-1 text">Populaires</h1>    
+    <h1 class="p-2 flex-grow-1 text ">Populaires</h1>    
     <div id="carouselExampleAutoplaying" class="carousel slide" data-bs-ride="carousel">
         <div class="carousel-inner">
           <div class="carousel-item active">
@@ -193,13 +193,24 @@
 
     
         <h1 class="my-4">Vos évènements</h1>
-    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-">
+    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-5">
         @foreach ( $evenement as $evenements )
         <a href="{{route('evenement.show', ['evenement'=>$evenements->id])}}" class="link-dark  link-offset-2 link-underline link-underline-opacity-0">
             <div class="col">
-                <div class="card card-cover overflow-hidden text-bg-dark rouded-4 shadow-lg " style="background-image: url('{{asset($evenements->cover_event)}}'); padding-bottom:200px">     
+                <div class="card card-cover overflow-hidden text-bg-dark rounded-4 shadow-lg border-0 evenement " style="background-image: url('{{asset($evenements->cover_event)}}'); background-size: cover;"> 
+                    
+                    <div class="gradient-overlay"></div>
+                    <div class="badge tools-event mt-2 ms-2 rounded-3 card-header"> <span class="fs-3">{{date('d', strtotime($evenements->date_heure_debut))}}</span> <br> <span class="fs-6">{{date('M', strtotime($evenements->date_heure_debut))}}</span> </div>
+                    <div class="card-body"><br><br><br></div>
+                    <div class="card-footer d-flex">
+                        <div class="fw-bold fs-4 p-2 w-100 ">{{$evenements->nom_evenement}} </div>
+                        <div  class="badge tools-event p-2 flex-shrink-1 rounded-3 ">
+                            <svg class="bi bi-heart " fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="fw-bold fs-4" >{{$evenements->nom_evenement}} </div>
+                
             </div>
         </a>
           

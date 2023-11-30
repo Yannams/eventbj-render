@@ -4,11 +4,11 @@
         <div class="col-8">
             <div class="row g-3 mb-3 ms-3">
                 <div class="col-12">
-                    <div class="card border-0 card-cover overflow-hidden text-bg-dark rouded-4 shadow-lg rounded" style="background-image: url('{{asset($evenement->cover_event)}}'); padding-bottom: 500px"></div>
+                    <div class="card border-0 card-cover overflow-hidden text-bg-dark rouded-4 shadow-lg rounded" style="background-image: url('{{asset($evenement->cover_event)}}'); padding-bottom: 500px; background-size: cover;"></div>
                 </div>
                 <div class="col-12 card border-0 ">
                     <div class="fw-bold fs-1">{{$evenement->nom_evenement}}</div>
-                    <div class="col-6">{{$date->format('d/m/Y')}}</div>
+                    <div class="col-6"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> {{$date->format('d/m/Y')}}</div>
                     <div class="col-6">{{$evenement->localisation}}</div>
                     <div class="fw-bold">Description</div>
                     <div>{{$evenement->description}}</div>

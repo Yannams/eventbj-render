@@ -48,12 +48,17 @@
     <symbol id="prev" viewBox="0 0 16 16">
       <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-4.5-.5a.5.5 0 0 1 0 1H5.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L5.707 7.5z"/>
     </symbol>
+    <symbol id="prev" viewBox="0 0 16 16">
+      <symbol id="heart" viewBox="0 0 16 16">
+        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143c.06.055.119.112.176.171a3.12 3.12 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+      </symbol>
+    </symbol>
   </svg>
   <style>
       {!! Vite::content('resources/css/app.css') !!}
   </style>
    <div class="container-fluid "style="background-color: #ffffff">
-      <header class="d-flex flex-wrap justify-content-center py-3 mb-4"> 
+      <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top"> 
    
               <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
                 <img src="{{ asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
@@ -105,7 +110,7 @@
        </header>
    </div>
       
-      <div class="container">
+      <div class="container mt-5 py-5">
         @yield('content')
       </div>
        
