@@ -21,7 +21,6 @@ class EvenementController extends Controller
     public function index()
     {
         $evenement = evenement::where('isOnline', true)
-                    //->where('type_evenement_id', $type)
                     ->get();
         $type_evenement=type_evenement::all();
         //dd($evenement);
@@ -92,8 +91,12 @@ class EvenementController extends Controller
         $organisateur=User::find($user_id);
         $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
         $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
+        $same_creator=evenement::where('isOnline', true)
+                    ->where('user_id',$user_id)
+                    ->get();
+                    //dd($same_creator);
     
-        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket'));
+        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator'));
     }
 
     /**
