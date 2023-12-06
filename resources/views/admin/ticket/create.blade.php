@@ -3,93 +3,107 @@
         <div class="card border-0">
             <div class="card-body">
                 <h1>Billeterie</h1>
-                <div class="d-flex">
-                    <h2 class="p-2 w-75">Ticket {{$type_ticket->nom_ticket}}</h2>
-                    <div class="p-2 fw-bold fs-3">{{$type_ticket->prix_ticket}} XOF | Frais: {{($type_ticket->prix_ticket*1.9)/100}} XOF</div>
+                <div class="d-flex"> 
+                    <h2 class="p-2 w-75" id="nom_ticket">Ticket {{$type_ticket->nom_ticket}}</h2>
+                    <div class="p-2 fw-bold fs-3" id="prix_ticket">{{$type_ticket->prix_ticket}} XOF | Frais: {{($type_ticket->prix_ticket*1.9)/100}} XOF</div>
                 </div>
                 <div class="row">
                     <div class="col-2">
                          <div class="input-group">
                             <button class="btn btn-outline-secondary" type="button"><svg class="bi bi-dash-lg" fill="#000000" onclick="decreaseValue()" width="30" height="30"><use xlink:href="#dash"></use></svg></button>
-                            <input type="number" class="form-control" name="nombre_ticket" id="nombre_ticket" class="form-control" min="0" value="0" readonly>
-                            <button class="btn btn-outline-secondary" type="button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample"><svg class="bi bi-plus border-3" fill="#000000" width="30" onclick="increaseValue()" height="30"><use xlink:href="#plus"></use></svg></button>
+                            <input type="number" class="form-control" name="nombre_ticket" id="nombre_ticket" class="form-control" min="0" value="0" disabled>
+                            <button class="btn btn-outline-secondary" type="button" ><svg class="bi bi-plus border-3" fill="#000000" width="30" onclick="increaseValue()" height="30"><use xlink:href="#plus"></use></svg></button>
                         </div>
                     </div>
                 </div>
-                <div class="collapse" id="collapseExample">
-                    <div class="card card-body">
-                      Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+                <h3 class="col">Resume de la commande </h3>
+                <hr>
+                <div id="resume" class="col">
+                    <div class="row">
+                       
                     </div>
-                  </div>
+                    
+                    
+                </div>
+                <form class="formulaire2" method="post" onsubmit="return false;">
+                    <input type="hidden" name="id_type_ticket" value="{{$type_ticket->id}}">
+                    <input type="hidden" name="montant" value="">
+                    <button type="submit" class="btn btn-primary kkiapay-button col-12">Obtenir</button>
+                </form>
                 
-                <form action="{{route('paiementKkia')}}" method="post">
-                    @csrf
-                    <div class="row g-3">
-                        <div class="col-12">   
-                            <label for="prix_ticket">Prix ticket</label>
-                            <input type="text" name="prix_ticket" id="prix_ticket" class="form-control" value="{{$type_ticket->prix_ticket}}" readonly>
-                        </div>
-                        <div class="col-12">   
-                            <label for="nombre_ticket">Nombre ticket</label>
-                            <input type="number" name="nombre_ticket" id="nombre_ticket" class="form-control" min="0" value="0"  > 
-                        </div>
-                        <div class="col-12">   
-                            <label for="total">Net à payer</label>
-                            <input type="number" name="total" id="total" class="form-control" readonly>
-                        </div>
-                        <input type="hidden" name="id_type_ticket" value="{{$type_ticket->id}}">
-                        <button type="submit" class="btn btn-primary kkiapay-button">Obtenir</button>
-                    </div>
-                    
-                    
-                    
-                   
-                    
-                    <script>
-                        var prixTicketinput = document.getElementById("prix_ticket");
-                        var nombreTicketinput = document.getElementById("nombre_ticket");
-                        var netApayerinput = document.getElementById("total");
-                    
-                        prixTicketinput.addEventListener("input", updateNetApayer);
-                        nombreTicketinput.addEventListener("input", updateNetApayer);
-                    
-                        function updateNetApayer() {
-                            var prixTicket = parseFloat(prixTicketinput.value);
-                            var nombreTicket = parseFloat(nombreTicketinput.value);
-                    
-                            if (!isNaN(prixTicket) && !isNaN(nombreTicket)) {
-                                var resultat = prixTicket * nombreTicket;
-                                netApayerinput.value = resultat;
-                    
-                                // Mettez à jour l'attribut 'amount' dans le script en bas avec la valeur calculée
-                                document.querySelector('script[src="https://cdn.kkiapay.me/k.js"]').setAttribute('amount', resultat);
-                            } else {
-                                netApayerinput.value = "";
-                    
-                                // Réinitialisez l'attribut 'amount' dans le script en bas si les valeurs ne sont pas valides
-                                document.querySelector('script[src="https://cdn.kkiapay.me/k.js"]').removeAttribute('amount');
+                <script>
+                    var formulaire2 = document.querySelector(".formulaire2");
+                
+                    formulaire2.addEventListener("submit", function(e) {
+                        e.preventDefault();
+                        initializeApp("{{ route('ticket.store')}}");
+                    });
+                
+                    function initializeApp(callbackUrl) {
+                        console.log(formulaire2.querySelector("[name='montant']").value);
+                        
+                        openKkiapayWidget({
+                            amount: formulaire2.querySelector("[name='montant']").value,
+                            position: "center",
+                            callback: callbackUrl,
+                            data: "2",
+                            theme: "#308747",
+                            sandbox: true,
+                            key: "e1ed75f092f611eeb66e33e3292024ab"
+                        });
+                    }
+                </script>
+                
+                {{-- @vite('resources/js/app.js')
+                <script>
+                    window.ticketStoreRoute = "{{ route('ticket.store') }}";
+                </script>
+                <script>
+                    initializeApp("{{ route('ticket.store') }}");
+                </script> --}}
+              
+
+                <script>
+                    function increaseValue() {
+                                var inputElement = document.getElementById('nombre_ticket');
+                                inputElement.value = parseInt(inputElement.value) + 1;
+                                var nbre_ticket = document.getElementById('nombre_ticket').value;
+                                var prix_ticket = parseInt(document.getElementById('prix_ticket').innerText);
+                                var resumeDiv = document.getElementById('resume');
+                                var total = nbre_ticket * prix_ticket;
+                                var frais = (total * 1.9) / 100;
+                                var NaP = total + frais;
+                                var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2 id="netApayer"">' + NaP + '</span></div>';
+                                resumeDiv.innerHTML = resume;
+                                document.querySelector('input[name="montant"]').setAttribute('value', total);
                             }
-                        }
-                    </script>
-                    <script>
-                        function increaseValue() {
-                            var inputElement = document.getElementById('nombre_ticket');
-                            inputElement.value = parseInt(inputElement.value) + 1;
-                        }
+
                     
-                        function decreaseValue() {
-                            var inputElement = document.getElementById('nombre_ticket');
-                            var currentValue = parseInt(inputElement.value);
-                            if (currentValue > 0) {
+                
+                    function decreaseValue() {
+                        var inputElement = document.getElementById('nombre_ticket');
+                        var currentValue = parseInt(inputElement.value);
+                        var resumeDiv = document.getElementById('resume');
+                        if (currentValue > 0) {
                                 inputElement.value = currentValue - 1;
+                                var nbre_ticket = document.getElementById('nombre_ticket').value;
+                                var prix_ticket = parseInt(document.getElementById('prix_ticket').innerText);                                    
+                                var total = nbre_ticket * prix_ticket;
+                                var frais = (total * 1.9) / 100;
+                                var NaP = total + frais;
+                                var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2" id="netApayer">' + NaP + '</span></div>';
+                                resumeDiv.innerHTML = resume;
+                                document.querySelector('input[name="montant"]').setAttribute('value', total);
                             }
-                        }
-                    </script>
-                    
-                    
-      
-        <script amount=""  callback="{{route('ticket.store')}}" data="" position="center"  theme="#0095ff" sandbox="true" key="d996a8407a9111eea7c1213b731c024f" src="https://cdn.kkiapay.me/k.js"></script>
-    </form>
+                            else if(currentValue === 0){
+                                resumeDiv.innerHTML = "";
+                                document.querySelector('input[name="montant"]').removeAttribute('value');
+                            }
+                    }
+                </script>
+
+  
+                <script amount=""  callback="{{route('ticket.store')}}" data="" position="center"  theme="#0095ff" sandbox="true" key="d996a8407a9111eea7c1213b731c024f" src="https://cdn.kkiapay.me/k.js"></script>
             </div>
            
         </div>

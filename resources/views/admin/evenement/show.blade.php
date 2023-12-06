@@ -121,7 +121,7 @@
         </div> 
         <div class="col-lg-4">
             <div class="row g-3 row-cols-1 row-cols-md-1 row-cols-lg-1">
-                <div class="col sticky-top">
+                <div class="col ">
                     <div class="card border-0 " >
                         <div class="card-body">
                             <div class="d-flex align-items-center">
@@ -136,26 +136,26 @@
                         </div>     
                     </div>
                 </div>
+                
                 @foreach ( $same_creator as $same_creators)
-                <a href="{{route('evenement.show', ['evenement'=>$same_creators->id])}}" class="link-dark  link-offset-2 link-underline link-underline-opacity-0">
-                    <div class="col">
-                        <div class="card card-cover overflow-hidden text-bg-dark rounded-4 shadow-lg border-0 evenement " style="background-image: url('{{asset($same_creators->cover_event)}}'); background-size: cover;"> 
-                            
-                            <div class="gradient-overlay"></div>
-                            <div class="badge tools-event mt-2 ms-2 rounded-3 card-header"> <span class="fs-3">{{date('d', strtotime($same_creators->date_heure_debut))}}</span> <br> <span class="fs-6">{{date('M', strtotime($same_creators->date_heure_debut))}}</span> </div>
-                            <div class="card-body"><br><br><br></div>
-                            <div class="card-footer d-flex">
-                                <div class="fw-bold fs-4 p-2 w-100 ">{{$same_creators->nom_evenement}} </div>
-                                <div  class="badge tools-event p-2 flex-shrink-1 rounded-3 ">
-                                    <svg class="bi bi-heart " fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
+                    <a href="{{route('evenement.show', ['evenement'=>$same_creators->id])}}" class="link-dark  link-offset-2 link-underline link-underline-opacity-0">
+                        <div class="col">
+                            <div class="card card-cover overflow-hidden text-bg-dark rounded-4 shadow-lg border-0 evenement " style="background-image: url('{{asset($same_creators->cover_event)}}'); background-size: cover;"> 
+                                
+                                <div class="gradient-overlay"></div>
+                                <div class="badge tools-event mt-2 ms-2 rounded-3 card-header"> <span class="fs-3">{{date('d', strtotime($same_creators->date_heure_debut))}}</span> <br> <span class="fs-6">{{date('M', strtotime($same_creators->date_heure_debut))}}</span> </div>
+                                <div class="card-body"><br><br><br></div>
+                                <div class="card-footer d-flex">
+                                    <div class="fw-bold fs-4 p-2 w-100 ">{{$same_creators->nom_evenement}} </div>
+                                    <div  class="badge tools-event p-2 flex-shrink-1 rounded-3 ">
+                                        <svg class="bi bi-heart " fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
+                                    </div>
                                 </div>
+            
                             </div>
-        
+                            
                         </div>
-                        
-                    </div>
-                </a>
-                    
+                    </a>       
                 @endforeach
             </div>
 

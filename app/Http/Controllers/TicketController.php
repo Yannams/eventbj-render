@@ -6,6 +6,7 @@ use App\Models\ticket;
 use App\Http\Requests\StoreticketRequest;
 use App\Http\Requests\UpdateticketRequest;
 use App\Models\type_ticket;
+use PhpParser\Node\Stmt\Foreach_;
 
 class TicketController extends Controller
 {
@@ -15,6 +16,7 @@ class TicketController extends Controller
     public function index()
     {
         $ticket=ticket::all();
+      
         return view('admin.ticket.index', compact('ticket'));
     }
 
@@ -34,8 +36,8 @@ class TicketController extends Controller
     public function store(StoreticketRequest $request)
     {
         $user=auth()->user()->id;
-        $transaction_id=$_GET('transaction_id');
-        dd($transaction_id);
+        $transaction_id= $request->query('transaction_id');
+        echo $transaction_id;
         $ticket = new Ticket();
         $ticket->save();
         $ticket->users()->attach($user);
@@ -71,6 +73,10 @@ class TicketController extends Controller
      */
     public function destroy(ticket $ticket)
     {
-        //
+    }
+
+    public function verifiedTransaction(){
+        
+
     }
 }

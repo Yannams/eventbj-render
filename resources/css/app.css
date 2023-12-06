@@ -39,6 +39,11 @@
     width: 50px;
     height: 50px;
   }
+  .badge-tool{
+    background: rgba(255, 255, 255); 
+    width: 50px;
+    height: 50px;
+  }
 
   .card {
     position: relative;
