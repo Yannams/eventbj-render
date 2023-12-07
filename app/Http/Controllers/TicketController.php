@@ -6,6 +6,7 @@ use App\Models\ticket;
 use App\Http\Requests\StoreticketRequest;
 use App\Http\Requests\UpdateticketRequest;
 use App\Models\type_ticket;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use PhpParser\Node\Stmt\Foreach_;
 
 class TicketController extends Controller
@@ -33,14 +34,21 @@ class TicketController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreticketRequest $request)
+    public function store( StoreticketRequest $request)
     {
-        $user=auth()->user()->id;
-        $transaction_id= $request->query('transaction_id');
-        echo $transaction_id;
-        $ticket = new Ticket();
-        $ticket->save();
-        $ticket->users()->attach($user);
+        if(auth()->check()){
+            $user=auth()->user()->id;
+            $destinationPath=public_path('image_ticket_acheté');
+            QrCode::generate(, '../public/qrcodes/qrcode.svg');
+            $ticket = new Ticket();
+            $ticket->transaction_id=$request->transaction_id;
+            $ticket->type_ticket_id=$request->id_type_ticket;
+            
+            $ticket->save();
+            $ticket->users()->attach($user);
+        }else{
+            
+        }
 
     }
 
@@ -75,8 +83,11 @@ class TicketController extends Controller
     {
     }
 
-    public function verifiedTransaction(){
-        
-
+    public function verifiedTransaction($type_ticket_id){ 
+        if(isset($_GET['transaction_id']))  {    
+            $type_ticket=type_ticket::find($type_ticket_id);
+            $transaction_id=$_GET['transaction_id'];
+            return view('admin.ticket.sendTiket',compact('transaction_id','type_ticket'));
+        }
     }
 }

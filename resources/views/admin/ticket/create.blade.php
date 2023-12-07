@@ -26,7 +26,7 @@
                     
                 </div>
                 <form class="formulaire2" method="post" onsubmit="return false;">
-                    <input type="hidden" name="id_type_ticket" value="{{$type_ticket->id}}">
+                   
                     <input type="hidden" name="montant" value="">
                     <button type="submit" class="btn btn-primary kkiapay-button col-12">Obtenir</button>
                 </form>
@@ -36,7 +36,7 @@
                 
                     formulaire2.addEventListener("submit", function(e) {
                         e.preventDefault();
-                        initializeApp("{{ route('ticket.store')}}");
+                        initializeApp("{{ route('verifiedTransation',['type_ticket'=>$type_ticket->id])}}");
                     });
                 
                     function initializeApp(callbackUrl) {

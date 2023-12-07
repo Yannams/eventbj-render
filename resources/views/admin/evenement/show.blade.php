@@ -107,7 +107,7 @@
                                 <div class="card-body">
                                     <div class="fw-bold fs-1">{{$tickets->nom_ticket}} </div>
                                     <div class="fw-bold fs-3">{{$tickets->prix_ticket}} XOF</div>
-                                    <form action="{{route('ticket.create')}}" method="get">
+                                    <form action="@if (auth()->check())  {{route('ticket.create')}} @else {{route('login')}} @endif " method="get">
                                         <input type="hidden" name="ticket" value="{{$tickets->id}}">
                                         <button type="submit" class="btn btn-primary w-100">Obtenir du ticket</button>
                                     </form>

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('code_QR')->nullable();
+            $table->string('transaction_id');
             $table->unsignedBigInteger('type_ticket_id')->nullable();
             $table->foreign('type_ticket_id')->references('id')->on('type_tickets')->onDelete('cascade');
             $table->timestamps();

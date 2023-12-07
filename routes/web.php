@@ -28,7 +28,7 @@ Route::get('/mes_evenements', [EvenementController::class,'MyEvents'])->name('Me
 Route::post('/onLine/{evenement}', [EvenementController::class,'OnlineEvents'])->name('OnlineEvents');
 Route::get('/filtredevenement/{type}', [EvenementController::class, 'filteredByTypeEvents'] )->name('type_event');
 Route::post('/profil',[ProfileController::class,'updateIsEntreprise'])->name('isEntreprise'); 
-Route::get('/verifiedTransaction', [TicketController::class,'verifiedTransaction'] )->name('verifiedTransation');
+Route::get('/verifiedTransaction/{type_ticket}', [TicketController::class,'verifiedTransaction'] )->name('verifiedTransation');
 
 Route::resource('evenement', EvenementController::class);
 Route::resource('type_lieu', TypeLieuController::class);
