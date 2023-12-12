@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('code_QR')->nullable();
             $table->string('transaction_id');
+            $table->string('statut');
             $table->unsignedBigInteger('type_ticket_id')->nullable();
             $table->foreign('type_ticket_id')->references('id')->on('type_tickets')->onDelete('cascade');
             $table->timestamps();

@@ -3,7 +3,7 @@
         <div class="card border-0">
             <div class="card-body">
                 <div class="d-flex align-items-center">
-                    <strong role="status">Création de votre e-ticket</strong>
+                    <strong role="status">Création de votre <span style="color:  #F0343C;">BJ</span><span style="color: #FBAA0A; ">-</span> <span style="color: #308747">ticket</span></strong>
                     <div class="spinner-border ms-auto" aria-hidden="true"></div>
                 </div>
                 <p></p>

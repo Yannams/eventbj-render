@@ -6,7 +6,9 @@ use App\Models\ticket;
 use App\Http\Requests\StoreticketRequest;
 use App\Http\Requests\UpdateticketRequest;
 use App\Models\type_ticket;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use App\Models\User;
+use BaconQrCode\Renderer\Image\Png;
+use BaconQrCode\Writer;
 use PhpParser\Node\Stmt\Foreach_;
 
 class TicketController extends Controller
@@ -16,7 +18,7 @@ class TicketController extends Controller
      */
     public function index()
     {
-        $ticket=ticket::all();
+       $ticket=ticket::all();
       
         return view('admin.ticket.index', compact('ticket'));
     }
@@ -38,19 +40,41 @@ class TicketController extends Controller
     {
         if(auth()->check()){
             $user=auth()->user()->id;
-            $destinationPath=public_path('image_ticket_acheté');
-            QrCode::generate(, '../public/qrcodes/qrcode.svg');
+            $userdata=User::find($user);
             $ticket = new Ticket();
             $ticket->transaction_id=$request->transaction_id;
             $ticket->type_ticket_id=$request->id_type_ticket;
-            
-            $ticket->save();
+            $ticket->statut="acheté";
+            $ticket->save();           
             $ticket->users()->attach($user);
-        }else{
+            $codeQRContent = "$ticket->id $ticket->transaction_id $user $userdata->name $ticket->statut";
+            $codeQR = base64_encode(QrCode::encode($codeQRContent)->encoding('UTF-8')->get());
+            $folderPath = public_path('code_QR');
+            if (!file_exists($folderPath)) {
+                mkdir($folderPath, 0777, true);
+            }
+            
+
+            $fileName = uniqid() . '.png';
+            $filePath = $folderPath . '/' . $fileName;
+
+            $renderer = new Png();
+            $renderer->setHeight(256);
+            $renderer->setWidth(256);
+            $writer = new Writer($renderer);
+            $writer->writeFile($codeQRContent, $filePath);
+            $ticket->code_QR=$qrCodePath;
+            $ticket->save();
+            return redirect()->route('ticket.index');
+        }
+            else
+        {
             
         }
 
     }
+
+
 
     /**
      * Display the specified resource.

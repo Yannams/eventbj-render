@@ -66,3 +66,17 @@
     position: relative;
     z-index: 2;
 }
+
+.custom-file-input {
+  display: none;
+}
+
+.custom-file-label {
+  background-color: #fff;
+  color: #000;
+  padding: 10px;
+  cursor: pointer;
+}
+.custom-file-label:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}

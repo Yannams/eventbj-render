@@ -32,7 +32,9 @@ public function updateIsEntreprise(Request $request)
                 $user->save();
                 return redirect()->route('select_type_lieu');
             }
-            
+            else{
+                echo "veullez resélectionné";
+            }
             
         }
         else{

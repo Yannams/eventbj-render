@@ -77,7 +77,7 @@ class EvenementController extends Controller
         $evenement_id=$evenement->id;
         session(['evenement_id'=>$evenement_id]);
         
-        return redirect()->route('chronogramme.create');
+        return redirect()->route('chronogramme.create')->with('message', 'L\'Etudiant a été creé avec succès');
     }
 
     /**

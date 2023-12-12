@@ -1,10 +1,28 @@
 <? session_start()?>
 @extends('layout.promoteur')
     @section('content')
-   
-        <div class="container">
+      
+                @if (session('message'))
+                    <div class="position-relative">
+                        <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+                            <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+                                <div class="toast-body d-flex align-items-center">
+                                    <div class="p-2">
+                                        <svg class="bi bi-check-all" fill="#fff" width="30" height="30">
+                                            <use xlink:href="#check"></use>
+                                        </svg>
+                                    </div>
+                                    <div class="p-2">{{session('message')}}</div>
+                                    <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        </div>    
+                    </div>
+                @endif
+              
             <form action="{{route('chronogramme.store')}}" method="post">
                 @csrf
+
 
                 <input type="hidden" name="evenement_id" value="{{$evenement_id}}">
                 
@@ -18,11 +36,11 @@
                     <label for="date_heure_fin">Date et heure de fin</label>
                     <input type="datetime-local" name="date_heure_fin" id="date_heure_fin" class="form-control">
                 </div>
-                <div class="row g-3 mb-4">
-                    <div class="col-sm-6">Ajouter un chronogramme</div>
-                    <div class="col-sm-6">
-                        <a class="btn btn-primary" data-bs-toggle="collapse" href="#date_activite_fields" role="button" aria-expanded="false" aria-controls="chronogramme" id="">
-                            <svg class="bi bi-plus" width="1em" height="1em">
+                <div class="d-flex mb-4">
+                    <div class="p-2 w-100 fw-bold">Ajouter un chronogramme</div>
+                    <div class="p-2">
+                        <a class="btn" data-bs-toggle="collapse" href="#date_activite_fields" role="button" aria-expanded="false" aria-controls="chronogramme" id="">
+                            <svg class="bi bi-plus" fill="#F0343C" width="30" height="30">
                                 <use xlink:href="#plus"></use>
                             </svg>
                         </a>
@@ -96,6 +114,16 @@
                         }
                     }
                 </script>
+             <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const toastLiveExample = document.getElementById('liveToast');
+
+                    if (toastLiveExample) {
+                        const toastBootstrap = new bootstrap.Toast(toastLiveExample);
+                        toastBootstrap.show();
+                    }
+                });
+            </script>
                 
                 
                 

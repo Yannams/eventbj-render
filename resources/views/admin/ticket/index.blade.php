@@ -2,12 +2,12 @@
     @section('content')
         @foreach ($ticket as $tickets)
         <div class="row">
-          {{dd($tickets->type_ticket)}}
+        
             <div class="badge badge-tool text-dark col-4"><span class="fs-3">30</span><br><span>nov</span></div>
             <div class="card mb-3 border-0 col-8 m-5" style="max-width: 540px;">
                 <div class="d-flex align-items-center">
                   <div class="p-2 w-25">
-                    <img src="{{asset('')}}" class="img-fluid rounded-4 m-3" alt="..."  width="100px">
+                    <img src="{{asset($tickets->code_QR)}}" class="img-fluid rounded-4 m-3" alt="..."  width="100px">
                   </div>
                   <div class="p-2">
                     <div class="card-body row">
