@@ -12,7 +12,7 @@
                                             <use xlink:href="#check"></use>
                                         </svg>
                                     </div>
-                                    <div class="p-2">{{session('message')}}</div>
+                                    <div class="p-2 fw-bold fs-5">{{session('message')}}</div>
                                     <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                                 </div>
                             </div>

@@ -79,7 +79,7 @@ class ChronogrammeController extends Controller
     
         // Redirection ou autre traitement après l'enregistrement
 
-         return redirect()->route('type ticket.create');
+         return redirect()->route('type ticket.create')->with('message','chronogramme créé');
 
     }
     

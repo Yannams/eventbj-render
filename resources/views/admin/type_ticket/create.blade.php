@@ -1,7 +1,23 @@
 @extends('layout.promoteur')
     @section('content')
     <div class="container">
-        
+        @if (session('message'))
+        <div class="position-relative">
+            <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+                <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-body d-flex align-items-center">
+                        <div class="p-2">
+                            <svg class="bi bi-check-all" fill="#fff" width="30" height="30">
+                                <use xlink:href="#check"></use>
+                            </svg>
+                        </div>
+                        <div class="p-2 fw-bold fs-5">{{session('message')}}</div>
+                        <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            </div>    
+        </div>
+    @endif
             <form action="{{route('type ticket.store')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row g-3">
@@ -40,6 +56,15 @@
                 </div>
             </form> 
        
-       
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const toastLiveExample = document.getElementById('liveToast');
+
+                    if (toastLiveExample) {
+                        const toastBootstrap = new bootstrap.Toast(toastLiveExample);
+                        toastBootstrap.show();
+                    }
+                });
+            </script>
     </div>
     @endsection

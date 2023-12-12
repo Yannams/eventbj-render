@@ -64,7 +64,7 @@ class TypeTicketController extends Controller
         $type_ticket->evenement_id=$request->evenement_id;
         $type_ticket->save();
 
-        return redirect()->route("type ticket.index");
+        return redirect()->route("type ticket.index")->with('message','Ticket créé');
     }
 
     /**

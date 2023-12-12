@@ -15,7 +15,7 @@
     </style>
 
 </head>
-<body>
+<body  style="background-color: #f5f5f5;">
  
   
    <div class="container-fluid">
@@ -84,8 +84,19 @@
         <symbol id="check" viewBox="0 0 16 16">
           <path d="M8.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L2.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093L8.95 4.992a.252.252 0 0 1 .02-.022zm-.92 5.14.92.92a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 1 0-1.091-1.028L9.477 9.417l-.485-.486-.943 1.179z"/>
         </symbol>
+        <symbol id="deleted" viewBox="0 0 16 16">
+          <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+          <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+        </symbol>
+        <symbol id="qrcode" viewBox="0 0 16 16">
+          <path d="M2 2h2v2H2z"/>
+          <path d="M6 0v6H0V0zM5 1H1v4h4zM4 12H2v2h2z"/>
+          <path d="M6 10v6H0v-6zm-5 1v4h4v-4zm11-9h2v2h-2z"/>
+          <path d="M10 0v6h6V0zm5 1v4h-4V1zM8 1V0h1v2H8v2H7V1zm0 5V4h1v2zM6 8V7h1V6h1v2h1V7h5v1h-4v1H7V8zm0 0v1H2V8H1v1H0V7h3v1zm10 1h-1V7h1zm-1 0h-1v2h2v-1h-1zm-4 0h2v1h-1v1h-1zm2 3v-1h-1v1h-1v1H9v1h3v-2zm0 0h3v1h-2v1h-1zm-4-1v1h1v-2H7v1z"/>
+          <path d="M7 12h1v3h4v1H7zm9 2v2h-3v-1h2v-1z"/>
+        </symbol>
     </svg>
-      <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top">
    
               <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
                 <img src="{{asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
@@ -95,20 +106,32 @@
                </form>
               <ul class="nav nav-underline mt-1">
                 <li class="nav-item"></li>
-                <li class="nav-item"><a href="#" class="nav-link active " aria-current="page">Home</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Mes tickets</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Découvrir</a></li>
-                <li class="nav-item"><a href="#" class="nav-link">Créer un évènement</a></li>                
+                <li class="nav-item">
+                  <a href="{{route('MesEvenements')}}" class="nav-link link-success active d-flex align-items-center" aria-current="page">
+                    <svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#calendar"></use></svg>Mes Evenements
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="" class="nav-link link-success d-flex align-items-center">
+                    <svg class="bi bi-qr-code me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qrcode"></use></svg>Billetterie
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="{{route('select_type_lieu')}}" class="nav-link link-success d-flex align-items-center">
+                    <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
+                  </a>
+                </li>
+                <li class="nav-item"><a href="#" class="nav-link"></a></li>                
               </ul>
               <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5 ms-4" >
 
-       </header>
+       </header> 
        <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
         <symbol id="plus" viewBox="0 0 16 16">
           <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
         </symbol>
       </svg>
-      <div class="container">
+      <div class="container mt-5 py-5">
         @yield('content')
       </div>
        
