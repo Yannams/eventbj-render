@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\evenement;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -9,14 +10,30 @@ class ProfileController extends Controller
 {
     public function afficherFormulaire (Request $request)
     {
-        if (Auth::check()) {
-            return view('auth.isEntreprise');
+        try {
+            if(Auth::check())
+            {
+                $user= auth()->user()->isEntreprise;
+                if($user == false)
+                {
+                    return redirect()->route('select_type_lieu');
+                }
+                elseif ($user == true) {
+                    return redirect()->route('select_type_lieu');
+                }
+                else {
+                    return view('auth.isEntreprise');
+                }
+            }
+             else {
+                 return view('auth.login');
+             }
+        } catch (\Exception $e) {
+            return redirect()->route('MesEvenements')->with('error', 'Opération échouée ');
         }
-        else {
-            return view('auth.login');
-        }
+       
     }
-public function updateIsEntreprise(Request $request)
+    public function updateIsEntreprise(Request $request)
     {
         if (Auth::check()) {
             $user = Auth::user();
@@ -25,7 +42,7 @@ public function updateIsEntreprise(Request $request)
             {
                 $user->isEntreprise = true;
                 $user->save();
-                return redirect()->route();
+                return redirect()->route('select_type_lieu');
             }
             elseif ($request->isEntreprise == "false") {
                 $user->isEntreprise = false;
@@ -33,7 +50,7 @@ public function updateIsEntreprise(Request $request)
                 return redirect()->route('select_type_lieu');
             }
             else{
-                echo "veullez resélectionné";
+                return redirect()->route('isEntreprise')->with('error','veuillez sélectionné de nouveau');
             }
             
         }

@@ -33,6 +33,22 @@
                         </div>
                     </div>    
                 </div>
+                @elseif (session('error'))
+                  <div class="position-relative">
+                      <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+                          <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+                              <div class="toast-body d-flex align-items-center">
+                                  <div class="p-2">
+                                      <svg class="bi bi-x-circle" fill="#fff" width="30" height="30">
+                                          <use xlink:href="#error"></use>
+                                      </svg>
+                                  </div>
+                                  <div class="p-2 fw-bold fs-5">{{session('error')}}</div>
+                                  <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                              </div>
+                          </div>
+                      </div>    
+                  </div>
                 @endif
             <table class="table">
                 <thead>

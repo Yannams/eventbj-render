@@ -23,6 +23,31 @@
     color: white;
 }
 
+.unchecked-step{
+  color: #308747;
+  text-decoration: none;
+  transition: 0.3ms;
+  border:solid;
+  border-width: 1px;
+}
+
+.unchecked-step:hover{
+  color: #308747;
+  text-decoration: none;
+  transition: 0.3ms;
+  border:solid;
+  border-width: 1px;
+}
+
+.checked-step{
+  background: #C3E3CC;
+  color: #308747;
+}
+.checked-step:hover{
+  background: #C3E3CC;
+  color: #308747;
+}
+
 .scrolling-wrapper {
     overflow-x: auto;
     white-space: nowrap;

@@ -1,6 +1,54 @@
 @extends('layout.promoteur')
     @section('content')
-  
+    @if (session('message'))
+    <div class="position-relative">
+        <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+            <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body d-flex align-items-center">
+                    <div class="p-2">
+                        <svg class="bi bi-check-all" fill="#fff" width="30" height="30">
+                            <use xlink:href="#check"></use>
+                        </svg>
+                    </div>
+                    <div class="p-2 fw-bold fs-5">{{session('message')}}</div>
+                    <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>    
+    </div>
+@elseif (session('danger'))
+  <div class="position-relative">
+    <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+        <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-body d-flex align-items-center">
+                <div class="p-2">
+                    <svg class="bi bi-trash" fill="#fff" width="30" height="30">
+                        <use xlink:href="#deleted"></use>
+                    </svg>
+                </div>
+                <div class="p-2 fw-bold fs-5">{{session('danger')}}</div>
+                <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>    
+</div>
+@elseif (session('error'))
+  <div class="position-relative">
+      <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+          <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="toast-body d-flex align-items-center">
+                  <div class="p-2">
+                      <svg class="bi bi-x-circle" fill="#fff" width="30" height="30">
+                          <use xlink:href="#error"></use>
+                      </svg>
+                  </div>
+                  <div class="p-2 fw-bold fs-5">{{session('error')}}</div>
+                  <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+          </div>
+      </div>    
+  </div>
+@endif
 
         <div class="container mt-5">
             <form action="{{route('isEntreprise')}}" method="POST">
@@ -31,4 +79,14 @@
                 
         </form>
         </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const toastLiveExample = document.getElementById('liveToast');
+
+                if (toastLiveExample) {
+                    const toastBootstrap = new bootstrap.Toast(toastLiveExample);
+                    toastBootstrap.show();
+                }
+            });
+        </script>
     @endsection

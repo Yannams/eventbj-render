@@ -173,14 +173,14 @@
            
     <h1 class="my-4">Categories</h1>
     <ul class="nav nav-pills mb-4" id="pillNav" role="tablist">
-    @foreach ($type_evenement as $key => $type_evenements )
-        <li class="nav-item" role="presentation">
-            <a href="{{ route('type_event', ['type' => $type_evenements->id]) }}" class=" fw-bold nav-link @if (request()->url() == route('type_event', ['type' => $type_evenements->id])) active-link @else non-active @endif rounded-pill  me-3" role="tab" aria-selected="true" >
-                {{ $type_evenements->nom_type_evenement }}
-            </a>
-        </li>
-    @endforeach
-</ul>
+        @foreach ($type_evenement as $key => $type_evenements )
+            <li class="nav-item" role="presentation">
+                <a href="{{ route('type_event', ['type' => $type_evenements->id]) }}" class=" fw-bold nav-link @if (request()->url() == route('type_event', ['type' => $type_evenements->id])) active-link @else non-active @endif rounded-pill  me-3" role="tab" aria-selected="true" >
+                    {{ $type_evenements->nom_type_evenement }}
+                </a>
+            </li>
+        @endforeach
+    </ul>
 
     
   

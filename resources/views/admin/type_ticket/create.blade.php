@@ -1,7 +1,7 @@
 @extends('layout.promoteur')
     @section('content')
     <div class="container">
-        @if (session('message'))
+    @if (session('message'))
         <div class="position-relative">
             <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
                 <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
@@ -17,7 +17,63 @@
                 </div>
             </div>    
         </div>
+    @elseif (session('danger'))
+      <div class="position-relative">
+        <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+            <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-body d-flex align-items-center">
+                    <div class="p-2">
+                        <svg class="bi bi-trash" fill="#fff" width="30" height="30">
+                            <use xlink:href="#deleted"></use>
+                        </svg>
+                    </div>
+                    <div class="p-2 fw-bold fs-5">{{session('danger')}}</div>
+                    <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>    
+    </div>
+    @elseif (session('error'))
+      <div class="position-relative">
+          <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+              <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+                  <div class="toast-body d-flex align-items-center">
+                      <div class="p-2">
+                          <svg class="bi bi-x-circle" fill="#fff" width="30" height="30">
+                              <use xlink:href="#error"></use>
+                          </svg>
+                      </div>
+                      <div class="p-2 fw-bold fs-5">{{session('error')}}</div>
+                      <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                  </div>
+              </div>
+          </div>    
+      </div>
     @endif
+    <ul class="row row-cols-4 row-cols-lg-4 row-cols-md-4 nav nav-pills mb-4" id="pillNav" role="tablist">
+        <li class="nav-item" role="presentation">
+            <a href="{{route('select_type_lieu')}}" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
+                Type de lieu  
+            </a>
+        </li>          
+        <li class="nav-item" role="presentation">
+            <a href="{{route('evenement.create')}}" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
+                Details de l’évènement
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
+                Date et heure
+            </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="" class=" fw-bold nav-link rounded unchecked-step me-3" role="tab" aria-selected="true" >
+                Création de ticket 
+            </a>
+        </li>                              
+    </ul>
+    <div class="card border-0">
+        <div class="card-body">
             <form action="{{route('type ticket.store')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row g-3">
@@ -55,6 +111,9 @@
                 <button type="submit" class="btn btn-primary">suivant</button>
                 </div>
             </form> 
+        </div>
+    </div>
+           
        
             <script>
                 document.addEventListener('DOMContentLoaded', function () {

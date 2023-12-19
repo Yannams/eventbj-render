@@ -98,18 +98,23 @@ class EvenementController extends Controller
      */
     public function show(evenement $evenement)
     {
-        $evenement=evenement::find($evenement->id);
-        $date= new DateTime($evenement->date_heure_debut);
-        $user_id=$evenement->user_id;
-        $organisateur=User::find($user_id);
-        $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
-        $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
-        $same_creator=evenement::where('isOnline', true)
-                    ->where('user_id',$user_id)
-                    ->get();
-                    //dd($same_creator);
+        try {
+            $evenement=evenement::find($evenement->id);
+            $date= new DateTime($evenement->date_heure_debut);
+            $user_id=$evenement->user_id;
+            $organisateur=User::find($user_id);
+            $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
+            $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
+            $same_creator=evenement::where('isOnline', true)
+                        ->where('user_id',$user_id)
+                        ->get();
+                        
     
         return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator'));
+        } catch (\Throwable $th) {
+            return redirect()->route('evenement.create')->with('error', 'L\'évenement n\'a pas été créé');
+        }
+           
     }
 
     /**
@@ -133,42 +138,61 @@ class EvenementController extends Controller
      */
     public function destroy(evenement $evenement)
     {
-        $evenement->delete();
-        return redirect()->route('MesEvenements')->with('danger', 'Evenement supprimé !');
-    }
-
-    public function MyEvents(){
-        $userId = auth()->user()->id;
-        $user = User::with('evenements')->find($userId);
-        if ($user) {
-            $evenement = $user->evenements;
-            return view("admin.evenement.mesEvenements", compact("evenement"));
-        } else {
-            // Gérez le cas où l'événement n'a pas été trouvé
-           // return view("admin.type_ticket.index", compact("evenement"));
+        try {
+            $evenement->delete();
+            return redirect()->route('MesEvenements')->with('danger', 'Evenement supprimé !');
+           
+        } catch (\Exception $e) {
+            return redirect()->route('MesEvenements')->with('error', 'Opération échouée ');
         }
-        return view("admin.evenement.mesEvenements");
+       
     }
+    public function MyEvents(){
+        try {
+            $userId = auth()->user()->id;
+            $user = User::with('evenements')->find($userId);
+            if ($user) {
+                $evenement = $user->evenements;
+                return view("admin.evenement.mesEvenements", compact("evenement"));
+            } else {
+                return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','aucun évènement n\'a été trouvé');
+            }
+           
+        } catch (\Exception $e) {
+            return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','un problème est survenue');
+        }
+       
+    }  
     
     public function OnlineEvents(evenement $evenement){
-        $evenement=evenement::find( $evenement->id );
-        $evenement->isOnline=true;
-        $evenement->save();
-        return redirect()->route('MesEvenements')->with('message', 'Evènement mis en ligne');
+        try {
+                $evenement=evenement::find( $evenement->id );
+                $evenement->isOnline=true;
+                $evenement->save();
+                return redirect()->route('MesEvenements')->with('message', 'Evènement mis en ligne');
 
+        } catch (\Exception $e) {
+            return redirect()->route('MesEvenements')->with('error', 'Opération échouée '); 
+        }
+       
     }
 
     public function filteredByTypeEvents($type){
-        if($type==1){
-            $evenement = evenement::where('isOnline', true)->get();
-        } else {
-            $evenement = evenement::where('isOnline', true)
-            ->where('type_evenement_id', $type)
-            ->get();
+        try {
+            if($type==1){
+                $evenement = evenement::where('isOnline', true)->get();
+            } else {
+                $evenement = evenement::where('isOnline', true)
+                ->where('type_evenement_id', $type)
+                ->get();
+            }
+            
+            $type_evenement=type_evenement::all();
+            return view('admin.evenement.index', compact('evenement', 'type_evenement'));
+        } catch (\Exception $e) {
+            return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('error', 'opération échoué');
         }
-        
-        $type_evenement=type_evenement::all();
-        return view('admin.evenement.index', compact('evenement', 'type_evenement'));
+       
 
     }
 }
