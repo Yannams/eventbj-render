@@ -29,6 +29,7 @@ Route::post('/onLine/{evenement}', [EvenementController::class,'OnlineEvents'])-
 Route::get('/filtredevenement/{type}', [EvenementController::class, 'filteredByTypeEvents'] )->name('type_event');
 Route::post('/isEntreprise',[ProfileController::class,'updateIsEntreprise'])->name('isEntreprise'); 
 Route::get('/verifiedTransaction/{type_ticket}', [TicketController::class,'verifiedTransaction'] )->name('verifiedTransation');
+Route::get('/create_step',[EvenementController::class,'multistep_form'])->name('create_step');
 
 Route::resource('evenement', EvenementController::class);
 Route::resource('type_lieu', TypeLieuController::class);

@@ -1,6 +1,7 @@
 <? session_start()?>
 @extends('layout.promoteur')
     @section('content')
+           
             
             @if (session('message'))
             <div class="position-relative">
@@ -101,11 +102,10 @@
                                 </a>
                             </div>
                         </div>                
-                        <div class="row g-3 mb-4">
-                            <div class="col-12">
-                                <div id="date_activite_fields" class="collapse" >
+                            <div class="row g-3 mb-4">
+                                <div class="col-12">
+                                    <div id="date_activite_fields" class="collapse" >
                                 </div>
-        
                             </div>
                         </div>
                         
@@ -179,12 +179,15 @@
                                 }
                             });
                         </script>
-                        
-                        
-                        
-                        
-                                       
-                        <button type="submit" class="btn btn-primary">Suivant</button>
+                        <div class="col-12 row">
+                            <div class="col">
+                                <a href="{{route('evenement.create')}}" class="btn btn-outline-success w-100">Précédent</a>
+                            </div>
+                            <div class="col">
+                                <button type="submit" class="btn btn-success w-100">Suivant</button>
+                            </div>
+                        </div>
+                       
                     </form>
                 </div>
             </div>      

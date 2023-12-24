@@ -75,7 +75,7 @@
     <div class="card border-0">
         <div class="card-body">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a href="{{route('type ticket.create')}}" class="btn btn-primary text-end"> Ajouter un nouveau ticket</a>
+                <a href="{{route('type ticket.create')}}" class="btn btn-success text-end"> Ajouter un nouveau ticket</a>
               </div>
                 <table class="table">
                     <thead>
@@ -98,8 +98,14 @@
                            
                     </tbody>
                   </table>
-                  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <a href="{{route('MesEvenements')}}" class="btn btn-primary text-end">Suivant</a>
+                  <div class="row mt-5">
+                    <div class="col">
+                        <a href="" class="btn btn-outline-success w-100">Précédent</a>
+                    </div>
+                    <div class="col">
+                        <a href="{{route('MesEvenements')}}" class="btn btn-success w-100">Terminer</a>
+                    </div>
+                    
                   </div>
                   <script>
                     document.addEventListener('DOMContentLoaded', function () {

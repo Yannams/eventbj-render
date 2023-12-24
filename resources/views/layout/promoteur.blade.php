@@ -17,7 +17,7 @@
 </head>
 <body  style="background-color: #f5f5f5;">
  
-  
+  @vite('resources/js/app.js')
    <div class="container-fluid">
     <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
       <symbol id="plus" viewBox="0 0 16 16">

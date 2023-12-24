@@ -101,7 +101,7 @@
                      </div>
                      <div class="col-12 mb-3">
                          <label for="localisation">Localisation</label>
-                         <input type="text" name="localisation" id="localisation" class="form-control">
+                         <input type="text" name="localisation" id="localisation" class="form-control" value="">
                      </div>
                      <div class="col-12 mb-3">
                          <label for="description">Description</label>
@@ -109,8 +109,14 @@
                      </div>
                      <div></div>
                      <input type="hidden" name="type_lieu_selected" value="{{$typeLieuId}}">
-                     <div class="col-12 mb-3">
-                         <button type="submit" class="btn btn-primary">Suivant</button>    
+                     <div class="col-12 mb-3 row">
+                        <div class="col">
+                            <a href="{{route('select_type_lieu')}}" class="btn btn-outline-success w-100">Précédent</a>
+                        </div>
+                         <div class="col">
+                            <button type="submit" class="btn btn-success w-100">Suivant</button>  
+                         </div>
+                           
                      </div>         
             </form>
      

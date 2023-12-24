@@ -7,6 +7,7 @@ use App\Models\evenement;
 use App\Http\Requests\StoreevenementRequest;
 use App\Http\Requests\UpdateevenementRequest;
 use App\Models\type_evenement;
+use App\Models\type_lieu;
 use App\Models\type_ticket;
 use App\Models\User;
 use DateTime;
@@ -27,7 +28,7 @@ class EvenementController extends Controller
            
             return view('admin.evenement.index', compact('evenement', 'type_evenement'));
         } catch (\Exception $e) {
-            return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('error', 'opération echoue');
+            return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('probleme', 'Un problème est survenu lors de la connexion');
         }
     }
 
@@ -193,7 +194,13 @@ class EvenementController extends Controller
             return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('error', 'opération échoué');
         }
        
+        
+    }
+    public function multistep_form(){
+        $type_lieu=type_lieu::all();
 
+        return view('admin.evenement.multi-step_form' , compact('type_lieu'));
     }
 }
+
 

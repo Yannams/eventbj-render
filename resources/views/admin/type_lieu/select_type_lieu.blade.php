@@ -45,7 +45,7 @@
                                 </div>
                                 
                                 <div class="col">
-                                    <button type="submit" class="btn btn-primary w-100">Suivant</button>
+                                    <button type="submit" class="btn btn-success w-100">Suivant</button>
                                 </div>
                             </div>
                            
