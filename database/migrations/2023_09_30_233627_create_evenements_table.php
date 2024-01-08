@@ -13,17 +13,20 @@ return new class extends Migration
     {
         Schema::create('evenements', function (Blueprint $table) {
             $table->id();
-            $table->string('nom_evenement');
-            $table->string('localisation');
-            $table->boolean('isOnline');
+            $table->string('nom_evenement')->nullable();
+            $table->string('localisation')->nullable();
+            $table->boolean('isOnline')->nullable();
             $table->timestamp('date_heure_debut')->nullable();
             $table->timestamp('date_heure_fin')->nullable();
-            $table->text('description');
-            $table->string('cover_event');
+            $table->text('description')->nullable();
+            $table->string('cover_event')->nullable();
+            $table->string('Fréquence')->nullable();
             $table->unsignedBigInteger('type_evenement_id')->nullable();
             $table->foreign('type_evenement_id')->references('id')->on('type_evenements')->onDelete('cascade');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('type_lieu_id')->nullable();
+            $table->foreign('type_lieu_id')->references('id')->on('type_lieus')->onDelete('cascade');
             $table->timestamps();
         });
     }

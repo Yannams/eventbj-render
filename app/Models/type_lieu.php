@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class type_lieu extends Model
 {
@@ -12,8 +13,8 @@ class type_lieu extends Model
 
     protected $fillable = ['nom_type','description'];
 
-    public function evenements():BelongsToMany
+    public function evenements():HasMany
     {
-        return $this->belongsToMany(evenement::class);
+        return $this->hasMany(evenement::class);
     }
 }

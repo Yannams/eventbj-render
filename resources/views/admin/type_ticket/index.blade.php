@@ -50,28 +50,7 @@
         </div>    
     </div>
   @endif
-  <ul class="row row-cols-4 row-cols-lg-4 row-cols-md-4 nav nav-pills mb-4" id="pillNav" role="tablist">
-    <li class="nav-item" role="presentation">
-        <a href="" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-            Type de lieu  
-        </a>
-    </li>          
-    <li class="nav-item" role="presentation">
-        <a href="{{route('evenement.create')}}" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-            Details de l’évènement
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a href="" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-            Date et heure
-        </a>
-    </li>
-    <li class="nav-item" role="presentation">
-        <a href="" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-            Création de ticket 
-        </a>
-    </li>                              
-</ul>
+    @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -103,7 +82,7 @@
                         <a href="" class="btn btn-outline-success w-100">Précédent</a>
                     </div>
                     <div class="col">
-                        <a href="{{route('MesEvenements')}}" class="btn btn-success w-100">Terminer</a>
+                        <a href="{{route('terminus')}}" class="btn btn-success w-100">Terminer</a>
                     </div>
                     
                   </div>

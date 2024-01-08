@@ -6,7 +6,6 @@ use App\Models\chronogramme;
 use App\Http\Requests\StorechronogrammeRequest;
 use App\Http\Requests\UpdatechronogrammeRequest;
 use App\Models\evenement;
-
 class ChronogrammeController extends Controller
 {
     /**
@@ -23,7 +22,7 @@ class ChronogrammeController extends Controller
     public function create()
     {
     
-        $evenement_id=session('evenement_id');
+       
         return view('admin.programmation.create', compact('evenement_id'));
     }
 
@@ -117,4 +116,13 @@ class ChronogrammeController extends Controller
     {
         //
     }
+
+    public function edit_chronogramme(evenement $evenement ){
+        $evenement_id=$evenement->id;
+        $chronogramme=chronogramme::where('evenement_id',$evenement_id)->get();
+        
+        return view('admin.programmation.edit_programmation',compact('evenement','evenement_id','chronogramme'));
+    }
+
+
 }

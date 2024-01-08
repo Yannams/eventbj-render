@@ -40,6 +40,7 @@ class EvenementController extends Controller
         try {
             $typeLieuId = $request->query('type_lieu_event');
             $type_evenement=type_evenement::all();
+            session(['type_lieu'=>$typeLieuId]);
             return view('admin.evenement.create', compact('typeLieuId','type_evenement'));
         } catch (\Exception $e) {
             return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('error', 'opération echoue');
@@ -52,44 +53,19 @@ class EvenementController extends Controller
      */
     public function store(StoreevenementRequest $request)
     {
-        try {
+        //try {
                 $userId = auth()->user()->id;
                 $evenement=new evenement;
-                $evenement->nom_evenement=$request->nom_evenement;
-                $evenement->localisation=$request->localisation;
-                $evenement->type_evenement_id=$request->type_evenement_id;
-                $evenement->isOnline=false;
-                
-                $evenement->description=$request->description;
-                
-                $image = $request->file('cover_event');
-                $destinationPath = public_path('image_evenement'); // Le chemin de destination où vous souhaitez déplacer le fichier
-
-                // Assurez-vous que le répertoire de destination existe
-                if (!file_exists($destinationPath)) {
-                    mkdir($destinationPath, 0755, true);
-                }
-
-                $fileName = time() . '_' . $image->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
-
-                $image->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
-
-                // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
-                $imagePath='image_evenement/'.$fileName;
-                $evenement->cover_event = $imagePath;
+                $evenement->Fréquence=$request->Fréquence;
                 $evenement->user_id=$userId;
                 $evenement->save();
-            
-
-                $typelieu=$request->input('type_lieu_selected');
-                $evenement->type_lieus()->attach($typelieu);
                 $evenement_id=$evenement->id;
                 session(['evenement_id'=>$evenement_id]);
                 
-                return redirect()->route('chronogramme.create')->with('message', 'L\'évenement a été créé avec succès');
-        } catch (\Exception $e) {
-                return redirect()->route('evenement.create')->with('error', 'L\'évenement n\'a pas été créé');
-        }
+                return redirect()->route('select_type_lieu');
+       // } catch (\Exception $e) {
+                //return redirect()->route('evenement.create')->with('error', 'L\'évenement n\'a pas été créé');
+        //}
        
        
     }
@@ -121,9 +97,10 @@ class EvenementController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(evenement $evenement)
-    {
-        //
+    public function edit(evenement $evenement, Request $request){
+        $typeLieuId = $request->query('type_lieu_event');
+        $type_evenement=type_evenement::all();
+        return view('admin.evenement.edit', compact('evenement','type_evenement', 'typeLieuId'));
     }
 
     /**
@@ -131,7 +108,43 @@ class EvenementController extends Controller
      */
     public function update(UpdateevenementRequest $request, evenement $evenement)
     {
-        //
+        $evenement=evenement::find($evenement->id);
+        $evenement->nom_evenement=$request->nom_evenement;
+        $evenement->localisation=$request->localisation;
+        $evenement->date_heure_debut=$request->date_heure_debut;
+        $evenement->date_heure_fin=$request->date_heure_fin;
+        $evenement->type_evenement_id=$request->type_evenement_id;
+        $evenement->isOnline=false;        
+        $evenement->description=$request->description;
+        if($request->hasFile('cover_event'))
+        {
+            $image = $request->file('cover_event');
+            $destinationPath = public_path('image_evenement'); // Le chemin de destination où vous souhaitez déplacer le fichier
+
+            // Assurez-vous que le répertoire de destination existe
+            if (!file_exists($destinationPath)) {
+                 mkdir($destinationPath, 0755, true);
+            }
+    
+            $fileName = time() . '_' . $image->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
+    
+            $image->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
+    
+            // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
+            $imagePath='image_evenement/'.$fileName;
+            $evenement->cover_event = $imagePath;
+        } 
+        else
+        {
+            $defaultImagePath = 'image/concert.jpeg';
+            $evenement->cover_event=$defaultImagePath;
+        }
+        $typelieu=$request->input('type_lieu_selected');
+        $evenement->type_lieu_id=$typelieu;      
+        $evenement->save();
+        session(['evenement_nom'=>$evenement->nom_evenement]);
+        return redirect()->route('type ticket.create')->with('message', 'evenement créé');    
+
     }
 
     /**
@@ -196,11 +209,10 @@ class EvenementController extends Controller
        
         
     }
-    public function multistep_form(){
-        $type_lieu=type_lieu::all();
-
-        return view('admin.evenement.multi-step_form' , compact('type_lieu'));
+    public function Create_event(){
+        return view('admin.evenement.create_event');
     }
+
 }
 
 

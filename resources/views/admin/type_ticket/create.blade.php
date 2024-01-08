@@ -50,35 +50,14 @@
           </div>    
       </div>
     @endif
-    <ul class="row row-cols-4 row-cols-lg-4 row-cols-md-4 nav nav-pills mb-4" id="pillNav" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a href="{{route('select_type_lieu')}}" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-                Type de lieu  
-            </a>
-        </li>          
-        <li class="nav-item" role="presentation">
-            <a href="{{route('evenement.create')}}" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-                Details de l’évènement
-            </a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a href="" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-                Date et heure
-            </a>
-        </li>
-        <li class="nav-item" role="presentation">
-            <a href="" class=" fw-bold nav-link rounded unchecked-step me-3" role="tab" aria-selected="true" >
-                Création de ticket 
-            </a>
-        </li>                              
-    </ul>
+   @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
             <form action="{{route('type ticket.store')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="row g-3">
                     <div class="col-12 ">
-                        <label for="image_ticket">Choisir un cover pour les tickets</label>
+                      <label for="image_ticket">Choisir un cover pour les tickets</label>
                         <input type="file" name="image_ticket" id="image_ticket" class="form-control">
                     </div>
                     <div class="col-12 ">
@@ -122,7 +101,7 @@
             </form> 
         </div>
     </div>
-           
+             
        
             <script>
                 document.addEventListener('DOMContentLoaded', function () {

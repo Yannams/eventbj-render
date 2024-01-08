@@ -63,7 +63,7 @@ class TypeTicketController extends Controller
         $type_ticket->place_dispo=$request->place_dispo;
         $type_ticket->evenement_id=$request->evenement_id;
         $type_ticket->save();
-
+        session(['type_ticket'=>$type_ticket->id]);
         return redirect()->route("type ticket.index")->with('message','Ticket créé');
     }
 
@@ -97,5 +97,12 @@ class TypeTicketController extends Controller
     public function destroy(type_ticket $type_ticket)
     {
         //
+    }
+
+    public function terminus(){
+        session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket']);
+
+        
+        return redirect()->route('MesEvenements');
     }
 }

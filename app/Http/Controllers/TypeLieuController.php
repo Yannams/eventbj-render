@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\type_lieu;
 use App\Http\Requests\Storetype_lieuRequest;
 use App\Http\Requests\Updatetype_lieuRequest;
+use App\Models\evenement;
 
 class TypeLieuController extends Controller
 {
@@ -73,12 +74,20 @@ class TypeLieuController extends Controller
     public function select_type_lieu()
     {   
         $type_lieu= type_lieu::all();
-        return view('admin.type_lieu.select_type_lieu', compact('type_lieu'));
+        $evenement_id=session('evenement_id');
+        $evenement = evenement::find($evenement_id);
+        return view('admin.type_lieu.select_type_lieu', compact('type_lieu','evenement_id','evenement'));
     }
 
 
+    /*renvoyer vers le formulaire de création des évènements que je vais enregistrer 
+    pour envoyer vers la programmation de l'évènement */ 
 
-/*renvoyer vers le formulaire de création des évènements que je vais enregistrer 
-pour envoyer vers la programmation de l'évènement */ 
+    public function type_lieu_selected(Storetype_lieuRequest $request)
+    {
+        $evenement=evenement::find(session('evenement_id'));
+        session(['TypeLieu'=>$request->type_lieu_event]); 
+        return redirect()->route('evenement.edit',$evenement);
+    }
 }
 

@@ -14,9 +14,9 @@ class evenement extends Model
 
     protected $fillable = ['nom_evenement','localisation', 'date_heure_debut','date_heure_fin','description','cover_event'];
 
-    public function type_lieus():BelongsToMany
+    public function type_lieu():BelongsTo
     {
-        return $this->belongsToMany(type_lieu::class);
+        return $this->belongsTo(type_lieu::class);
     }
 
     public function type_evenement():BelongsTo
