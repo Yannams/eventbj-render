@@ -122,7 +122,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{route('select_type_lieu')}}" class="nav-link link-success d-flex align-items-center">
+                  <a href=" {{ route('Create_event')}} " class="nav-link link-success d-flex align-items-center">
                     <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
                   </a>
                 </li>

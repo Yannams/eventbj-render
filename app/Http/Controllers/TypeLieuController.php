@@ -85,6 +85,9 @@ class TypeLieuController extends Controller
 
     public function type_lieu_selected(Storetype_lieuRequest $request)
     {
+        $validatedData= $request->validate([
+            'type_lieu_event'=>'required'
+        ]);  
         $evenement=evenement::find(session('evenement_id'));
         session(['TypeLieu'=>$request->type_lieu_event]); 
         return redirect()->route('evenement.edit',$evenement);

@@ -11,6 +11,8 @@ use App\Models\type_lieu;
 use App\Models\type_ticket;
 use App\Models\User;
 use DateTime;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
 class EvenementController extends Controller
@@ -20,16 +22,11 @@ class EvenementController extends Controller
      */
     
     public function index()
-    {
-        try{
-            $evenement = evenement::where('isOnline', true)
-                        ->get();
-            $type_evenement=type_evenement::all();
-           
-            return view('admin.evenement.index', compact('evenement', 'type_evenement'));
-        } catch (\Exception $e) {
-            return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('probleme', 'Un problème est survenu lors de la connexion');
-        }
+    {  
+        $evenement = evenement::where('isOnline', true)
+                    ->get();
+        $type_evenement=type_evenement::all();
+        return view('admin.evenement.index', compact('evenement', 'type_evenement'));   
     }
 
     /**
@@ -37,60 +34,50 @@ class EvenementController extends Controller
      */
     public function create(Request $request)
     {
-        try {
-            $typeLieuId = $request->query('type_lieu_event');
-            $type_evenement=type_evenement::all();
-            session(['type_lieu'=>$typeLieuId]);
-            return view('admin.evenement.create', compact('typeLieuId','type_evenement'));
-        } catch (\Exception $e) {
-            return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('error', 'opération echoue');
-        }
+        
+        $typeLieuId = $request->query('type_lieu_event');
+        $type_evenement=type_evenement::all();
+        session(['type_lieu'=>$typeLieuId]);
+        return view('admin.evenement.create', compact('typeLieuId','type_evenement'));
+        
      
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreevenementRequest $request)
+    public function store(StoreevenementRequest $request):RedirectResponse
     {
-        //try {
-                $userId = auth()->user()->id;
-                $evenement=new evenement;
-                $evenement->Fréquence=$request->Fréquence;
-                $evenement->user_id=$userId;
-                $evenement->save();
-                $evenement_id=$evenement->id;
-                session(['evenement_id'=>$evenement_id]);
-                
-                return redirect()->route('select_type_lieu');
-       // } catch (\Exception $e) {
-                //return redirect()->route('evenement.create')->with('error', 'L\'évenement n\'a pas été créé');
-        //}
        
-       
+        $userId = auth()->user()->id;
+        $evenement=new evenement;
+        $validatedData= $request->validate([
+            'Frequence'=>'required|min:3|max:10'
+        ]);
+        $evenement->Fréquence=$request->Frequence;
+        $evenement->user_id=$userId;
+        $evenement->save();
+        $evenement_id=$evenement->id;
+        session(['evenement_id'=>$evenement_id]);
+        return redirect()->route('select_type_lieu');   
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(evenement $evenement)
-    {
-        try {
-            $evenement=evenement::find($evenement->id);
-            $date= new DateTime($evenement->date_heure_debut);
-            $user_id=$evenement->user_id;
-            $organisateur=User::find($user_id);
-            $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
-            $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
-            $same_creator=evenement::where('isOnline', true)
-                        ->where('user_id',$user_id)
-                        ->get();
-                        
-    
+    public function show(evenement $evenement){
+   
+        $evenement=evenement::find($evenement->id);
+        $date= new DateTime($evenement->date_heure_debut);
+        $user_id=$evenement->user_id;
+        $organisateur=User::find($user_id);
+        $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
+        $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
+        $same_creator=evenement::where('isOnline', true)
+                ->where('user_id',$user_id)
+                ->get();            
         return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator'));
-        } catch (\Throwable $th) {
-            return redirect()->route('evenement.create')->with('error', 'L\'évenement n\'a pas été créé');
-        }
+       
            
     }
 
@@ -108,7 +95,15 @@ class EvenementController extends Controller
      */
     public function update(UpdateevenementRequest $request, evenement $evenement)
     {
+       
         $evenement=evenement::find($evenement->id);
+        $ValidatedData=$request->validate([
+            'nom_evenement'=>'required|min:1|max:100',
+            'localisation'=>'required',
+            'date_heure_debut'=>'required|after:today|before:date_heure_fin',
+            'date_heure_fin'=>'required|after:today|after:date_heure_debut',
+            'type_evenement_id'=>'required'
+        ]);
         $evenement->nom_evenement=$request->nom_evenement;
         $evenement->localisation=$request->localisation;
         $evenement->date_heure_debut=$request->date_heure_debut;
@@ -152,64 +147,42 @@ class EvenementController extends Controller
      */
     public function destroy(evenement $evenement)
     {
-        try {
-            $evenement->delete();
-            return redirect()->route('MesEvenements')->with('danger', 'Evenement supprimé !');
-           
-        } catch (\Exception $e) {
-            return redirect()->route('MesEvenements')->with('error', 'Opération échouée ');
-        }
-       
+        $evenement->delete();
+        return redirect()->route('MesEvenements')->with('danger', 'Evenement supprimé !');
     }
     public function MyEvents(){
-        try {
+
             $userId = auth()->user()->id;
             $user = User::with('evenements')->find($userId);
             if ($user) {
-                $evenement = $user->evenements;
+                $evenement = $user->evenements->sortByDesc('created_at');
                 return view("admin.evenement.mesEvenements", compact("evenement"));
             } else {
                 return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','aucun évènement n\'a été trouvé');
             }
-           
-        } catch (\Exception $e) {
-            return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','un problème est survenue');
-        }
        
     }  
     
     public function OnlineEvents(evenement $evenement){
-        try {
-                $evenement=evenement::find( $evenement->id );
-                $evenement->isOnline=true;
-                $evenement->save();
-                return redirect()->route('MesEvenements')->with('message', 'Evènement mis en ligne');
-
-        } catch (\Exception $e) {
-            return redirect()->route('MesEvenements')->with('error', 'Opération échouée '); 
-        }
+        $evenement=evenement::find( $evenement->id );
+        $evenement->isOnline=true;
+        $evenement->save();
+        return redirect()->route('MesEvenements')->with('message', 'Evènement mis en ligne');
        
     }
 
     public function filteredByTypeEvents($type){
-        try {
-            if($type==1){
-                $evenement = evenement::where('isOnline', true)->get();
-            } else {
-                $evenement = evenement::where('isOnline', true)
+      
+            $evenement = evenement::where('isOnline', true)
                 ->where('type_evenement_id', $type)
                 ->get();
-            }
-            
-            $type_evenement=type_evenement::all();
-            return view('admin.evenement.index', compact('evenement', 'type_evenement'));
-        } catch (\Exception $e) {
-            return view('admin.evenement.index', compact('evenement', 'type_evenement'))->with('error', 'opération échoué');
-        }
+        $type_evenement=type_evenement::all();
+        return view('admin.evenement.index', compact('evenement', 'type_evenement'));
        
         
     }
     public function Create_event(){
+        session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket']);
         return view('admin.evenement.create_event');
     }
 

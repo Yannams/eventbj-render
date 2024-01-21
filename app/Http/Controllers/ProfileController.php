@@ -10,7 +10,7 @@ class ProfileController extends Controller
 {
     public function afficherFormulaire (Request $request)
     {
-        try {
+       
             if(Auth::check())
             {
                 $user= auth()->user()->isEntreprise;
@@ -28,9 +28,7 @@ class ProfileController extends Controller
              else {
                  return view('auth.login');
              }
-        } catch (\Exception $e) {
-            return redirect()->route('MesEvenements')->with('error', 'Opération échouée ');
-        }
+    
        
     }
     public function updateIsEntreprise(Request $request)

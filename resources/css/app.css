@@ -33,7 +33,8 @@
 }
 
 .unchecked-step:hover{
-  color: #308747;
+  color: #fff;
+  background-color: #F0343C;
   text-decoration: none;
   transition: 0.3ms;
   border:solid;
@@ -92,8 +93,95 @@
     position: relative;
     z-index: 2;
 }
+.custum-file-upload {
+    position: relative;
+    height: 400px;
+    width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #cacaca;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0px 48px 35px -48px rgba(0, 0, 0, 0.1);
+    overflow: hidden; /* Pour masquer le contenu dépassant */
 
-.custom-file-input {
+    /* Ajout d'une classe pour l'overlay noir transparent */
+    background: url('') center center no-repeat;
+    background-size: cover;
+    transition: all 0.3s ease-in-out;
+}
+
+.custum-file-upload:hover {
+  position: relative;
+  height: 500px;
+  width: 900px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #cacaca;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0px 48px 35px -48px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Pour masquer le contenu dépassant */
+
+  /* Ajout d'une classe pour l'overlay noir transparent */
+  background: url('') center center no-repeat;
+  background-size: cover;
+}
+/* Nouvelle classe pour l'overlay */
+.custum-file-upload::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Noir transparent */
+    z-index: 1; /* Pour placer l'overlay au-dessus du contenu */
+}
+
+.custum-file-upload .icon {
+    position: relative; /* Pour définir le contexte d'empilement pour l'icône */
+    z-index: 2; /* Pour placer l'icône au-dessus de l'overlay */
+}
+
+.custum-file-upload .icon svg {
+    height: 80px;
+    fill: rgba(255, 255, 255, 1);
+}
+
+.custum-file-upload .text {
+    position: absolute;
+    top: 20px; /* Ajuster la position du texte par rapport au haut */
+    z-index: 2; /* Pour placer le contenu au-dessus de l'overlay */
+
+}
+.custum-file-upload .text .edit-text {
+  display: block;
+  font-size: 12px;
+  color: #666;
+}
+
+.custum-file-upload .text span {
+    font-weight: 400;
+    color: rgba(255, 255, 255, 1); /* Couleur blanche pour le texte */
+}
+
+.custum-file-upload input {
+    display: none;
+}
+
+
+/* .custom-file-input {
   display: none;
 }
 
@@ -105,7 +193,7 @@
 }
 .custom-file-label:hover {
   background-color: rgba(0, 0, 0, 0.5);
-}
+} */
 
 .steps{
   display: flex;
@@ -115,6 +203,11 @@
 }
 
 .checking-step{
+  background-color: #FBAA0A;
+  border: #FBAA0A;
+  color: #fff;
+}
+.checking-step:hover{
   background-color: #FBAA0A;
   border: #FBAA0A;
   color: #fff;
@@ -172,4 +265,73 @@
   background: #C3E3CC ;
   transition: all 300ms ease;
 }
+
+.hidden-radio{
+  display: none;
+}
+
+.button-check{
+  color: #308747;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: #308747;
+  padding: 10px;
+  align-items: center;
+  transition: 3ms;
+}
+
+.button-check:hover{
+  background-color: #308747;
+  color: #fff;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: #308747;
+  padding: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.hidden-radio:checked + .button-check{
+  background-color: #308747;
+  color: #fff;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: #308747;
+  padding: 10px;
+  align-items: center;
+
+}
+.button-check-error{
+  border: solid 1px;
+  border-color: #F0343C;
+  color: #308747;
+  padding: 10px;
+  border-radius: 5px;
+  align-items: center;
+}
+
+.button-check-error:hover{
+  background-color: #308747;
+  color: #fff;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: #308747;
+  padding: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.hidden-radio:checked + .button-check-error{
+  background-color: #308747;
+  color: #fff;
+  border: solid 1px;
+  border-radius: 5px;
+  border-color: #308747;
+  padding: 10px;
+  align-items: center;
+
+}
+
+
+
 

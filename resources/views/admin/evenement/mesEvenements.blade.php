@@ -51,40 +51,64 @@
                   </div>
                 @endif
                 
-            <table class="table">
+            <table class="table align-middle">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Nom évènement</th>
                     <th scope="col">En ligne </th>
-                    <th scope="col">Date début</th>
+                    <th scope="col">Date et heure début</th>
                     <th scope="col">Action</th>
 
                   </tr>
                 </thead>
                 <tbody>
                 @foreach ($evenement as $evenements )
-                <tr>
-                    <th scope="row"><img src="{{asset($evenements->cover_event)}}" alt="" width="100" class="rounded"></th>
+                <tr class="">
+                    
+                    <th scope="row"><img src="{{asset($evenements->cover_event)}}" alt="cover" width="100" class="rounded"></th>
                     <td>{{$evenements->nom_evenement}}</td>
                     <td>@if ( $evenements->isOnline==false )
                       non-publié
                     @else
                       en ligne
                     @endif</td>
-                    <td>{{$evenements->date_heure_debut}}</td>
-                    <td class="d-flex">
-                      <a href="" class="btn btn-secondary me-2">gérer</a>
-                      <form action="{{route('OnlineEvents', ['evenement'=>$evenements->id])}}" method="post" >
-                        @csrf
-                        <button type="submit" class="btn btn-success me-2">Mettre en ligne</button>
-                      </form>
-                      <a href="" class="btn btn-primary me-2">Modifier l'évènement</a>
-                      <form action="{{ route('evenement.destroy', $evenements) }}" method="POST" style="display: inline;" id="supprimer-etudiant-{{ $evenements->id }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger">Supprimer</button>
-                    </form>
+                    <td>{{date('d/m/Y à h:i', strtotime($evenements->date_heure_debut))}}</td>
+                    <td>
+                    <div class="row row-cols-2 row-cols-md-2 row-cols-lg-2">
+                        <div class="col">
+                            <form action="{{route('OnlineEvents', ['evenement'=>$evenements->id])}}" method="post" >
+                                @csrf
+                                <button type="submit" class="btn btn-success">Mettre en ligne</button>
+                            </form>
+                           
+                        </div>
+                        <div class="col">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-success dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                  Dropdown
+                                </button>
+                                <ul class="dropdown-menu">
+                                  <li>
+                                    <a href="" class=" dropdown-item">gérer</a>
+                                </li>
+                                  <li><a href="" class="dropdown-item">Modifier l'évènement</a></li>
+                                  <li> 
+                                    <form action="{{ route('evenement.destroy', $evenements) }}" method="POST" style="display: inline;" id="supprimer-etudiant-{{ $evenements->id }}">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="dropdown-item">Supprimer</button>
+                                    </form>
+                                </li>
+                                <li>
+                                    <a href="{{route('evenement.show', $evenements)}}" class="dropdown-item"> voir</a>
+                                </li>
+                                </ul>
+                              </div>
+                        </div>
+                    </div>
+                     
+                      
                     </td>
 
                   </tr> 

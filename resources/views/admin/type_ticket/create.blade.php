@@ -53,39 +53,57 @@
    @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
-            <form action="{{route('type ticket.store')}}" method="post" enctype="multipart/form-data">
+            <form action="{{route('type ticket.store')}}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+
                 @csrf
                 <div class="row g-3">
                     <div class="col-12 ">
                       <label for="image_ticket">Choisir un cover pour les tickets</label>
-                        <input type="file" name="image_ticket" id="image_ticket" class="form-control">
+                      <input type="file" name="image_ticket" id="image_ticket" class="form-control" required>
+                        <div class="invalid-feedback">
+                            Veuillez ajouter une image de couverture
+                        </div>
                     </div>
                     <div class="col-12 ">
                         <label for="nom_ticket">Nom ticket</label>
-                        <input type="text" name="nom_ticket" id="nom_ticket" class="form-control">
+                        <input type="text" name="nom_ticket" id="nom_ticket" class="form-control" minlength="3" maxlength="100" required>
+                        <div class="invalid-feedback">
+                            Veuillez entrer un nom d'au moins 3 caractères
+                        </div>
                     </div>
                     <div class="col-2">
                         <label for="type_ticket">type_ticket</label>
-                        <select name="type_ticket" id="type_ticket" class="form-control">
+                        <select name="type_ticket" id="type_ticket" class="form-control" required>
                             <option value="ticket payé">ticket payé</option>
                             <option value="Invitation">Invitation</option>
                             <option value="Don">Don</option>
-
                         </select>
+                        <div class="invalid-feedback">
+                            Veuillez choisir une categorie de ticket 
+                        </div>
                     </div>
                 
                     <div class="col-sm-4">
                         <label for="prix_ticket">Prix ticket</label>
-                        <input type="number" name="prix_ticket" id="prix_ticket" class="form-control">
+                        <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" required>
+                        <div class="invalid-feedback">
+                            Veuillez mettre le prix du ticket
+                        </div>
                     </div>
                     <div class="col-sm-4">
                         <label for="frais_ticket">frais prélevée</label>
-                        <input type="number" name="frais_ticket" id="frais_ticket" class="form-control">
+                        <input type="number" name="frais_ticket" id="frais_ticket" class="form-control" min="0" required>
+                        <div class="invalid-feedback">
+                            Veuillez ajouter une image de couverture
+                        </div>
                     </div>
                     
                     <div class="col-sm-4">
-                        <label for="place_dispo">Nombre de place</label>
-                        <input type="number" name="place_dispo" id="place_dispo" class="form-control" >
+                        <label for="place_dispo">Quantité de ticket</label>
+                        <input type="number" name="place_dispo" id="place_dispo" class="form-control"  required>
+                        <div class="invalid-feedback">
+                            Veuillez ajouter une quantité
+                        </div>
                     </div>
                     <input type="hidden" name="evenement_id" id="evenement_id" value="{{$evenement_id}}">
                     <div class="col-12 mt-4 row">
@@ -101,7 +119,26 @@
             </form> 
         </div>
     </div>
-             
+    <script>
+        (() => {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+                }, false)
+            })
+            })()
+    </script>
        
             <script>
                 document.addEventListener('DOMContentLoaded', function () {

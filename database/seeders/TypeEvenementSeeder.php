@@ -15,10 +15,6 @@ class TypeEvenementSeeder extends Seeder
     {
         $type_evenement =[
             [
-                "nom_type_evenement"=> "Tout",
-                "description"=> "Tous les évènements",
-            ],
-            [
                 "nom_type_evenement"=> "Chill",
                 "description"=> "évènement festifs ou rassemblement",
             ],

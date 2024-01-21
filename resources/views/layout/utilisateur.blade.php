@@ -108,63 +108,62 @@
   </svg>
   
    <div class="container-fluid "style="background-color: #ffffff">
-      <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top"> 
-   
-              <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-                <img src="{{ asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
+    <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top">
+      <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none order-first">
+          <img src="{{ asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
+      </a>
+      <form action="" class="me-5 w-25 mt-2">
+          <input type="search" name="" id="" class="form-control rounded-pill border-4 " placeholder="rechercher...">
+      </form>
+      <ul class="nav nav-underline mt-1 d-lg-flex">
+          <li class="nav-item">
+              <a href="{{ route('evenement.index') }}" class="nav-link link-success active d-flex align-items-center" aria-current="page">
+                  <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
               </a>
-               <form action="" class="me-5 w-25 mt-2">
-                  <input type="search" name="" id="" class="form-control rounded-pill border-4 " placeholder="rechercher...">
-               </form>
-               <ul class="nav nav-underline mt-1">
-                <li class="nav-item"></li>
-                <li class="nav-item">
-                    <a href="{{ route('evenement.index') }}" class="nav-link link-success active d-flex align-items-center" aria-current="page">
-                        <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{ route('ticket.index') }}" class="nav-link link-success d-flex align-items-center">
-                        <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link link-success d-flex align-items-center">
-                        <svg class="bi bi-globe2 me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#globe"></use></svg> Découvrir
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="@if (auth()->check()) {{ route('Create_event')}} @else {{route('login')}} @endif" class="nav-link link-success d-flex align-items-center">
-                        <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
-                    </a>
-                </li>
-                @if (auth()->check())
-                  <li class="nav-item ">
-                      <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit;" class="nav-link link-success justify-content-center d-flex align-items-center">
-                          <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
-                      </a>
-                      <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
-                          @csrf
-                      </form>
-                  </li>
-                @else
-                  <li class="nav-item">
-                      <a href="{{ route('login') }}" class="nav-link link-success">
-                        <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
-                        Se connecter
-                      </a>
-                  </li>
-                  <li class="nav-item">
-                      <a href="{{ route('register') }}" class="nav-link link-success">
-                        <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
-                        S'inscrire
-                      </a>
-                  </li>
-                    
-                @endif
-            </ul>
-              <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5 ms-4">
-       </header>
+          </li>
+          <li class="nav-item">
+              <a href="{{ route('ticket.index') }}" class="nav-link link-success d-flex align-items-center">
+                  <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
+              </a>
+          </li>
+          <li class="nav-item">
+              <a href="#" class="nav-link link-success d-flex align-items-center">
+                  <svg class="bi bi-globe2 me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#globe"></use></svg> Découvrir
+              </a>
+          </li>
+          <li class="nav-item">
+              <a href="@if (auth()->check()) {{ route('Create_event')}} @else {{route('login')}} @endif" class="nav-link link-success d-flex align-items-center">
+                  <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
+              </a>
+          </li>
+          @if (auth()->check())
+            <li class="nav-item ">
+                <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit;" class="nav-link link-success justify-content-center d-flex align-items-center">
+                    <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
+                </a>
+                <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
+                    @csrf
+                </form>
+            </li>
+          @else
+            <li class="nav-item">
+                <a href="{{ route('login') }}" class="nav-link link-success">
+                  <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
+                  Se connecter
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="{{ route('register') }}" class="nav-link link-success">
+                  <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
+                  S'inscrire
+                </a>
+            </li>
+              
+          @endif
+      </ul>
+      <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5 ms-4">
+  </header>
+  
    </div>
       
       <div class="container mt-5 py-5">
@@ -172,6 +171,11 @@
       </div>
        
      </div>
-    
+     <script>
+      // Utiliser JavaScript pour ajouter la classe fixed-bottom sur les petits écrans
+      if (window.innerWidth < 768) {
+          document.querySelector('ul.nav').classList.add('fixed-bottom');
+      }
+  </script>
 </body>
 </html>
