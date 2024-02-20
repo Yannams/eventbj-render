@@ -10,11 +10,14 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" href="{{asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png')}}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-bwJ3NRRpZy9bCaOa14DE9q79zFbQA7SH3uMKr6Pz3bMLcfmI7RmCmAE8XMErWsRn" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Your+Font+Name&display=swap" rel="stylesheet">
+    <title>eventbj</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
-    <title>eventbj</title>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <style>
       {!! Vite::content('resources/css/app.css') !!}
   </style>
@@ -105,25 +108,42 @@
         <path d="M15.384 6.115a.485.485 0 0 0-.047-.736A12.444 12.444 0 0 0 8 3C5.259 3 2.723 3.882.663 5.379a.485.485 0 0 0-.048.736.518.518 0 0 0 .668.05A11.448 11.448 0 0 1 8 4c2.507 0 4.827.802 6.716 2.164.205.148.49.13.668-.049z"/>
         <path d="M13.229 8.271a.482.482 0 0 0-.063-.745A9.455 9.455 0 0 0 8 6c-1.905 0-3.68.56-5.166 1.526a.48.48 0 0 0-.063.745.525.525 0 0 0 .652.065A8.46 8.46 0 0 1 8 7a8.46 8.46 0 0 1 4.576 1.336c.206.132.48.108.653-.065zm-2.183 2.183c.226-.226.185-.605-.1-.75A6.473 6.473 0 0 0 8 9c-1.06 0-2.062.254-2.946.704-.285.145-.326.524-.1.75l.015.015c.16.16.407.19.611.09A5.478 5.478 0 0 1 8 10c.868 0 1.69.201 2.42.56.203.1.45.07.61-.091zM9.06 12.44c.196-.196.198-.52-.04-.66A1.99 1.99 0 0 0 8 11.5a1.99 1.99 0 0 0-1.02.28c-.238.14-.236.464-.04.66l.706.706a.5.5 0 0 0 .707 0l.707-.707z"/>
       </symbol>
+    <symbol id="plus"  viewBox="0 0 16 16">
+        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4"/>
+    </symbol>
+    <symbol id="next-button" viewBox="0 0 16 16">
+      <path d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"/>
+    </symbol>
+    <symbol id="previous-button" viewBox="0 0 16 16">
+      <path d="m3.86 8.753 5.482 4.796c.646.566 1.658.106 1.658-.753V3.204a1 1 0 0 0-1.659-.753l-5.48 4.796a1 1 0 0 0 0 1.506z"/>
+    </symbol>
+    <symbol id="search" viewBox="0 0 16 16">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+    </symbol>
+    <symbol id="heart" viewBox="0 0 16 16">
+    
+        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+    </symbol>
   </svg>
-  
+
    <div class="container-fluid "style="background-color: #ffffff">
     <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top">
-      <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none order-first">
+        <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none order-first postion-absolute top-0 start-0">
           <img src="{{ asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
-      </a>
-      <form action="" class="me-5 w-25 mt-2">
+        </a>
+        <div class="me-4 mb-sm-0 d-md-none d-inline ">
+          <svg class="bi bi-search" fill="currentColor"  width="30" height="30"><use xlink:href="#search"></use></svg>
+          <svg class="bi bi-heart ms-2" fill="currentColor"  width="30" height="30"><use xlink:href="#heart"></use></svg>
+        </div>
+
+        <form action="" class="me-5 w-25 mt-2 d-md-inline d-none">
           <input type="search" name="" id="" class="form-control rounded-pill border-4 " placeholder="rechercher...">
-      </form>
-      <ul class="nav nav-underline mt-1 d-lg-flex">
+        </form>
+       
+      <ul class="nav nav-underline mt-1 d-lg-flex d-none">
           <li class="nav-item">
-              <a href="{{ route('evenement.index') }}" class="nav-link link-success active d-flex align-items-center" aria-current="page">
+              <a href="{{ route('evenement.index') }}" class="nav-link link-success @if (request()->url()== route('evenement.index'))active @endif d-flex align-items-center" aria-current="page">
                   <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
-              </a>
-          </li>
-          <li class="nav-item">
-              <a href="{{ route('ticket.index') }}" class="nav-link link-success d-flex align-items-center">
-                  <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
               </a>
           </li>
           <li class="nav-item">
@@ -132,37 +152,114 @@
               </a>
           </li>
           <li class="nav-item">
-              <a href="@if (auth()->check()) {{ route('Create_event')}} @else {{route('login')}} @endif" class="nav-link link-success d-flex align-items-center">
+              <a href=" {{route('Create_event')}}" class="nav-link link-success d-flex align-items-center">
                   <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
               </a>
           </li>
-          @if (auth()->check())
-            <li class="nav-item ">
-                <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit;" class="nav-link link-success justify-content-center d-flex align-items-center">
-                    <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
-                </a>
-                <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
-                    @csrf
-                </form>
-            </li>
-          @else
-            <li class="nav-item">
-                <a href="{{ route('login') }}" class="nav-link link-success">
-                  <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
-                  Se connecter
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="{{ route('register') }}" class="nav-link link-success">
-                  <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
-                  S'inscrire
-                </a>
-            </li>
-              
-          @endif
+          <li class="nav-item">
+              <a href="{{ route('ticket.index') }}" class="nav-link link-success @if (request()->url()== route('ticket.index'))active @endif d-flex align-items-center">
+                  <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
+              </a>
+          </li>
+          <li class="nav-item">
+            <div class="btn-group dropstart">
+              <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
+              </a>
+            
+              <ul class="dropdown-menu ">
+                  @if (auth()->check())
+                  <li>
+                      <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit;" class="justify-content-center d-flex align-items-center dropdown-item">
+                          <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
+                      </a>
+                      <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
+                          @csrf
+                      </form>
+                  </li>
+                @else
+                  <li>
+                      <a href="{{ route('login') }}" class="dropdown-item">
+                        <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
+                        Se connecter
+                      </a>
+                  </li>
+                  <li>
+                      <a href="{{ route('register') }}" class=" dropdown-item">
+                        <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
+                        S'inscrire
+                      </a>
+                  </li>
+                    
+                @endif
+                  <li><a class="dropdown-item" href="#">Permuter vers organisateur</a></li>
+              </ul>
+            </div>
+          </li>         
       </ul>
-      <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5 ms-4">
+    
+      <ul class="nav nav-pills mt-1 p-2 bg-white d-lg-none row row-cols-5 fixed-bottom">
+        <li class="nav-item flex-column">
+            <a href="{{ route('evenement.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('evenement.index'))active green @endif d-flex align-items-center" aria-current="page">
+                <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="#" class="nav-link flex-column link-success d-flex align-items-center">
+                <svg class="bi bi-globe2 me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#globe"></use></svg> Découvrir
+            </a>
+        </li>
+        <li class="nav-item ">
+            <a href=" {{route('Create_event')}}" class="nav-link flex-column link-success d-flex align-items-center">
+              <span class="rounded-circle shadow" style=" display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: #308747; margin-top: -30px"><svg class="bi bi-plus" fill="#C3E3CC"  width="40" height="40"><use xlink:href="#plus"></use></svg></span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{{ route('ticket.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('ticket.index'))active green @endif d-flex align-items-center">
+                <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
+            </a>
+        </li>
+        <li class="nav-item">
+          <div class="btn-group dropstart">
+            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
+            </a>
+          
+            <ul class="dropdown-menu ">
+                @if (auth()->check())
+                <li>
+                    <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit;" class="justify-content-center d-flex align-items-center dropdown-item">
+                        <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
+                    </a>
+                    <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
+                        @csrf
+                    </form>
+                </li>
+              @else
+                <li>
+                    <a href="{{ route('login') }}" class="dropdown-item">
+                      <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
+                      Se connecter
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('register') }}" class=" dropdown-item">
+                      <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
+                      S'inscrire
+                    </a>
+                </li>
+                  
+              @endif
+                <li><a class="dropdown-item" href="#">Permuter vers organisateur</a></li>
+            </ul>
+          </div>
+        </li>         
+    </ul>
+
+    
+      
   </header>
+  
   
    </div>
       
@@ -172,10 +269,63 @@
        
      </div>
      <script>
+        const triggerTabList = document.querySelectorAll('#myTab button')
+            triggerTabList.forEach(triggerEl => {
+              const tabTrigger = new bootstrap.Tab(triggerEl)
+
+              triggerEl.addEventListener('click', event => {
+                event.preventDefault()
+                tabTrigger.show()
+              })
+            })
+     </script>
+     {{-- <script>
       // Utiliser JavaScript pour ajouter la classe fixed-bottom sur les petits écrans
-      if (window.innerWidth < 768) {
-          document.querySelector('ul.nav').classList.add('fixed-bottom');
+      function responsiveHeader(){
+          if (window.innerWidth < 768) {
+            navElement=document.querySelector('ul.nav');
+            searchBar=document.getElementById('searchBar')
+            navElement.classList.remove('nav-underline');
+            navElement.classList.add('fixed-bottom','bg-light','nav-pills','green','row','row-cols-5','p-2' );
+            let navLinks = document.querySelectorAll('a.nav-link');
+
+            // Parcourez chaque élément a et ajoutez la classe 'flex-column'
+            navLinks.forEach(function(navLink) {
+                navLink.classList.add('flex-column');
+            });
+            console.log(searchBar);
+            let createEventLink = document.querySelector('a.nav-link[href*="Create_event"]');
+            searchBar.innerHTML='<svg class="bi bi-search" fill="currentColor"  width="30" height="30"><use xlink:href="#search"></use></svg>'
+            $('#searchBar').addClass(' position-absolute top-0 end-0 me-5 mt-2')
+          // Supprimez le texte à l'intérieur du lien
+          createEventLink.innerHTML = '<span class="rounded-circle" style=" display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: #308747; margin-top: -30px"><svg class="bi bi-plus" fill="#C3E3CC"  width="40" height="40"><use xlink:href="#plus"></use></svg></span>';
+
+        }
+        else{
+            navElement=document.querySelector('ul.nav');
+            navElement.classList.add('nav-underline');
+            navElement.classList.remove('fixed-bottom','bg-light','nav-pills','green','row','row-cols-5','p-2' );
+
+            let navLinks = document.querySelectorAll('a.nav-link');
+
+            // Parcourez chaque élément a et ajoutez la classe 'flex-column'
+            navLinks.forEach(function(navLink) {
+                navLink.classList.remove('flex-column');
+            });
+
+            let createEventLink = document.querySelector('a.nav-link[href*="Create_event"]');
+
+          // Supprimez le texte à l'intérieur du lien
+          createEventLink.innerHTML = '<svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement';
+        }
       }
-  </script>
+      
+      responsiveHeader();
+
+      window.addEventListener('resize', function() {
+        // Code à exécuter lorsqu'il y a un changement de taille d'écran
+        responsiveHeader();
+    });
+     </script> --}}
 </body>
 </html>

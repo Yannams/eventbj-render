@@ -29,11 +29,13 @@ Route::post('/onLine/{evenement}', [EvenementController::class,'OnlineEvents'])-
 Route::get('/filtredevenement/{type}', [EvenementController::class, 'filteredByTypeEvents'] )->name('type_event');
 Route::post('/isEntreprise',[ProfileController::class,'updateIsEntreprise'])->name('isEntreprise'); 
 Route::get('/verifiedTransaction/{type_ticket}', [TicketController::class,'verifiedTransaction'] )->name('verifiedTransation');
-Route::get('/Create_event',[EvenementController::class,'Create_event'])->name('Create_event');
+Route::get('/Create_event',[EvenementController::class,'Create_event'])->name('Create_event')->middleware('auth');
 Route::get('/Editor/chronogramme/{evenement}', [ChronogrammeController::class,'edit_chronogramme'])->name('edit_chronogramme');
 Route::post('/evenement/edit/heure/{evenement}', [EvenementController::class,'updateHours'])->name('updateHours');
 Route::post('/typelieuSelected', [TypeLieuController::class,'type_lieu_selected'])->name('typelieuSelected');
 Route::get('/Form_end',[TypeTicketController::class,'terminus'])->name('terminus');
+Route::post('/ticket_selected',[TicketController::class, 'TicketSelected'])->name('ticket_selected')->middleware('auth');
+Route::post('/NombreTicket',[TicketController::class, 'nombreTicket'])->name('nombreTicket');
 
 Route::resource('evenement', EvenementController::class);
 Route::resource('type_lieu', TypeLieuController::class);

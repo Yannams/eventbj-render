@@ -1,6 +1,6 @@
 @extends('layout.utilisateur')
     @section('content')
-        <div class="card border-0">
+        <div class="card border-0 shadow">
             <div class="card-body">
                 <h1>Billeterie</h1>
                 <div class="d-flex"> 
@@ -28,7 +28,7 @@
                 <form class="formulaire2" method="post" onsubmit="return false;">
                    
                     <input type="hidden" name="montant" value="">
-                    <button type="submit" class="btn btn-primary kkiapay-button col-12">Obtenir</button>
+                    <button type="submit" class="btn btn-success kkiapay-button col-12">Obtenir</button>
                 </form>
                 
                 <script>
@@ -36,17 +36,39 @@
                 
                     formulaire2.addEventListener("submit", function(e) {
                         e.preventDefault();
+                        var dataToSend={
+                            nombreTicket:$('#nombre_ticket').val()
+                        }
+                        console.log(dataToSend);
+                        $.ajax({
+                            url: "{{route('nombreTicket')}}" ,
+                            type: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            },
+                            dataType: 'json', // le type de données que vous attendez en réponse
+                            data: dataToSend, // les données à envoyer
+                            success: function(data) {
+                            // La fonction à exécuter en cas de succès
+                            console.log('Réponse réussie:', data);
+                            },
+                            error: function(error) {
+                            // La fonction à exécuter en cas d'erreur
+                            console.error('Erreur de requête AJAX:', error);
+                            }
+                        })
                         initializeApp("{{ route('verifiedTransation',['type_ticket'=>$type_ticket->id])}}");
                     });
                 
+
                     function initializeApp(callbackUrl) {
-                        console.log(formulaire2.querySelector("[name='montant']").value);
+                        
                         
                         openKkiapayWidget({
                             amount: formulaire2.querySelector("[name='montant']").value,
                             position: "center",
                             callback: callbackUrl,
-                            data: "2",
+                            data: "",
                             theme: "#308747",
                             sandbox: true,
                             key: "e1ed75f092f611eeb66e33e3292024ab"
