@@ -399,3 +399,16 @@
 .menu::-webkit-scrollbar{
   display: none;
 }
+@media(max-width:992px) {
+  .card-size{
+    width: 13rem; 
+    height:20rem;
+  }  
+}
+
+@media (min-width:992px) {
+  .card-size{
+    width: 16rem; 
+    height:20rem;
+  }
+}

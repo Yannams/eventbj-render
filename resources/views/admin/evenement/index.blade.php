@@ -78,7 +78,7 @@
                   <div class="carousel-item active">
                        <div class="row row-cols-1 row-cols-md-4 g-3 mb-4 scrolling-wrapper recommended flex-nowrap">
                             <div class="col recommandedEvent ">
-                                <div class="card low-padding rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#F0343C; ">
+                                <div class="card low-padding rounded-4 border-0 card-size recommandedEventCard" style="background-color:#F0343C; ">
                                     <img src="{{asset('image/img.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -91,7 +91,7 @@
                                 </div>
                             </div>
                             <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#FBAA0A;">
+                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#FBAA0A;">
                                     <img src="{{asset('image/Capture d’écran 2023-08-10 170824.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -104,7 +104,7 @@
                                 </div>
                             </div>
                             <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#308747;">
+                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#308747;">
                                     <img src="{{asset('image/Capture d’écran 2023-08-10 172019.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -117,7 +117,7 @@
                                 </div>
                             </div>
                             <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                     <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -134,7 +134,7 @@
                   <div class="carousel-item">
                     <div class="row row-cols-1 row-cols-md-4 g-3 mb-4 scrolling-wrapper recommended flex-nowrap">
                         <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                 <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title fw-bold">ZeChill</h5>
@@ -147,7 +147,7 @@
                             </div>
                         </div>
                         <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                 <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title fw-bold">ZeChill</h5>
@@ -160,7 +160,7 @@
                             </div>
                         </div>
                         <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                 <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title fw-bold">ZeChill</h5>
@@ -173,7 +173,7 @@
                             </div>
                         </div>
                         <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                 <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                 <div class="card-body">
                                     <h5 class="card-title fw-bold">ZeChill</h5>
@@ -190,7 +190,7 @@
                   <div class="carousel-item">
                        <div class="row row-cols-1 row-cols-md-4 g-3 mb-4 scrolling-wrapper recommended flex-nowrap">
                             <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                     <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -203,7 +203,7 @@
                                 </div>
                             </div>
                             <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                     <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -216,7 +216,7 @@
                                 </div>
                             </div>
                             <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                     <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -229,7 +229,7 @@
                                 </div>
                             </div>
                             <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0" style="width: 13rem; height:20rem; background-color:#B1B3C8;">
+                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
                                     <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                     <div class="card-body">
                                         <h5 class="card-title fw-bold">ZeChill</h5>
@@ -276,7 +276,7 @@
         <a href="{{route('evenement.show', ['evenement'=>$evenements->id])}}" class="link-dark  link-offset-2 link-underline link-underline-opacity-0">
             <div class="col">
                 <div class="card shadow card-cover overflow-hidden text-bg-dark rounded-4 shadow-lg border-0 evenement shadow" style="height: 250px;"> 
-                    <img src="{{$evenements->cover_event}}" class="card-img" alt="...">
+                    <img src="{{$evenements->cover_event}}" class="card-img h-100" alt="...">
                     <div class="card-img-overlay flex-column">
                         <div class="badge tools-event pb-5 mb-5 rounded-3 card-header"> <span class="fs-3">{{date('d', strtotime($evenements->date_heure_debut))}}</span> <br> <span class="fs-6">{{date('M', strtotime($evenements->date_heure_debut))}}</span> </div>
                         <div class="d-flex mt-5 pt-4">
@@ -307,6 +307,7 @@
         function recommandedResponsive() {
             if (window.innerWidth<768) {
                 var carouselContent = document.querySelectorAll(".recommended");
+                var recommandedEventCard = document.querySelectorAll(".recommandedEventCard")
                 var responsiveCarousel= document.getElementById('responsiveCarousel')
                 carouselContent.forEach(function(item) {
                     // Récupérer le contenu de l'élément
@@ -314,9 +315,11 @@
                     // Ajouter le contenu à l'élément avec l'ID responsiveCarousel
                     responsiveCarousel.innerHTML += itemContent;
                      
-                    item.innerHTML=""
-                })
+                    item.innerHTML="";
 
+                    console.log(recommandedEventCard);
+                }
+                )
                 $('.button-carrousel').hide();
             }
             else{
@@ -331,7 +334,6 @@
                    
                     // Prendre les 4 éléments suivants de responsiveCarousel
                     var responsiveItems = Array.from(responsiveCarousel).slice(startIndex, startIndex + 4);
-                    console.log(responsiveItems);
                     // Ajouter chaque élément responsiveCarousel à l'élément carouselContent en cours
                     responsiveItems.forEach(function (responsiveItem) {
                         item.appendChild(responsiveItem);

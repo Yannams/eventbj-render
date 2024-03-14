@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\InfoUser;
 use App\Models\ticket;
 use App\Http\Requests\StoreticketRequest;
 use App\Http\Requests\UpdateticketRequest;
 use App\Models\type_ticket;
 use App\Models\User;
+use Dompdf\Dompdf;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -43,6 +47,7 @@ class TicketController extends Controller
             $nombreTicket=session('nombreTicket');
             $type_ticket=type_ticket::find($request->id_type_ticket);
             $cover_ticket=$type_ticket->image_ticket;
+            $attach=array();
             for($i=0; $i<$nombreTicket; $i++){
                 $user=auth()->user()->id;
                 $userdata=User::find($user);
@@ -63,25 +68,38 @@ class TicketController extends Controller
                 $QrCodePath='code_QR/'.$fileName;
                 $ticket->code_QR = $QrCodePath; // Correction ici, utilisez $filePath au lieu de $qrCodePath
                 $ticket->save(); 
-                $manager = ImageManager::gd();
-                $image = $manager->read($cover_ticket);
-                dd($QrCodePath);
-                // paste another image
-                $image->place($QrCodePath);
+                $data = $ticket; // Récupérer les données pour le PDF
+                $type_ticket->place_dispo--;
+                $type_ticket->save();
+                // Génération du contenu HTML
+                $html = view('admin.ticket.generatedTicket',compact('data'));
 
-                // create a new resized watermark instance and insert at bottom-right 
-                // corner with 10px offset and an opacity of 25%
-                $image->place(
-                    'images/watermark.png',
-                    'bottom-right', 
-                    10, 
-                    10,
-                    25
-                );
-               
-             
-                             
+                // Initialisation de Dompdf (via le fournisseur de service)
+                $dompdf = app(Dompdf::class);
+
+                // Chargement du contenu HTML
+                $dompdf->loadHtml($html);
+                
+                $dompdf->setPaper('A4', 'portrait');
+
+                // Rendu et sortie du PDF
+                $dompdf->render();
+                $output = $dompdf->output();
+                
+                file_put_contents(public_path('ticketPdf/ticket'.Auth::user()->id.'_'.$ticket->id.'_'.trim($data->type_ticket->evenement->nom_evenement).'.pdf'), $output);         
+                
+                $filePath=public_path('ticketPdf/ticket'.Auth::user()->id.'_'.$ticket->id.'_'.trim($data->type_ticket->evenement->nom_evenement).'.pdf');
+
+                $attach[]=$filePath;
+                
             }
+            $mailData=[
+                'subject'=>'Tickets pour '. $data->type_ticket->evenement->nom_evenement,
+                'body'=>'Bonjour '.Auth::user()->name.' Veuillez trouver ci-joint les tickets pour '.$data->type_ticket->evenement->nom_evenement,
+            ];
+
+            Mail::to(Auth::user()->email)
+                ->send(new InfoUser($mailData,$attach)); 
            
             return redirect()->route('ticket.index');
         }

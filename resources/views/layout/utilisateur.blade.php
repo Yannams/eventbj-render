@@ -170,7 +170,7 @@
               <ul class="dropdown-menu ">
                   @if (auth()->check())
                   <li>
-                      <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit;" class="justify-content-center d-flex align-items-center dropdown-item">
+                      <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="justify-content-center d-flex align-items-center dropdown-item">
                           <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
                       </a>
                       <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
@@ -199,66 +199,61 @@
       </ul>
     
       <ul class="nav nav-pills mt-1 p-2 bg-white d-lg-none row row-cols-5 fixed-bottom">
-        <li class="nav-item flex-column">
-            <a href="{{ route('evenement.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('evenement.index'))active green @endif d-flex align-items-center" aria-current="page">
-                <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="#" class="nav-link flex-column link-success d-flex align-items-center">
-                <svg class="bi bi-globe2 me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#globe"></use></svg> Découvrir
-            </a>
-        </li>
-        <li class="nav-item ">
-            <a href=" {{route('Create_event')}}" class="nav-link flex-column link-success d-flex align-items-center">
-              <span class="rounded-circle shadow" style=" display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: #308747; margin-top: -30px"><svg class="bi bi-plus" fill="#C3E3CC"  width="40" height="40"><use xlink:href="#plus"></use></svg></span>
-            </a>
-        </li>
-        <li class="nav-item">
-            <a href="{{ route('ticket.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('ticket.index'))active green @endif d-flex align-items-center">
-                <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
-            </a>
-        </li>
-        <li class="nav-item">
-          <div class="btn-group dropstart">
-            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
-            </a>
-          
-            <ul class="dropdown-menu ">
-                @if (auth()->check())
-                <li>
-                    <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit;" class="justify-content-center d-flex align-items-center dropdown-item">
-                        <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
-                    </a>
-                    <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
-                        @csrf
-                    </form>
-                </li>
-              @else
-                <li>
-                    <a href="{{ route('login') }}" class="dropdown-item">
-                      <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
-                      Se connecter
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('register') }}" class=" dropdown-item">
-                      <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
-                      S'inscrire
-                    </a>
-                </li>
-                  
-              @endif
-                <li><a class="dropdown-item" href="#">Permuter vers organisateur</a></li>
-            </ul>
-          </div>
-        </li>         
-    </ul>
-
-    
-      
-  </header>
+          <li class="nav-item flex-column">
+              <a href="{{ route('evenement.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('evenement.index'))active green @endif d-flex align-items-center" aria-current="page">
+                  <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
+              </a>
+          </li>
+          <li class="nav-item">
+              <a href="#" class="nav-link flex-column link-success d-flex align-items-center">
+                  <svg class="bi bi-globe2 me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#globe"></use></svg> Découvrir
+              </a>
+          </li>
+          <li class="nav-item ">
+              <a href=" {{route('Create_event')}}" class="nav-link flex-column link-success d-flex align-items-center">
+                <span class="rounded-circle shadow" style=" display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: #308747; margin-top: -30px"><svg class="bi bi-plus" fill="#C3E3CC"  width="40" height="40"><use xlink:href="#plus"></use></svg></span>
+              </a>
+          </li>
+          <li class="nav-item">
+              <a href="{{ route('ticket.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('ticket.index'))active green @endif d-flex align-items-center">
+                  <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
+              </a>
+          </li>
+          <li class="nav-item">
+            <div class="btn-group dropstart">
+              <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
+              </a>
+            
+              <ul class="dropdown-menu ">
+                  @if (auth()->check())
+                    <li>
+                      <form method="POST" action="{{ route('logout') }}">
+                          @csrf 
+                          <button type="submit">Logout</button>
+                      </form>                  
+                    </li>
+                  @else
+                    <li>
+                        <a href="{{ route('login') }}" class="dropdown-item">
+                          <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
+                          Se connecter
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('register') }}" class=" dropdown-item">
+                          <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
+                          S'inscrire
+                        </a>
+                    </li>
+                      
+                  @endif
+                  <li><a class="dropdown-item" href="#">Permuter vers organisateur</a></li>
+              </ul>
+            </div>
+          </li>         
+      </ul>  
+    </header>
   
   
    </div>
