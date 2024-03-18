@@ -12,8 +12,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Your+Font+Name&display=swap" rel="stylesheet">
     <title>eventbj</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -121,8 +119,10 @@
         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
     </symbol>
     <symbol id="heart" viewBox="0 0 16 16">
-    
-        <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+      <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15"/>
+    </symbol>
+    <symbol id="heart-fill" viewBox="0 0 16 16">
+      <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
     </symbol>
   </svg>
 
@@ -134,12 +134,22 @@
         <div class="me-4 mb-sm-0 d-md-none d-inline ">
           <svg class="bi bi-search" fill="currentColor"  width="30" height="30"><use xlink:href="#search"></use></svg>
           <svg class="bi bi-heart ms-2" fill="currentColor"  width="30" height="30"><use xlink:href="#heart"></use></svg>
+        </div>    
+        <div class="w-50">
+          <button class="btn w-100" id="Search" >
+                <div class="card rounded-pill">
+                  <div class="card-body">
+                    <span><svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#search"></use></svg></span> Rechercher un évènement
+                  </div>
+              </div>
+          </button>
+          <div class="card d-none" id="searchBar" style="position:fixed; z-index:1500; width:700px;top:0;" >
+            <div class="card-body">
+              <input type="search" class="rounded-pill form-control" id="search-input" name="keyWord" placeholder="Rechercher un évènement">
+               <div id="Research-result"></div>
+            </div>
+          </div>
         </div>
-
-        <form action="" class="me-5 w-25 mt-2 d-md-inline d-none">
-          <input type="search" name="" id="" class="form-control rounded-pill border-4 " placeholder="rechercher...">
-        </form>
-       
       <ul class="nav nav-underline mt-1 d-lg-flex d-none">
           <li class="nav-item">
               <a href="{{ route('evenement.index') }}" class="nav-link link-success @if (request()->url()== route('evenement.index'))active @endif d-flex align-items-center" aria-current="page">
@@ -264,6 +274,127 @@
        
      </div>
      <script>
+        var searchBtn= document.getElementById('Search');
+        var SearchBarSpace=document.getElementById('searchBar');
+        var ResultSpace =document.getElementById('Research-result')
+        
+        function showSearchBar() {
+          searchBtn.classList.add('d-none');
+          SearchBarSpace.classList.remove('d-none');
+          
+        }
+        function hideSearchBar() {
+          searchBtn.classList.remove('d-none');
+          SearchBarSpace.classList.add('d-none');
+        }
+
+        searchBtn.addEventListener("click",showSearchBar);
+        SearchBarSpace.addEventListener("focusout",hideSearchBar);
+
+        SearchBarSpace.addEventListener("input",function ResearchEvent() {
+          WordInput=document.getElementById("search-input");
+          Word=WordInput.value;
+          
+          if (Word=='') {
+              ResultSpace.innerHTML="";
+            }else{
+              $.ajaxSetup(
+                  {
+                      headers:{
+                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      }
+                  }
+                )
+                $.ajax(
+                  {
+                      type:'POST',
+                      url: '/query',
+                      data:{
+                          search: Word,
+                      },
+
+                      dataType:'JSON',
+                
+                    success: function(data){
+                    if (data.success==true) {
+                      ResultSpace.innerHTML=""
+                      for (let i = 0; i < data['evenement'].length; i++) {
+                        const element = data['evenement'][i]['nom_evenement'];
+                        const id = data['evenement'][i]['id'];
+                        ResultSpace.innerHTML+="<div class=\"clickable-result d-flex align-items-center justify-content-center mt-3\"><div class=\"my-2\"><a href=\""+id+"\" class=\"text-dark link-underline link-underline-opacity-0\">"+element+"</a></div></div><hr>"
+                        
+                      }
+                    } else{
+                      const element=data["message"];
+                      ResultSpace.innerHTML+="<div class=\"clickable-result d-flex align-items-center justify-content-center mt-3\"><div class=\"my-2\"><a href=\""+id+"\" class=\"text-dark link-underline link-underline-opacity-0\">"+element+"</a></div></div><hr>";
+                    }
+                      
+                      
+                    }
+                  }
+              )
+            }
+        })
+                  
+                
+
+        
+      //   var searchBtn= document.getElementById('Search');
+      //   var SearchBarSpace=document.getElementById('searchBar')
+      //   searchBtn.addEventListener('click',function SearchBar() 
+      //     SearchBarSpace.innerHTML=' <div class="card" style="position:fixed; z-index:1500; width:700px;top:0;" ><div class="card-body"><input type="search" class="rounded-pill form-control" id="search-input" name="keyWord" placeholder="Rechercher un évènement"> <div id="Research-result"></div></div></div>';
+      //     var searchInput=document.getElementById('search-input');
+      //     var ResultSpace=document.getElementById('Research-result')
+          
+      //     searchInput.addEventListener('input',(event)=>{
+      //       Word=searchInput.value;
+      //       if (Word=='') {
+      //         ResultSpace.innerHTML="";
+      //       }else{
+              
+
+        //       $.ajaxSetup(
+        //           {
+        //               headers:{
+        //                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //               }
+        //           }
+        //       )
+        //       $.ajax(
+        //           {
+        //               type:'POST',
+        //               url: '/query',
+        //               data:{
+        //                   search: Word,
+        //               },
+
+        //               dataType:'JSON',
+                
+        //             success: function(data){
+        //               console.log(data);
+        //               ResultSpace.innerHTML="";
+        //               for (let i = 0; i < data.length; i++) {
+        //                 const element = data[i]['nom_evenement'];
+        //                 const id = data[i]['id'];
+        //                 ResultSpace.innerHTML+="<div class=\"clickable-result d-flex align-items-center justify-content-center mt-3\"><div class=\"my-2\"><a href=\""+id+"\" class=\"text-dark link-underline link-underline-opacity-0\">"+element+"</a></div></div><hr>"
+                        
+        //               }
+                      
+        //             }
+        //           }
+        //       )
+        //     }
+        // })
+
+       
+      // });
+      //  searchInput.addEventListener('focusout',function EndSearch() {
+      //     SearchBarSpace.innerHTML='<button class="btn w-100" id="Search"><div class="card rounded-pill"><div class="card-body"><span><svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#search"></use></svg></span> Rechercher un évènement</div></div></button>'
+      //   })
+        
+      
+     </script>
+     <script>
         const triggerTabList = document.querySelectorAll('#myTab button')
             triggerTabList.forEach(triggerEl => {
               const tabTrigger = new bootstrap.Tab(triggerEl)
@@ -274,6 +405,7 @@
               })
             })
      </script>
+     
      {{-- <script>
       // Utiliser JavaScript pour ajouter la classe fixed-bottom sur les petits écrans
       function responsiveHeader(){

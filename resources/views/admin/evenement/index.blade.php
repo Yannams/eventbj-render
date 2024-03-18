@@ -263,14 +263,12 @@
                 <li class="">
                     <a href="{{ route('type_event', ['type' => $type_evenements->id]) }}" class="@if (request()->url() == route('type_event', ['type' => $type_evenements->id])) active-link @else non-active @endif">
                         {{ $type_evenements->nom_type_evenement }}
-                    </a>
-                   
+                    </a>  
                 </li>
             @endforeach
             
         </ul>
     </div>
-
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-4">
         @foreach ( $evenement as $evenements )
         <a href="{{route('evenement.show', ['evenement'=>$evenements->id])}}" class="link-dark  link-offset-2 link-underline link-underline-opacity-0">
@@ -279,10 +277,26 @@
                     <img src="{{$evenements->cover_event}}" class="card-img h-100" alt="...">
                     <div class="card-img-overlay flex-column">
                         <div class="badge tools-event pb-5 mb-5 rounded-3 card-header"> <span class="fs-3">{{date('d', strtotime($evenements->date_heure_debut))}}</span> <br> <span class="fs-6">{{date('M', strtotime($evenements->date_heure_debut))}}</span> </div>
+                        <input type="hidden" id="event_id" name="evenement_id" value="{{$evenements->id}}">
                         <div class="d-flex mt-5 pt-4">
                             <div class="fw-bold fs-4 p-2 w-100 ">{{$evenements->nom_evenement}} </div>
-                            <div  class="badge tools-event p-2 d-flex align-items-center flex-shrink-1 rounded-3 ">
-                                <svg class="bi bi-heart " fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
+                            <div  class="badge tools-event p-2 d-flex align-items-center justify-content-center flex-shrink-1 rounded-3 "> 
+                                {{-- <form action="{{route('like_event')}}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="evenement_id" value="{{$evenements->id}}"> --}}
+                                    @auth
+                                        <button class="btn border-0 btn-like" data-event-id="{{$evenements->id}}" id="like">
+                                            <svg class="bi bi-heart @if (Auth::user()->events()->find($evenements->id)!=null) @if (Auth::user()->events()->find($evenements->id)->pivot->like==1) d-none @endif @endif" data-event-id="{{$evenements->id}}" id="unliked" fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
+                                            <svg class="bi bi-heart-fill @if (Auth::user()->events()->find($evenements->id)!=null) @if (Auth::user()->events()->find($evenements->id)->pivot->like==0) d-none @endif @else d-none @endif" data-event-id="{{$evenements->id}}" id="liked" fill="red" width="30" height="30" ><use xlink:href="#heart-fill"></use></svg>
+                                        </button>
+                                    @else
+                                        <form action="{{route('login')}}">
+                                            <button class="btn">
+                                                <svg class="bi bi-heart" fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
+                                            </button>
+                                        </form>
+                                    @endauth
+                                {{-- </form>--}}
                             </div>
                         </div>
                     </div>
@@ -291,9 +305,47 @@
                 
             </div>
         </a>
-          
+        
         @endforeach
     </div>
+
+   
+    <script>
+        var likes=document.querySelectorAll('.btn-like');
+        likes.forEach(function (like) {
+            like.addEventListener('click', function likeAction(event) {
+                event.preventDefault();
+                evenement_id=like.getAttribute('data-event-id');
+                unliked=like.querySelector('.bi-heart');
+                liked=like.querySelector('.bi-heart-fill');
+                unliked.classList.toggle('d-none');
+                liked.classList.toggle('d-none');
+                $.ajaxSetup(
+                    {
+                        headers:{
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        }
+                    }
+                )
+                $.ajax(
+                    {
+                        type:'POST',
+                        url: '/like/event',
+                        data:{
+                            evenement_id: evenement_id,
+                        },
+
+                        dataType:'JSON',
+                    }
+                )
+            })
+            })
+        
+    
+        
+        
+        
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const toastLiveExample = document.getElementById('liveToast');
@@ -317,7 +369,7 @@
                      
                     item.innerHTML="";
 
-                    console.log(recommandedEventCard);
+                    
                 }
                 )
                 $('.button-carrousel').hide();

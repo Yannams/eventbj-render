@@ -412,3 +412,10 @@
     height:20rem;
   }
 }
+
+.clickable-result:hover{
+  background-color: #999;
+  height: 100%;
+  border-radius: 10px;
+  padding: auto;
+}

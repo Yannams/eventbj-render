@@ -14,6 +14,7 @@ use DateTime;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EvenementController extends Controller
 {
@@ -185,7 +186,46 @@ class EvenementController extends Controller
         session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket']);
         return view('admin.evenement.create_event');
     }
+    
+    public function like_event(Request $request){
+        $user_id=Auth::user()->id;
+        $evenement_id=$request->evenement_id;
+        $evenement = evenement::find($evenement_id);
+        $like=$evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement_id)->wherePivot('like',true);
+        $get_likeline=$like->get();
+        
+        if($evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement_id)->wherePivot('like',true)->get()->isNotEmpty()){
+            $status=['like'=>false];
+            $evenement->users()->updateExistingPivot($user_id,$status);
+           
+        }elseif($evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement_id)->wherePivot('like',false)->get()->isNotEmpty()){
+            $status=['like'=>true];
+            $evenement->users()->updateExistingPivot($user_id,$status);
+        }else{
+            $status=['like'=>true];
+            $evenement->users()->attach($user_id,$status);
+        }
 
+    }
+
+    public function research_event(Request $request){
+        $keyWord=$request->search;
+        $evenement=evenement::where('nom_evenement', 'like', '%'.$keyWord.'%')->get();
+        //dd($evenement);
+        if ($evenement) {
+            return response()->json([
+                "success"=>true,
+                "evenement"=>$evenement
+            ]);
+        }
+        else {
+            return response()->json([
+                "success"=>false,
+                "message"=>"Aucun évènement pour le moment"
+            ]);
+        }
+       
+    }
 }
 
 

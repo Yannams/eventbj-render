@@ -36,6 +36,9 @@ Route::post('/typelieuSelected', [TypeLieuController::class,'type_lieu_selected'
 Route::get('/Form_end',[TypeTicketController::class,'terminus'])->name('terminus');
 Route::post('/ticket_selected',[TicketController::class, 'TicketSelected'])->name('ticket_selected')->middleware('auth');
 Route::post('/NombreTicket',[TicketController::class, 'nombreTicket'])->name('nombreTicket');
+Route::post('/like/event',[EvenementController::class,'like_event'])->name('like_event')->middleware('auth');
+Route::post('/query',[EvenementController::class,'research_event'])->name('research_event');
+
 
 Route::resource('evenement', EvenementController::class);
 Route::resource('type_lieu', TypeLieuController::class);

@@ -29,4 +29,8 @@ class evenement extends Model
         return $this->hasMany(type_ticket::class);
     }
 
+    public function users():BelongsToMany
+    {
+        return $this->belongsToMany(User::class)->withPivot('like');
+    }
 }

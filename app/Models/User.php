@@ -55,4 +55,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Ticket::class);
     }
+
+    public function events():BelongsToMany
+    {
+        return $this->belongsToMany(evenement::class)->withPivot('like');
+    }
 }
