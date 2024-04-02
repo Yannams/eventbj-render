@@ -54,7 +54,7 @@
     <div class="card border-0">
         <div class="card-body">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a href="{{route('type ticket.create')}}" class="btn btn-success text-end"> Ajouter un nouveau ticket</a>
+                <a href="{{route('type_ticket.create')}}" class="btn btn-success text-end"> Ajouter un nouveau ticket</a>
               </div>
                 <table class="table">
                     <thead>
@@ -63,6 +63,7 @@
                         <th scope="col">Nom</th>
                         <th scope="col">prix </th>
                         <th scope="col">Quantité</th>
+                        <th scope="col"> Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -72,6 +73,9 @@
                             <td>{{$type_ticket->nom_ticket}}</td>
                             <td>{{$type_ticket->prix_ticket}}</td>
                             <td>{{$type_ticket->place_dispo}}</td>
+                            <td>
+                                <a href="{{route('type_ticket.edit',$type_ticket->id)}}" class="btn btn-success">Modifier</a>
+                            </td>
                         </tr>
                         @endforeach
                            

@@ -25,14 +25,14 @@
         </a>
     </li>
     <li class="nav-item" role="presentation">
-        <a href="@if (session('type_ticket')) {{route('type ticket.create')}} @endif" class=" fw-bold nav-link rounded @if (request()->url()==route('type ticket.create')) checking-step @elseif (session('type_ticket')) checked-step @else unchecked-step @endif me-3" role="tab" aria-selected="true" >
+        <a href="@if (session('type_ticket')) {{route('type_ticket.create')}} @endif" class=" fw-bold nav-link rounded @if (request()->url()==route('type_ticket.create')) checking-step @elseif (session('type_ticket')) checked-step @else unchecked-step @endif me-3" role="tab" aria-selected="true" >
             Création de ticket 
         </a>
     </li>                              
     <li class="nav-item" role="presentation">
         <a href="@if (session('type_ticket'))
-            {{route('type ticket.index')}}
-        @endif" class=" fw-bold nav-link rounded  @if (request()->url()==route('type ticket.index')) checking-step  @else unchecked-step @endif me-3" role="tab" aria-selected="true" >
+            {{route('type_ticket.index')}}
+        @endif" class=" fw-bold nav-link rounded  @if (request()->url()==route('type_ticket.index')) checking-step  @else unchecked-step @endif me-3" role="tab" aria-selected="true" >
             vos tickets
         </a>
     </li> 

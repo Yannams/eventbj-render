@@ -4,14 +4,17 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -58,6 +61,11 @@ class User extends Authenticatable
 
     public function events():BelongsToMany
     {
-        return $this->belongsToMany(evenement::class)->withPivot('like');
+        return $this->belongsToMany(evenement::class)->withPivot('like','nombre_click','date_click','date_like','date_unlike','created_at','updated_at');
+    }
+
+    public function ProfilPromoteur():HasOne
+    {
+        return $this->hasOne(ProfilPromoteur::class);
     }
 }

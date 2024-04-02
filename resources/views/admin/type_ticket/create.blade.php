@@ -53,7 +53,7 @@
    @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
-            <form action="{{route('type ticket.store')}}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+            <form action="{{route('type_ticket.store')}}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
 
                 @csrf
                 <div class="row g-3">

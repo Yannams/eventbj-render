@@ -62,7 +62,7 @@
                     <h1 class="p-2 flex-grow-1 fw-bold">A la une</h1>
                     <div class="p-2 me-2 d-none d-lg-inline">
                         <button class="button-carrousel p-2" id="prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
-                            <span class="bi bi-caret-left-fill" aria-hidden="true"><svg class="bi bi-caret-right-fill" fill="currentColor" width="32" height="32"><use xlink:href="#previous-button"></use></svg> </span>
+                            <span class="" aria-hidden="true"><svg class="bi bi-caret-right-fill" fill="currentColor" width="32" height="32"><use xlink:href="#previous-button"></use></svg> </span>
                             <span class="visually-hidden">Previous</span>
                         </button>
                         
@@ -254,7 +254,7 @@
     <div class="menu-container">
         <ul class="menu" >
             <li class="">
-                <a href="{{ route('evenement.index') }}" class="@if (request()->url() == route('evenement.index')) active-link @else non-active @endif">
+                <a href="{{ route('evenement.index') }}" class="@if (request()->url() == route('evenement.index') || request()->url() == route('home') ||request()->url() == route('index') ) active-link @else non-active @endif">
                     Tout
                 </a>
                 
@@ -271,10 +271,10 @@
     </div>
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-4">
         @foreach ( $evenement as $evenements )
-        <a href="{{route('evenement.show', ['evenement'=>$evenements->id])}}" class="link-dark  link-offset-2 link-underline link-underline-opacity-0">
+        <a href="{{route('evenement.show', ['evenement'=>$evenements->id])}}" class="clicked-link link-dark  link-offset-2 link-underline link-underline-opacity-0">
             <div class="col">
                 <div class="card shadow card-cover overflow-hidden text-bg-dark rounded-4 shadow-lg border-0 evenement shadow" style="height: 250px;"> 
-                    <img src="{{$evenements->cover_event}}" class="card-img h-100" alt="...">
+                    <img src="{{asset($evenements->cover_event)}}" class="card-img h-100" alt="...">
                     <div class="card-img-overlay flex-column">
                         <div class="badge tools-event pb-5 mb-5 rounded-3 card-header"> <span class="fs-3">{{date('d', strtotime($evenements->date_heure_debut))}}</span> <br> <span class="fs-6">{{date('M', strtotime($evenements->date_heure_debut))}}</span> </div>
                         <input type="hidden" id="event_id" name="evenement_id" value="{{$evenements->id}}">
@@ -308,8 +308,6 @@
         
         @endforeach
     </div>
-
-   
     <script>
         var likes=document.querySelectorAll('.btn-like');
         likes.forEach(function (like) {
@@ -339,12 +337,7 @@
                     }
                 )
             })
-            })
-        
-    
-        
-        
-        
+            })   
     </script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {

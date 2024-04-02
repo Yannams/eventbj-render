@@ -31,6 +31,6 @@ class evenement extends Model
 
     public function users():BelongsToMany
     {
-        return $this->belongsToMany(User::class)->withPivot('like');
+        return $this->belongsToMany(User::class)->withPivot('like','nombre_click','date_click','date_like','date_unlike','created_at','updated_at');
     }
 }

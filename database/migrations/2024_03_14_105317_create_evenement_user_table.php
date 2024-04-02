@@ -20,6 +20,10 @@ return new class extends Migration
             $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade');
 
             $table->boolean('like');
+            $table->timestamp('date_like')->nullable();
+            $table->timestamp('date_unlike')->nullable();
+            $table->integer('nombre_click');
+            $table->timestamp('Date_click')->nullable();
 
             $table->timestamps();
         });

@@ -12,6 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>eventbj</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
@@ -152,7 +153,7 @@
         </div>
       <ul class="nav nav-underline mt-1 d-lg-flex d-none">
           <li class="nav-item">
-              <a href="{{ route('evenement.index') }}" class="nav-link link-success @if (request()->url()== route('evenement.index'))active @endif d-flex align-items-center" aria-current="page">
+              <a href="{{ route('evenement.index') }}" class="nav-link link-success @if (request()->url()== route('evenement.index')||request()->url()== route('home')||request()->url()== route('index')) active @endif d-flex align-items-center" aria-current="page">
                   <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
               </a>
           </li>
@@ -174,7 +175,11 @@
           <li class="nav-item">
             <div class="btn-group dropstart">
               <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
+                @auth
+                  <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
+                @else
+                  <i class="bi bi-person-circle text-dark" style="font-size: 30px" ></i>
+                @endauth 
               </a>
             
               <ul class="dropdown-menu ">
@@ -202,7 +207,7 @@
                   </li>
                     
                 @endif
-                  <li><a class="dropdown-item" href="#">Permuter vers organisateur</a></li>
+                  <li><a class="dropdown-item" href="{{route('MesEvenements')}}">Permuter vers organisateur</a></li>
               </ul>
             </div>
           </li>         
@@ -304,7 +309,7 @@
                           'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                       }
                   }
-                )
+              )
                 $.ajax(
                   {
                       type:'POST',
@@ -334,65 +339,7 @@
                   }
               )
             }
-        })
-                  
-                
-
-        
-      //   var searchBtn= document.getElementById('Search');
-      //   var SearchBarSpace=document.getElementById('searchBar')
-      //   searchBtn.addEventListener('click',function SearchBar() 
-      //     SearchBarSpace.innerHTML=' <div class="card" style="position:fixed; z-index:1500; width:700px;top:0;" ><div class="card-body"><input type="search" class="rounded-pill form-control" id="search-input" name="keyWord" placeholder="Rechercher un évènement"> <div id="Research-result"></div></div></div>';
-      //     var searchInput=document.getElementById('search-input');
-      //     var ResultSpace=document.getElementById('Research-result')
-          
-      //     searchInput.addEventListener('input',(event)=>{
-      //       Word=searchInput.value;
-      //       if (Word=='') {
-      //         ResultSpace.innerHTML="";
-      //       }else{
-              
-
-        //       $.ajaxSetup(
-        //           {
-        //               headers:{
-        //                   'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //               }
-        //           }
-        //       )
-        //       $.ajax(
-        //           {
-        //               type:'POST',
-        //               url: '/query',
-        //               data:{
-        //                   search: Word,
-        //               },
-
-        //               dataType:'JSON',
-                
-        //             success: function(data){
-        //               console.log(data);
-        //               ResultSpace.innerHTML="";
-        //               for (let i = 0; i < data.length; i++) {
-        //                 const element = data[i]['nom_evenement'];
-        //                 const id = data[i]['id'];
-        //                 ResultSpace.innerHTML+="<div class=\"clickable-result d-flex align-items-center justify-content-center mt-3\"><div class=\"my-2\"><a href=\""+id+"\" class=\"text-dark link-underline link-underline-opacity-0\">"+element+"</a></div></div><hr>"
-                        
-        //               }
-                      
-        //             }
-        //           }
-        //       )
-        //     }
-        // })
-
-       
-      // });
-      //  searchInput.addEventListener('focusout',function EndSearch() {
-      //     SearchBarSpace.innerHTML='<button class="btn w-100" id="Search"><div class="card rounded-pill"><div class="card-body"><span><svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#search"></use></svg></span> Rechercher un évènement</div></div></button>'
-      //   })
-        
-      
+        })  
      </script>
      <script>
         const triggerTabList = document.querySelectorAll('#myTab button')
@@ -406,53 +353,6 @@
             })
      </script>
      
-     {{-- <script>
-      // Utiliser JavaScript pour ajouter la classe fixed-bottom sur les petits écrans
-      function responsiveHeader(){
-          if (window.innerWidth < 768) {
-            navElement=document.querySelector('ul.nav');
-            searchBar=document.getElementById('searchBar')
-            navElement.classList.remove('nav-underline');
-            navElement.classList.add('fixed-bottom','bg-light','nav-pills','green','row','row-cols-5','p-2' );
-            let navLinks = document.querySelectorAll('a.nav-link');
-
-            // Parcourez chaque élément a et ajoutez la classe 'flex-column'
-            navLinks.forEach(function(navLink) {
-                navLink.classList.add('flex-column');
-            });
-            console.log(searchBar);
-            let createEventLink = document.querySelector('a.nav-link[href*="Create_event"]');
-            searchBar.innerHTML='<svg class="bi bi-search" fill="currentColor"  width="30" height="30"><use xlink:href="#search"></use></svg>'
-            $('#searchBar').addClass(' position-absolute top-0 end-0 me-5 mt-2')
-          // Supprimez le texte à l'intérieur du lien
-          createEventLink.innerHTML = '<span class="rounded-circle" style=" display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: #308747; margin-top: -30px"><svg class="bi bi-plus" fill="#C3E3CC"  width="40" height="40"><use xlink:href="#plus"></use></svg></span>';
-
-        }
-        else{
-            navElement=document.querySelector('ul.nav');
-            navElement.classList.add('nav-underline');
-            navElement.classList.remove('fixed-bottom','bg-light','nav-pills','green','row','row-cols-5','p-2' );
-
-            let navLinks = document.querySelectorAll('a.nav-link');
-
-            // Parcourez chaque élément a et ajoutez la classe 'flex-column'
-            navLinks.forEach(function(navLink) {
-                navLink.classList.remove('flex-column');
-            });
-
-            let createEventLink = document.querySelector('a.nav-link[href*="Create_event"]');
-
-          // Supprimez le texte à l'intérieur du lien
-          createEventLink.innerHTML = '<svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement';
-        }
-      }
-      
-      responsiveHeader();
-
-      window.addEventListener('resize', function() {
-        // Code à exécuter lorsqu'il y a un changement de taille d'écran
-        responsiveHeader();
-    });
-     </script> --}}
+    
 </body>
 </html>

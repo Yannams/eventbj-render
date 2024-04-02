@@ -121,7 +121,7 @@
                                 <label for="num_user" class="col-12 col-form-label text-start">{{ __('Numéro') }}</label>
 
                                 <div class="col-12">
-                                    <input id="num_user" type="num_user" class="form-control @error('num_user') is-invalid @enderror" name="num_user" value="{{ old('num_user') }}" required >
+                                    <input id="num_user" type="number" class="form-control @error('num_user') is-invalid @enderror" name="num_user" value="{{ old('num_user') }}" required >
 
                                     @error('num_user')
                                         <span class="invalid-feedback" role="alert">

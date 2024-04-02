@@ -1,62 +1,18 @@
 @extends('layout.promoteur')
     @section('content')
         <div class="container">
-          @if (session('message'))
-                    <div class="position-relative">
-                        <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
-                            <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-body d-flex align-items-center">
-                                    <div class="p-2">
-                                        <svg class="bi bi-check-all" fill="#fff" width="30" height="30">
-                                            <use xlink:href="#check"></use>
-                                        </svg>
-                                    </div>
-                                    <div class="p-2 fw-bold fs-5">{{session('message')}}</div>
-                                    <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                                </div>
-                            </div>
-                        </div>    
-                    </div>
-                @elseif (session('danger'))
-                  <div class="position-relative">
-                    <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
-                        <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
-                            <div class="toast-body d-flex align-items-center">
-                                <div class="p-2">
-                                    <svg class="bi bi-trash" fill="#fff" width="30" height="30">
-                                        <use xlink:href="#deleted"></use>
-                                    </svg>
-                                </div>
-                                <div class="p-2 fw-bold fs-5">{{session('danger')}}</div>
-                                <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                            </div>
-                        </div>
-                    </div>    
-                </div>
-                @elseif (session('error'))
-                  <div class="position-relative">
-                      <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
-                          <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
-                              <div class="toast-body d-flex align-items-center">
-                                  <div class="p-2">
-                                      <svg class="bi bi-x-circle" fill="#fff" width="30" height="30">
-                                          <use xlink:href="#error"></use>
-                                      </svg>
-                                  </div>
-                                  <div class="p-2 fw-bold fs-5">{{session('error')}}</div>
-                                  <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                              </div>
-                          </div>
-                      </div>    
-                  </div>
-                @endif
+            <div class="position-relative">
+                <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+                   
+                </div>    
+            </div>
                 
             <table class="table align-middle">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
                     <th scope="col">Nom évènement</th>
-                    <th scope="col">En ligne </th>
+                    <th scope="col">Statut </th>
                     <th scope="col">Date et heure début</th>
                     <th scope="col">Action</th>
 
@@ -68,7 +24,7 @@
                     
                     <th scope="row"><img src="{{asset($evenements->cover_event)}}" alt="cover" width="100" class="rounded"></th>
                     <td>{{$evenements->nom_evenement}}</td>
-                    <td>@if ( $evenements->isOnline==false )
+                    <td class="OnlineStatus">@if ( $evenements->isOnline==false )
                       non-publié
                     @else
                       en ligne
@@ -77,11 +33,7 @@
                     <td>
                     <div class="row row-cols-2 row-cols-md-2 row-cols-lg-2">
                         <div class="col">
-                            <form action="{{route('OnlineEvents', ['evenement'=>$evenements->id])}}" method="post" >
-                                @csrf
-                                <button type="submit" class="btn btn-success">Mettre en ligne</button>
-                            </form>
-                           
+                            <button type="button" class="btn btn-success sendEvent" data-evenement-id="{{$evenements->id}}">@if ($evenements->isOnline == 0) Mettre en ligne @else Désactiver l'évènement @endif </button>
                         </div>
                         <div class="col">
                             <div class="btn-group" role="group">
@@ -90,7 +42,7 @@
                                 </button>
                                 <ul class="dropdown-menu">
                                   <li>
-                                    <a href="" class=" dropdown-item">gérer</a>
+                                    <a href="{{route('gererEvent',$evenements->id)}}" class=" dropdown-item">gérer</a>
                                 </li>
                                   <li><a href="" class="dropdown-item">Modifier l'évènement</a></li>
                                   <li> 
@@ -118,13 +70,54 @@
               </table>
         </div>
         <script>
-          document.addEventListener('DOMContentLoaded', function () {
-              const toastLiveExample = document.getElementById('liveToast');
+            var SendEventbtn=document.querySelectorAll('.sendEvent');
+            var liveToast=document.querySelector('.toast-container')
+            var OnlineStatus=document.querySelector('.OnlineStatus')
+            SendEventbtn.forEach(function (sendEvent) {
+               sendEvent.addEventListener('click', function SendEventAction(event) {
+                    event.preventDefault();
+                    evenement_id=sendEvent.getAttribute('data-evenement-id');
+                    $.ajaxSetup(
+                        {
+                            headers:{
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        }
+                    )
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url: 'onLine',
+                            data:{
+                                evenement_id: evenement_id,
+                            },
 
-              if (toastLiveExample) {
-                  const toastBootstrap = new bootstrap.Toast(toastLiveExample);
-                  toastBootstrap.show();
-              }
-          });
-      </script>
+                            dataType:'JSON',
+
+                            success: function(data) {
+                                if (data.success==true) {
+                                    if (data.status==true) {
+                                        sendEvent.innerHTML="désactiver l'évènement"
+                                        OnlineStatus.innerHTML="en ligne"
+                                    }else{
+                                        sendEvent.innerHTML="Mettre en ligne"
+                                        OnlineStatus.innerHTML="non-publié"
+                                    }
+                                   
+                                    liveToast.innerHTML=' <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true"> <div class="toast-body d-flex align-items-center"><div class="p-2"><svg class="bi bi-check-all" fill="#fff" width="30" height="30"><use xlink:href="#check"></use></svg></div><div class="p-2 fw-bold fs-5">'+data.message+'</div><button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button></div></div>'
+                                    const toastLiveExample = document.getElementById('liveToast');
+
+                                    if (toastLiveExample) {
+                                        const toastBootstrap = new bootstrap.Toast(toastLiveExample);
+                                        toastBootstrap.show();
+                                    }
+                                }
+                            }
+                        }
+                    )
+                })
+                })
+        
+        </script>
+        
     @endsection

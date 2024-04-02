@@ -64,7 +64,7 @@ class TypeTicketController extends Controller
         $type_ticket->evenement_id=$request->evenement_id;
         $type_ticket->save();
         session(['type_ticket'=>$type_ticket->id]);
-        return redirect()->route("type ticket.index")->with('message','Ticket créé');
+        return redirect()->route("type_ticket.index")->with('message','Ticket créé');
     }
 
     /**
@@ -80,7 +80,8 @@ class TypeTicketController extends Controller
      */
     public function edit(type_ticket $type_ticket)
     {
-        //
+        $type_ticket=type_ticket::find($type_ticket->id);
+        return view('admin.type_ticket.edit',compact('type_ticket'));
     }
 
     /**
@@ -88,7 +89,17 @@ class TypeTicketController extends Controller
      */
     public function update(Updatetype_ticketRequest $request, type_ticket $type_ticket)
     {
-        //
+       $data=$request->validate(
+            [
+                "image_ticket"=>"required",
+                "nom_ticket"=>"required",
+                "prix_ticket"=>"required|numeric",
+                "frais_ticket"=>"required|numeric",
+                "place_dispo"=>"required|numeric",
+            ]
+            );
+        $type_ticket->update($data);
+        return redirect()->route('type_ticket.index');
     }
 
     /**
