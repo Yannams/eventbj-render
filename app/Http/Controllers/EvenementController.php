@@ -116,7 +116,7 @@ class EvenementController extends Controller
         $evenement->nom_evenement=$request->nom_evenement;
         $evenement->localisation=$request->localisation;
         $evenement->date_heure_debut=$request->date_heure_debut;
-        $evenement->date_heure_fin=$request->date_heure_fin;
+        $evenement->date_heure_fin=$request-> date_heure_fin;
         $evenement->type_evenement_id=$request->type_evenement_id;
         $evenement->isOnline=false;        
         $evenement->description=$request->description;
@@ -160,7 +160,7 @@ class EvenementController extends Controller
         return redirect()->route('MesEvenements')->with('danger', 'Evenement supprimé !');
     }
     public function MyEvents(){
-
+        if(Auth::user()->hasRole('Promoteur')){
             $userId = auth()->user()->id;
             $user = User::with('evenements')->find($userId);
             if ($user) {
@@ -169,23 +169,26 @@ class EvenementController extends Controller
             } else {
                 return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','aucun évènement n\'a été trouvé');
             }
+        }
+        else {
+            session(['route'=>'MesEvenements']);
+            return redirect()->route('Promoteur.create');
+        }
        
     }  
     
     public function OnlineEvents(Request $request){
         $evenement_id= $request->evenement_id;
         $evenement=evenement::find( $evenement_id );
-        if($evenement->isOnline==false){
-            $evenement->isOnline=true;
-            $evenement->save();
-            return response()->json([
-                "success"=>true,
-                "status"=>true,
-                "message"=>"evenement mis en ligne",
-            ]);
-        }
-        else
-        {
+        
+        /*
+        *Je vérifie d'abord que tous les tickets d'un évènements ont une date de lancement et un date de fermeture
+        *Si la date de lancement est nulles et que la méthode est ActivationEvènement je met la date du jour
+        *Si les deux dates sont nulle le rediriger vers un endroit ou il pourra changer la date
+        *Si rien n'est null mettre l'evènement en ligne 
+         */
+        
+        if($evenement->isOnline==true){
             $evenement->isOnline=false;
             $evenement->save();
             return response()->json([
@@ -193,8 +196,78 @@ class EvenementController extends Controller
                 "status"=>false,
                 "message"=>"evenement désactivé"
             ]);
+          }
+        else
+        {
+            $typeTicketAProgrammer=array();
+            foreach ($evenement->type_tickets as $type_ticket) {
+                if ($type_ticket->Date_heure_lancement==null && $type_ticket->methodeProgrammationLancement=="ActivationEvènement") {
+                   $type_ticket_update= type_ticket::find($type_ticket->id);
+                   $type_ticket_update->Date_heure_lancement=Carbon::now();
+                   $type_ticket_update->save();
+                } elseif ($type_ticket->Date_heure_lancement==null && $type_ticket->methodeProgrammationLancement=="ProgrammerPlustard" || $type_ticket->Date_heure_fermeture==null && $type_ticket->methodeProgrammationFermeture=="ProgrammerPlustard") {
+                    $typeTicketAProgrammer[]=$type_ticket->id;
+                    $redirectUrl=route('ModifierHoraire');
+                }
+                
+            }
+            if(!empty($typeTicketAProgrammer)){
+               
+                session(['type_ticket'=>$typeTicketAProgrammer]);
+                
+                return response()->json([
+                    "redirect"=>true,
+                    "redirecturl"=>$redirectUrl,
+                    "Type_ticket"=>$typeTicketAProgrammer
+                ]);
+            }  $evenement->isOnline=false;
+            $evenement->save();
+            return response()->json([
+                "success"=>true,
+                "status"=>true,
+                "message"=>"evenement désactivé"
+            ]);
+            
+        
         }
        
+    }
+    public function ModifierHoraire(){
+        $typeTicketAprogrammer=array();
+        $typeTicket=session('type_ticket');
+        foreach ($typeTicket as $key => $typeTicketArecuperer) {
+           $typeTicketAprogrammer[]=type_ticket::find($typeTicketArecuperer);
+        }
+        
+        return view('admin.type_ticket.modifierHoraire',compact('typeTicketAprogrammer'));
+    }
+
+    public function UpdateHoraire(Request $request){
+
+       $typeTicketsAmodifier=session('type_ticket');
+    //    dd($typeTicketsAmodifier, $request);
+       foreach ($typeTicketsAmodifier as $key => $typeTicketAmodifier) {
+
+          $TypeTicket=type_ticket::find($typeTicketAmodifier);
+          $evenement=evenement::find($TypeTicket->evenement->id);
+          $evenement->isOnline=true;
+          $evenement->save();
+          if($request->methodeProgrammationLancement[$typeTicketAmodifier]=='ActivationEvènement'){
+                $TypeTicket->Date_heure_lancement=now();
+          }else{
+              $TypeTicket->Date_heure_lancement=$request->Date_heure_lancement[$typeTicketAmodifier];
+          }
+          $TypeTicket->methodeProgrammationLancement=$request->methodeProgrammationLancement[$typeTicketAmodifier];
+          $TypeTicket->methodeProgrammationFermeture=$request->methodeProgrammationFermeture[$typeTicketAmodifier];
+          $TypeTicket->Date_heure_fermeture=$request->Date_heure_fermeture[$typeTicketAmodifier];
+          $TypeTicket->save();
+        
+
+       }
+       return redirect()->route('MesEvenements')->with('message','évènement mis en ligne');
+
+    
+
     }
 
     public function filteredByTypeEvents($type){
@@ -212,6 +285,7 @@ class EvenementController extends Controller
         if(Auth::user()->hasRole('Promoteur')){
             return view('admin.evenement.create_event');
         }else{
+            session(['route'=>'Create_event']);
             return redirect()->route('Promoteur.create'); 
         }
        
@@ -240,7 +314,7 @@ class EvenementController extends Controller
 
     public function research_event(Request $request){
         $keyWord=$request->search;
-        $evenement=evenement::where('nom_evenement', 'like', '%'.$keyWord.'%')->get();
+        $evenement=evenement::where('nom_evenement', 'like', '%'.$keyWord.'%')->where('isOnline',true)->get();
         //dd($evenement);
         if ($evenement) {
             return response()->json([
@@ -263,46 +337,72 @@ class EvenementController extends Controller
         return view('admin.evenement.gererEvent',compact('evenement','Color_tab'));
     }
 
-    public function getChartsData(Request $request){
-
-        $evenement_id=$request->evenement_id;
-        $evenement=evenement::find($evenement_id);
-        $type_tickets=$evenement->type_tickets;
-
-        //obtenir les donnée des statistique de ventes de tickets
-        $nom_ticket_tab=array();
-        $nombreTicket_tab=array();
-        foreach ($type_tickets as $type_ticket) {
-           $nom_ticket=$type_ticket->nom_ticket;
-           $nombreTicket=$type_ticket->tickets->count();
-           $nom_ticket_tab[]=$nom_ticket;
-           $nombreTicket_tab[]=$nombreTicket;
-        }
+     public function getChartsData(Request $request){
+        //récupérer l'évènement
+        $evenement=evenement::find($request->evenement_id);
         
-        // obtenir les données des ventes par semaines
-        $WeeklySells=array();
-        $dailyData=array();
-        $data=array();
-        $borderColor_tab=["#308747","#FBAA0A","#F0343C"];
+        /*récupérer tous les types de ticket de cet evènement pour comparer les ventes */
+        $type_tickets=$evenement->type_tickets()->get();
+
+        //recupération des périodes
+        $periode=$request->periode;
+        $periode_revenu=$request->periode_revenu;
+        $periode_click=$request->periode_click;
+        $periode_inscription=$request->periode_inscription;
+        $periode_conversion=$request->periode_conversion;
+       
+        //nombre de ticket  vendu par type_ticket
+        $nombreTicketParTypeticket=array();
+        $NomTypeTicket = array();
+        foreach ($type_tickets as $type_ticket) {
+            $nombreTicket=$type_ticket->tickets->count();
+            $nombreTicketParTypeticket[]=$nombreTicket;
+            $NomTypeTicket[]=$type_ticket->nom_ticket;
+
+        }
+
+    
+
+
+        $nombreDejour=$periode;
+        $NombreVenduParTicket=array();
+        $Color=["#308747","#FBAA0A","#F0343C"];
         $borderColor=array();
         $x=0;
-       foreach ($type_tickets as  $type_ticket) {
-            for($i=0; $i<7;$i++){
-                $jour = Carbon::now()->startOfWeek()->addDays($i); // Jour de la semaine spécifié
+        
+        foreach ($type_tickets as $type_ticket) {
+            $DatesVente = array();
+            $nombreVendusParSemaineDeCeTicket=array();
+            // Je récupère le nombre de ticket vendu selon le jour
+            if ($nombreDejour==7){
+                for ($i=$nombreDejour-1; $i >=0 ; $i--) { 
+                    $jour=Carbon::now()->today()->subDays($i);
+                    $DatesVente[]=date('d/m/Y',strtotime($jour));
+                    $nombreVenduDuJourDeCeTicket=$type_ticket->tickets->where('created_at','>=',$jour->startOfDay())->where('created_at','<=',$jour->endOfDay())->count();
+                    $nombreVendusParSemaineDeCeTicket[]=$nombreVenduDuJourDeCeTicket;
+                }
+            } elseif ($nombreDejour==30) {
+                for ($i=27; $i >=0; $i-=4) { 
 
-                $nbInstancesJour = $type_ticket->tickets()->whereDate('created_at', $jour)->count();
-
-                $dailyData[$i]=$nbInstancesJour;
+                    $jourDebut=Carbon::now()->today()->subDays($i)->startOfDay();
+                    $jourfin=Carbon::now()->today()->subDays($i-3)->endOfDay();
+                    $DatesVente[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                    $nombreVenduDuJourDeCeTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                    $nombreVendusParSemaineDeCeTicket[]=$nombreVenduDuJourDeCeTicket;
+                }
             }
-            $data[$type_ticket->nom_ticket]=$dailyData;
-            $borderColor[$type_ticket->nom_ticket]=$borderColor_tab[$x];  
+            
+            $NombreVenduParTicket[$type_ticket->nom_ticket]=$nombreVendusParSemaineDeCeTicket;
+            $borderColor[$type_ticket->nom_ticket]=$Color[$x];
             $x++;
         }
-        foreach($nom_ticket_tab as $nom_ticket){
+
+        //Création de la datasets à envoyer pour les ticket 
+        foreach($NomTypeTicket as $nom_ticket){
 
             $WeeklySells_content=[
                 "label"=>$nom_ticket,
-                "data"=>$data[$nom_ticket],
+                "data"=>$NombreVenduParTicket[$nom_ticket],
                 "borderColor"=>$borderColor[$nom_ticket]
             ];
 
@@ -310,68 +410,196 @@ class EvenementController extends Controller
 
         }
 
-        //obtenir l'evolution du revenu 
-      $revenuParTicket=array();
-      $revenuJournalier=array();
-       foreach ($type_tickets as $type_ticket) {
-            for ($i=0; $i < 7; $i++) { 
-                $jour = Carbon::now()->startOfWeek()->addDays($i); 
-                $nbInstancesJour = $type_ticket->tickets()->whereDate('created_at', $jour)->count();
-                $dailyData[$i]=$nbInstancesJour;
-            }  
-           
-            foreach ($dailyData as $nbrTicket) {
-                $prixTicket=$nbrTicket*$type_ticket->prix_ticket;
-                $revenuJournalier[]=$prixTicket;
-            }
-            $revenuParTicket[]=$revenuJournalier;
-            $revenuJournalier=array();
-       } 
-       
-       $revenuSemestriel=array(0,0,0,0,0,0,0);
-      for ($i=0; $i < count($revenuParTicket); $i++) { 
-            for ($j=0; $j < count($revenuParTicket[$i]); $j++) { 
-                $revenuSemestriel[$j] += $revenuParTicket[$i][$j];
-            }
-        }
-     
-      //nombre de click
-     $clickPerweek=array();
-        for ($i=0; $i < 7; $i++) { 
-            $jour = Carbon::now()->addDays($i);
-            $clickPerDay=$evenement->users()->wherePivot('Date_click','>=',$jour->startOfDay()->toDateTimeString())->wherePivot('Date_click','<=',$jour->endOfDay()->toDateTimeString())->count();
-            $clickPerweek[]=$clickPerDay;
-        }  
-    
-       //evolution du nombre d'incrit
-        $nombreTicketPerDay=array(0,0,0,0,0,0,0);
-       foreach ($type_tickets as $type_ticket) {
-            for ($i=0; $i < count($data[$type_ticket->nom_ticket]); $i++) { 
-                $nombreTicketPerDay[$i]+=$data[$type_ticket->nom_ticket][$i];
-            }
-       }
-       	//calcul du taux de conversion
-        $WeeklyConversion=array();
-       for ($i=0; $i < 7; $i++) { 
-        if ($nombreTicketPerDay[$i]!=0) {
-            $conversionPerDay=($clickPerweek[$i]/$nombreTicketPerDay[$i])*100;
-        }
-        else{
-            $conversionPerDay=0;
-        }
+        //revenu
+        //l'evolution du revenu c'est l'evolution du chiffre d'affaire par jour pour tous les ticket
 
-            $WeeklyConversion[]=$conversionPerDay;
+        
+         $revenuParTicket=array();
+        $revenuJournalier=array();
+    
+       foreach ($type_tickets as $type_ticket) {
+        //recupérer le nombre de ticket vendu par jours
+        $Date_Revenus=array();
+        $revenuPourCeTicket=array();
+        if($periode_revenu==7){
+            for($i=$periode_revenu-1 ; $i>=0 ;$i--){
+                $jour=Carbon::now()->today()->subDays($i);
+                $Date_Revenus[]=date('d/m/Y',strtotime($jour));
+                $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jour->startOfDay())->where('created_at','<=',$jour->endOfDay())->count();
+                $revenuPourCeTicket[]=$nombreTicket*$type_ticket->prix_ticket;
+            }
+        }elseif($periode_revenu==30){
+           for ($i=27; $i >=0 ; $i-=4) { 
+                $jourDebut=Carbon::now()->today()->subDays($i)->startOfDay();
+                $jourfin=Carbon::now()->today()->subDays($i-3)->endOfDay();
+                $Date_Revenus[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                $revenuPourCeTicket[]=$nombreTicket*$type_ticket->prix_ticket;
+           }
+        }
+        $revenuParTicket[]=$revenuPourCeTicket;
        }
         
+       $revenuSemestriel=array(0,0,0,0,0,0,0);
+       for ($i=0; $i < count($revenuParTicket) ; $i++) { 
+            for ($j=0; $j < count($revenuParTicket[$i]); $j++) { 
+                $revenuSemestriel[$j] += $revenuParTicket[$i][$j];
+                
+            }
+       }
+       
+       //Nombre de click
+       $Date_click=array();
+       $NbrClickParDate=array();
+       if ($periode_click==7) {
+        for ($i=$periode_click-1; $i>=0 ; $i--) { 
+            $jour=Carbon::now()->today()->subDays($i);
+            $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
+            $finjour=Carbon::now()->today()->subDays($i)->endOfDay();
+            $NombreClickAcetteDate = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
+            $Date_click[]=date('d/m/Y',strtotime($jour));
+            $NbrClickParDate[]=$NombreClickAcetteDate;
+        }
+       }elseif ($periode_click==30) {
+        for ($i=27; $i>=0 ; $i-=4) { 
+            //$jour=Carbon::now()->today()->subDays($i);
+            $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
+            $finjour=Carbon::now()->today()->subDays($i-3)->endOfDay();
+            $NombreClickAcetteDate = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
+            $Date_click[]=date('d/m/Y',strtotime($debutjour))."-".date('d/m/Y',strtotime($finjour));
+            $NbrClickParDate[]=$NombreClickAcetteDate;
+           
+        }
+    }
+       
       
+
+    //Nonmbre d'inscriptionn
+   $NombreInsriptionParTicket=array();
+    foreach ($type_tickets as $type_ticket) {
+        //recupérer le nombre de ticket vendu par jours
+        $Date_inscription=array();
+        $NbrInscriptionPourCeTicket=array();
+        if ($periode_inscription==7) {
+            for($i=$periode_inscription-1 ; $i>=0 ;$i--){
+                $jour=Carbon::now()->today()->subDays($i);
+                $Date_inscription[]=date('d/m/Y',strtotime($jour));
+                $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jour->startOfDay())->where('created_at','<=',$jour->endOfDay())->count();
+                $NbrInscriptionPourCeTicket[]=$nombreTicket;
+            }
+        }elseif ($periode_inscription==30) {
+            for($i=27 ; $i>=0 ;$i-=4){
+                $jourDebut=Carbon::now()->today()->subDays($i)->startOfDay();
+                $jourfin=Carbon::now()->today()->subDays($i-3 )->endOfDay();
+                $Date_inscription[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                $NbrInscriptionPourCeTicket[]=$nombreTicket;
+            }
+        }
+       
+        $NombreInscriptionParTicket[]=$NbrInscriptionPourCeTicket;
+       }
+       
+       $InscriptionJournalier=array(0,0,0,0,0,0,0);
+       for ($i=0; $i < count($NombreInscriptionParTicket) ; $i++) { 
+            for ($j=0; $j < count($NombreInscriptionParTicket[$i]); $j++) { 
+                $InscriptionJournalier[$j] += $NombreInscriptionParTicket[$i][$j];  
+            }
+       }
+       
+       //obtenir le taux de conversion journalier 
+       
+       //recupérer le tableau des incription pour la conversion
+    
+       $NombreInsriptionParTicketConversion=array();
+    foreach ($type_tickets as $type_ticket) {
+        //recupérer le nombre de ticket vendu par jours
+        $Date_conversion=array();
+        $NbrInscriptionPourCeTicketConversion=array();
+        if ($periode_conversion==7) {
+            for($i=$periode_conversion-1 ; $i>=0 ;$i--){
+                $jour=Carbon::now()->today()->subDays($i);
+                $Date_conversion[]=date('d/m/Y',strtotime($jour));
+                $nombreTicketConversion=$type_ticket->tickets->where('created_at','>=',$jour->startOfDay())->where('created_at','<=',$jour->endOfDay())->count();
+                $NbrInscriptionPourCeTicketConversion[]=$nombreTicketConversion;
+            }
+        }elseif ($periode_conversion==30) {
+            for($i=27 ; $i>=0 ;$i-=4){
+                $jourDebut=Carbon::now()->today()->subDays($i)->startOfDay();
+                $jourfin=Carbon::now()->today()->subDays($i-3 )->endOfDay();
+                $Date_conversion[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                $nombreTicketConversion=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                $NbrInscriptionPourCeTicketConversion[]=$nombreTicketConversion;
+            }
+        }
+        
+        $NombreInscriptionParTicketConversion[]=$NbrInscriptionPourCeTicketConversion;
+       }
+       
+       $InscriptionJournalierConversion=array(0,0,0,0,0,0,0);
+       for ($i=0; $i < count($NombreInscriptionParTicketConversion) ; $i++) { 
+            for ($j=0; $j < count($NombreInscriptionParTicketConversion[$i]); $j++) { 
+                $InscriptionJournalierConversion[$j] += $NombreInscriptionParTicketConversion[$i][$j];  
+            }
+       }
+
+    //recupérer le nombre de click pour la conversion
+
+    $Date_conversion=array();
+    $NbrClickParDateConversion=array();
+    if ($periode_conversion==7) {
+        for ($i=$periode_conversion-1; $i>=0 ; $i--) { 
+            $jour=Carbon::now()->today()->subDays($i);
+            $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
+            $finjour=Carbon::now()->today()->subDays($i)->endOfDay();
+            $NombreClickAcetteDateConversion = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
+            $Date_conversion[]=date('d/m/Y',strtotime($jour));
+            $NbrClickParDateConversion[]=$NombreClickAcetteDateConversion;
+        }
+    } elseif ($periode_conversion==30) {
+        for ($i=27; $i>=0 ; $i-=4) { 
+            $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
+            $finjour=Carbon::now()->today()->subDays($i-3)->endOfDay();
+            $NombreClickAcetteDateConversion = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
+            $Date_conversion[]=date('d/m/Y',strtotime($debutjour))."-".date('d/m/Y',strtotime($finjour));
+            $NbrClickParDateConversion[]=$NombreClickAcetteDateConversion;
+        }
+    }
+    
+   
+
+        $TauxConversionParJour=array();
+        
+            for ($i=0; $i < 7; $i++) { 
+                if ($InscriptionJournalierConversion[$i]!=0) {
+                    $TauxConversion=($NbrClickParDateConversion[$i]/$InscriptionJournalierConversion[$i])*100;
+                }
+                else{
+                    $TauxConversion=0;
+                }
+        
+                $TauxConversionParJour[]=$TauxConversion;
+            }
+        
+
+        
+       
         return response()->json([
-            "type_ticket"=>$nom_ticket_tab,
-            "nombreTicket"=>$nombreTicket_tab,
-            "datasells"=>$WeeklySells,
-            "evolution_revenu"=>$revenuSemestriel,
-            "evolution_click"=>$clickPerweek,
-            "evolution_inscription"=>$nombreTicketPerDay,
-            "ConversionPerDay"=>$WeeklyConversion
+            'nombreTicketParTypeticket'=>$nombreTicketParTypeticket,
+            'type_ticket'=>$NomTypeTicket,
+            'dates'=>$DatesVente,
+            'datasells'=>$WeeklySells,
+            'evolution_revenu'=>$revenuSemestriel,
+            'date_revenu'=>$Date_Revenus,
+            'date_click'=>$Date_click,
+            'evolution_click'=>$NbrClickParDate,
+            'date_inscription'=>$Date_inscription,
+            'evolution_inscription'=>$InscriptionJournalier,
+            'taux_conversion'=>$TauxConversionParJour,
+            'date_conversion'=>$Date_conversion,
+           
+            
+            
         ]);
     }
 }

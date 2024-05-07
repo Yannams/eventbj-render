@@ -24,7 +24,7 @@ use App\Http\Controllers\TypeTicketController;
 Route::get('/', [EvenementController::class,'index'])->name('index');
 Route::get('/home',[EvenementController::class,'index'])->name('home');
 Route::get('/evenement/type_lieu',[TypeLieuController::class,'select_type_lieu'])->name('select_type_lieu')->middleware('auth','role:Promoteur');
-Route::get('/mes_evenements', [EvenementController::class,'MyEvents'])->name('MesEvenements')->middleware('auth','role:Promoteur');
+Route::get('/mes_evenements', [EvenementController::class,'MyEvents'])->name('MesEvenements')->middleware('auth');
 Route::post('/onLine', [EvenementController::class,'OnlineEvents'])->name('OnlineEvents')->middleware('auth','role:Promoteur');
 Route::get('/filtredevenement/{type}', [EvenementController::class, 'filteredByTypeEvents'] )->name('type_event'); 
 Route::get('/verifiedTransaction/{type_ticket}', [TicketController::class,'verifiedTransaction'] )->name('verifiedTransation');
@@ -39,6 +39,10 @@ Route::post('/like/event',[EvenementController::class,'like_event'])->name('like
 Route::post('/query',[EvenementController::class,'research_event'])->name('research_event');
 Route::get('/gererEvent/{evenement}',[EvenementController::class,'gererEvent'])->name('gererEvent')->middleware('auth','role:Promoteur');
 Route::post('/getChartsData',[EvenementController::class,'getChartsData'])->name('getChartsData')->middleware('auth','role:Promoteur');
+Route::get('/billetterie',[TypeTicketController::class,'billetterie'])->name('billetterie');
+Route::get('/ModifierHoraire',[EvenementController::class,'ModifierHoraire'])->name('ModifierHoraire');
+Route::post('/UpdaterHoraire',[EvenementController::class,'UpdateHoraire'])->name('UpdateHoraire');
+
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy']]);

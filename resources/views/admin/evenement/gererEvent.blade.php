@@ -1,10 +1,8 @@
 @extends('layout.promoteur')
     @section('content')
-        {{-- <form action="{{route('getChartsData')}}" method="post">
+        <form action="{{route('getChartsData')}}" method="post" id="ChartsDataForms">
             @csrf
             <input type="hidden" name="evenement_id" value="{{$evenement->id}}">
-            <button type="submit">Button</button>
-        </form> --}}
 
         <div class="row g-4">
             <div class="col-8">
@@ -36,7 +34,15 @@
                     <div class="col-12">
                         <div class="card border-0">
                             <div class="card-body">
-                               <div class="card-title fw-semibold">billets vendus cette semaine</div>
+                                <div class="d-flex align-items-center">
+                                    <div class="card-title fw-semibold w-100">billets vendus cette semaine</div> 
+                                    <select name="periode" id="periode" class="form-select rounded-4 flex-shrink-1">
+                                             <option value="7">7 derniers jours</option>
+                                            <option value="30">30 derniers jours</option>
+                                            <option value="billeterie">toute la durée de la billetterie</option>
+                                    </select>
+                                </div>
+                               
                                <div>
                                     <canvas id="WeeklySales"></canvas>
                                </div>
@@ -82,7 +88,15 @@
                     <div class="col-6">
                         <div class="card border-0 h-100">
                             <div class="card-body">
-                               <div class="card-title fw-semibold">evolution du revenu</div> 
+                                <div class="d-flex align-items-center">
+                                    <div class="card-title fw-semibold w-100">evolution du revenu</div> 
+                                    <select name="periode_revenu" id="periode_revenu" class="form-select rounded-4 flex-shrink-1">
+                                            <option value="7">7 derniers jours</option>
+                                            <option value="30">30 derniers jours</option>
+                                            <option value="billeterie">toute la durée de la billetterie</option>
+                                    </select>
+                                </div>
+                               
                                <div>
                                     <canvas id="Revenu"></canvas>
                                </div> 
@@ -113,7 +127,15 @@
             <div class="col-4">
                 <div class="card border-0 h-100">
                     <div class="card-body">
-                        <div class="card-title fw-semibold">Nombre de click</div>
+                        <div class="d-flex align-items-center">
+                            <div class="card-title fw-semibold w-100">Nombre de click</div>
+                            <select name="periode_click" id="periode_click" class="form-select rounded-4 flex-shrink-1">
+                                    <option value="7">7 derniers jours</option>
+                                    <option value="30">30 derniers jours</option>
+                                    <option value="billeterie">toute la durée de la billetterie</option>
+                            </select>
+                        </div>
+                        
                         <div>
                             <canvas id="click"></canvas>
                         </div>
@@ -123,7 +145,15 @@
             <div class="col-4">
                 <div class="card border-0 h-100">
                     <div class="card-body">
-                        <div class="card-title fw-semibold">Nombre d'inscription</div>
+                        <div class="d-flex align-items-center">
+                            <div class="card-title fw-semibold w-100">Nombre d'inscription</div>
+                            <select name="periode_inscription" id="periode_inscription" class="form-select rounded-4 flex-shrink-1">
+                                <option value="7">7 derniers jours</option>
+                                <option value="30">30 derniers jours</option>
+                                <option value="billeterie">toute la durée de la billetterie</option>
+                            </select>
+                        </div>
+                        
                         <div>
                             <canvas id="inscription"></canvas>
                         </div>
@@ -133,7 +163,15 @@
             <div class="col-12">
                 <div class="card border-0 h-100">
                     <div class="card-body">
-                        <div class="card-title fw-semibold">Taux de conversion:</div>
+                        <div class="d-flex align-tems-center ">
+                            <div class="card-title fw-semibold w-100">Taux de conversion:</div>
+                            <select name="periode_conversion" id="periode_conversion" class="form-select rounded-4 flex-shrink-1">
+                                    <option value="7">7 derniers jours</option>
+                                    <option value="30">30 derniers jours</option>
+                                    <option value="billeterie">toute la durée de la billetterie</option>
+                            </select>
+                        </div>
+                       
                         <div>
                             <canvas id="conversion"></canvas>
                         </div>
@@ -141,11 +179,26 @@
                 </div>
             </div>
         </div>
+        </form>
         <input type="hidden" name="evenement_id" id="evenement_id" value="{{$evenement->id}}">
         <script>
-            evenement_id_input=document.getElementById('evenement_id');
-            evenement_id=evenement_id_input.value
-            document.addEventListener('DOMContentLoaded', function GetData() {
+            var dataform=document.getElementById('ChartsDataForms')
+            var evenement_id_input=document.getElementById('evenement_id');
+            var periode_input=document.getElementById('periode');
+            var periode_revenu_input=document.getElementById('periode_revenu');
+            var periode_click_input=document.getElementById('periode_click');
+            var periode_inscription_input=document.getElementById('periode_inscription');
+            var periode_conversion_input=document.getElementById('periode_conversion');
+
+            var evenement_id=evenement_id_input.value;
+            var periode=periode_input.options[document.getElementById('periode').selectedIndex].value;
+            var periode_revenu=periode_revenu_input.value;
+            var periode_click=periode_click_input.value;
+            var periode_inscription=periode_inscription_input.value;
+            var periode_conversion=periode_conversion_input.value;
+          
+            function GetData() {
+                
                 $.ajaxSetup(
                   {
                       headers:{
@@ -158,54 +211,96 @@
                       type:'POST',
                       url: '/getChartsData',
                       data:{
-                          evenement_id:evenement_id,
+                            evenement_id:evenement_id, 
+                            periode: periode,
+                            periode_revenu:periode_revenu,
+                            periode_click:periode_click,
+                            periode_inscription:periode_inscription,
+                            periode_conversion:periode_conversion,
                       },
 
                       dataType:'JSON',
                 
                     success: function(data){
-                        
+                        console.log(data);
                         TicketSold(data);
                         WeeklySales(data)
                         click(data);
                         inscription(data);
                         revenu(data);
-                        conersion(data);
+                        conversion(data);
                     }
                   }
               )
 
                 
-            })
+            };
+
+            
+            $('#periode').change(function() {
+                 periode = $(this).val();
+               GetData();
+            });
+
+            $('#periode_revenu').change(function() {
+                 periode_revenu = $(this).val();
+               GetData();
+            }); 
+            $('#periode_click').change(function() {
+                 periode_click = $(this).val();
+               GetData();
+            });
+            $('#periode_inscription').change(function() {
+                 periode_inscription = $(this).val();
+               GetData();
+            });
+            $('#periode_conversion').change(function() {
+                 periode_conversion = $(this).val();
+               GetData();
+            });
+           
+            
+            document.addEventListener('DOMContentLoaded',GetData() )
+            
             function TicketSold(data) {
                 const ctx = document.getElementById('TicketSold');
-
-                new Chart(ctx,{
+                TicketSoldChart=Chart.getChart("TicketSold");
+               if(TicketSoldChart !== undefined){
+                TicketSoldChart.destroy()
+               }
+                TicketSoldChart= new Chart(ctx,{
                     type: 'doughnut',
                     data:{
                         labels: data.type_ticket,
                         datasets:[{
                             label:'Nombre de ticket vendus',
-                            data:data.nombreTicket,
+                            data:data.nombreTicketParTypeticket,
                             backgroundColor:[
                                 '#308747',
                                 '#FBAA0A',
-                                '#F0343C'
+                                '#F0343C',
+                                
                             ],
                         hoverOffset: 4
                         }],
                         
                     }
-                })
+                });
+              
             }
 
             function WeeklySales(data) {
-                const WeeklySales = new Chart(
+                let WeeklySalesChart=Chart.getChart('WeeklySales');
+                if (WeeklySalesChart!= undefined) {
+                    WeeklySalesChart.destroy()
+                }
+
+               WeeklySalesChart = new Chart(
                 document.getElementById("WeeklySales"),
                 {
                     type: "line",
                     data: {
-                    labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi","Dimanche"],
+                    labels: data.dates,
                     datasets: data.datasells
                     },
                     options: {
@@ -216,12 +311,16 @@
 
             }
             function click(data) {
-                const WeeklySales = new Chart(
+                let clickChart = Chart.getChart('click');
+                if (clickChart != undefined) {
+                    clickChart.destroy()
+                }
+                clickChart= new Chart(
                 document.getElementById("click"),
                 {
                     type: "line",
                     data: {
-                    labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi","Dimanche"],
+                    labels: data.date_click,
                     datasets: 
                         [{
                             label: "Nombre de click",
@@ -237,12 +336,16 @@
             }
 
             function inscription(data) {
-                const WeeklySales = new Chart(
+                let  IncriptionChart = Chart.getChart('inscription');
+                if ( IncriptionChart != undefined) {
+                     IncriptionChart.destroy()
+                }
+                IncriptionChart = new Chart(
                 document.getElementById("inscription"),
                 {
                     type: "line",
                     data: {
-                    labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi","Dimanche"],
+                    labels: data.date_inscription,
                     datasets: 
                         [{
                             label: "nombre d'incription",
@@ -257,13 +360,18 @@
                 );
             }
             
+
             function revenu(data) {
-                const WeeklySales = new Chart(
+                let  revenuChart = Chart.getChart('Revenu');
+                if ( revenuChart != undefined) {
+                     revenuChart.destroy()
+                }
+                revenuChart= new Chart(
                 document.getElementById("Revenu"),
                 {
                     type: "line",
                     data: {
-                    labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi","Dimanche"],
+                    labels: data.date_revenu,
                     datasets: 
                         [{
                             label: "evolution_revenu",
@@ -277,17 +385,21 @@
                 }
                 );
             }
-            function conersion(data) {
-                const WeeklySales = new Chart(
+            function conversion(data) {
+                let  ConversionChart = Chart.getChart('conversion');
+                if ( ConversionChart != undefined) {
+                     ConversionChart.destroy()
+                }
+                ConversionChart = new Chart(
                 document.getElementById("conversion"),
                 {
                     type: "line",
                     data: {
-                    labels: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi","Dimanche"],
+                    labels: data.date_conversion,
                     datasets: 
                         [{
                             label: "Taux de conversion",
-                            data: data.ConversionPerDay,
+                            data: data.taux_conversion,
                             borderColor:"#308747",
                         }]
                     },

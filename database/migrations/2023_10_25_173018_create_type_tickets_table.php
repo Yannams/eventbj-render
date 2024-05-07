@@ -19,6 +19,10 @@ return new class extends Migration
             $table->string('type_ticket');
             $table->string('place_dispo');
             $table->string('image_ticket');
+            $table->string('methodeProgrammationLancement');
+            $table->timestamp('Date_heure_lancement')->nullable();
+            $table->string('methodeProgrammationFermeture');
+            $table->timestamp('Date_heure_fermeture')->nullable();
             $table->unsignedBigInteger('evenement_id')->nullable();
             $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade');
             $table->timestamps();

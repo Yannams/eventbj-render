@@ -6,7 +6,23 @@
                    
                 </div>    
             </div>
-                
+            @if (session('message'))
+                <div class="position-relative">
+                    <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+                        <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-body d-flex align-items-center">
+                                <div class="p-2">
+                                    <svg class="bi bi-check-all" fill="#fff" width="30" height="30">
+                                        <use xlink:href="#check"></use>
+                                    </svg>
+                                </div>
+                                <div class="p-2 fw-bold fs-5">{{session('message')}}</div>
+                                <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                            </div>
+                        </div>
+                    </div>    
+                </div>
+             @endif
             <table class="table align-middle">
                 <thead>
                   <tr>
@@ -33,7 +49,11 @@
                     <td>
                     <div class="row row-cols-2 row-cols-md-2 row-cols-lg-2">
                         <div class="col">
-                            <button type="button" class="btn btn-success sendEvent" data-evenement-id="{{$evenements->id}}">@if ($evenements->isOnline == 0) Mettre en ligne @else Désactiver l'évènement @endif </button>
+                            {{-- <form action="{{route('OnlineEvents')}}" method="post">
+                                @csrf
+                                <input type="hidden" name="evenement_id" value="{{$evenements->id}}"> --}}
+                                <button type="submit" class="btn btn-success sendEvent" data-evenement-id="{{$evenements->id}}">@if ($evenements->isOnline == 0) Mettre en ligne @else Désactiver l'évènement @endif </button>
+                            {{-- </form> --}}
                         </div>
                         <div class="col">
                             <div class="btn-group" role="group">
@@ -111,13 +131,22 @@
                                         const toastBootstrap = new bootstrap.Toast(toastLiveExample);
                                         toastBootstrap.show();
                                     }
+                                }else if(data.redirect==true){
+                                    window.location.href = data.redirecturl;
                                 }
                             }
                         }
                     )
                 })
                 })
-        
-        </script>
-        
+    </script>
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const toastLiveExample = document.getElementById('liveToast');
+            if (toastLiveExample) {
+                const toastBootstrap = new bootstrap.Toast(toastLiveExample);
+                toastBootstrap.show();
+            }
+        });
+    </script>  
     @endsection

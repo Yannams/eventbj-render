@@ -108,23 +108,21 @@
               <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
                 <img src="{{asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
               </a>
-               <form action="" class="me-5 w-25 mt-2">
-                  <input type="search" name="" id="" class="form-control rounded-pill border-4 " placeholder="rechercher...">
-               </form>
+               
               <ul class="nav nav-underline mt-1">
                 <li class="nav-item"></li>
                 <li class="nav-item">
-                  <a href="{{route('MesEvenements')}}" class="nav-link link-success active d-flex align-items-center" aria-current="page">
+                  <a href="{{route('MesEvenements')}}" class="nav-link link-success @if(request()->url()==route('MesEvenements')) active @endif d-flex align-items-center" aria-current="page">
                     <svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#calendar"></use></svg>Mes Evenements
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="" class="nav-link link-success d-flex align-items-center">
+                  <a href="{{route('billetterie')}}" class="nav-link @if(request()->url()==route('billetterie')) active @endif link-success d-flex align-items-center">
                     <svg class="bi bi-qr-code me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qrcode"></use></svg>Billetterie
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href=" {{ route('Create_event')}} " class="nav-link link-success d-flex align-items-center">
+                  <a href=" {{ route('Create_event')}} " class="nav-link  @if(request()->url()==route('Create_event')) active @endif link-success d-flex align-items-center">
                     <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
                   </a>
                 </li>

@@ -43,7 +43,10 @@ class ProfilPromoteurController extends Controller
             $promoteur->user_id=Auth::user()->id;
             $promoteur->save();
             Auth::user()->assignRole('promoteur');
-            return redirect()->route('Create_event');
+            $route=session('route');
+            session()->forget('route');
+          
+            return redirect()->route($route);
        
     }
 

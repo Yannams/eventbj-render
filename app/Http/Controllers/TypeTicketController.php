@@ -32,7 +32,8 @@ class TypeTicketController extends Controller
     {
 
         $evenement_id=session('evenement_id');
-        return view('admin.type_ticket.create', compact('evenement_id'));
+        $evenement=evenement::find($evenement_id);
+        return view('admin.type_ticket.create', compact('evenement_id','evenement'));
     }
 
     /**
@@ -62,7 +63,12 @@ class TypeTicketController extends Controller
         $type_ticket->type_ticket=$request->type_ticket;
         $type_ticket->place_dispo=$request->place_dispo;
         $type_ticket->evenement_id=$request->evenement_id;
+        $type_ticket->methodeProgrammationLancement=$request->methodeProgrammationLancement;
+        $type_ticket->Date_heure_lancement=$request->Date_heure_lancement;
+        $type_ticket->methodeProgrammationFermeture=$request->methodeProgrammationFermeture;
+        $type_ticket->Date_heure_fermeture=$request->Date_heure_fermeture;
         $type_ticket->save();
+
         session(['type_ticket'=>$type_ticket->id]);
         return redirect()->route("type_ticket.index")->with('message','Ticket créé');
     }
@@ -99,7 +105,7 @@ class TypeTicketController extends Controller
             ]
             );
         $type_ticket->update($data);
-        return redirect()->route('type_ticket.index');
+        return redirect()->route('billetterie');
     }
 
     /**
@@ -115,5 +121,11 @@ class TypeTicketController extends Controller
 
         
         return redirect()->route('MesEvenements');
+    }
+
+    public function billetterie(){
+
+        $evenements=evenement::all();
+        return view('admin.type_ticket.billetterie',compact('evenements'));
     }
 }

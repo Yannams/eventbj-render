@@ -117,6 +117,7 @@
                             Veuillez ajouter une quantité
                         </div>
                     </div>
+        
                     {{-- <input type="hidden" name="evenement_id" id="evenement_id" value="{{$evenement_id}}"> --}}
                     <div class="col-12 mt-4 row">
                         <div class="col">
