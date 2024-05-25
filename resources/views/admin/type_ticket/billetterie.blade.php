@@ -11,6 +11,8 @@
                             <th scope="col">Nom</th>
                             <th scope="col">prix </th>
                             <th scope="col">Quantité</th>
+                            <th scope="col">Date et heure de Lancement</th>
+                            <th scope="col">Date et heure de fermeture</th>
                             <th scope="col"> Actions</th>
                           </tr>
                         </thead>
@@ -21,6 +23,9 @@
                                 <td>{{$type_ticket->nom_ticket}}</td>
                                 <td>{{$type_ticket->prix_ticket}}</td>
                                 <td>{{$type_ticket->place_dispo}}</td>
+                                <td>{{$type_ticket->Date_heure_lancement!=null ?date('d/m/Y H:i', strtotime($type_ticket->Date_heure_lancement)):"A programmer"}}</td>
+                                <td>{{$type_ticket->Date_heure_fermeture!=null ?date('d/m/Y H:i', strtotime($type_ticket->Date_heure_fermeture)):"A programmer"}}</td>
+
                                 <td>
                                     <a href="{{route('type_ticket.edit',$type_ticket->id)}}" class="btn btn-success">Modifier</a>
                                 </td>

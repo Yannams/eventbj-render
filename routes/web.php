@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EvenementController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProfilPromoteurController;
+use App\Http\Controllers\PromoteurController;
 use App\Http\Controllers\TypeLieuController;
 use App\Http\Controllers\TypeTicketController;
 
@@ -42,6 +42,7 @@ Route::post('/getChartsData',[EvenementController::class,'getChartsData'])->name
 Route::get('/billetterie',[TypeTicketController::class,'billetterie'])->name('billetterie');
 Route::get('/ModifierHoraire',[EvenementController::class,'ModifierHoraire'])->name('ModifierHoraire');
 Route::post('/UpdaterHoraire',[EvenementController::class,'UpdateHoraire'])->name('UpdateHoraire');
+Route::get('/scanTicket',[TicketController::class,'scanTicket'])->name('scanTicket');
 
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
@@ -50,4 +51,4 @@ Route::resource('evenement', EvenementController::class,['except'=>['update','st
 Route::resource('chronogramme',ChronogrammeController::class)->middleware(['auth','role:Promoteur']);
 Route::resource('type_ticket', TypeTicketController::class)->middleware(['auth','role:Promoteur']);
 Route::resource('ticket', TicketController::class);
-Route::resource('Promoteur',ProfilPromoteurController::class);
+Route::resource('Promoteur',PromoteurController::class);

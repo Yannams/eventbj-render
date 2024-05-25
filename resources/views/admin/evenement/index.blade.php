@@ -286,8 +286,8 @@
                                     <input type="hidden" name="evenement_id" value="{{$evenements->id}}"> --}}
                                     @auth
                                         <button class="btn border-0 btn-like" data-event-id="{{$evenements->id}}" id="like">
-                                            <svg class="bi bi-heart @if (Auth::user()->events()->find($evenements->id)!=null) @if (Auth::user()->events()->find($evenements->id)->pivot->like==1) d-none @endif @endif" data-event-id="{{$evenements->id}}" id="unliked" fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
-                                            <svg class="bi bi-heart-fill @if (Auth::user()->events()->find($evenements->id)!=null) @if (Auth::user()->events()->find($evenements->id)->pivot->like==0) d-none @endif @else d-none @endif" data-event-id="{{$evenements->id}}" id="liked" fill="red" width="30" height="30" ><use xlink:href="#heart-fill"></use></svg>
+                                            <svg class="bi bi-heart @if (Auth::user()->evenements()->find($evenements->id)!=null) @if (Auth::user()->events()->find($evenements->id)->pivot->like==1) d-none @endif @endif" data-event-id="{{$evenements->id}}" id="unliked" fill="currentColor" width="30" height="30" ><use xlink:href="#heart"></use></svg>
+                                            <svg class="bi bi-heart-fill @if (Auth::user()->evenements()->find($evenements->id)!=null) @if (Auth::user()->events()->find($evenements->id)->pivot->like==0) d-none @endif @else d-none @endif" data-event-id="{{$evenements->id}}" id="liked" fill="red" width="30" height="30" ><use xlink:href="#heart-fill"></use></svg>
                                         </button>
                                     @else
                                         <form action="{{route('login')}}">

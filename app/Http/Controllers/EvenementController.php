@@ -6,6 +6,7 @@ use App\Models\chronogramme;
 use App\Models\evenement;
 use App\Http\Requests\StoreevenementRequest;
 use App\Http\Requests\UpdateevenementRequest;
+use App\Models\Promoteur;
 use App\Models\type_evenement;
 use App\Models\type_lieu;
 use App\Models\type_ticket;
@@ -52,13 +53,14 @@ class EvenementController extends Controller
     public function store(StoreevenementRequest $request):RedirectResponse
     {
        
-        $userId = auth()->user()->id;
+        $userId = auth()->user()->Promoteur->id;
+        
         $evenement=new evenement;
         $validatedData= $request->validate([
             'Frequence'=>'required|min:3|max:10'
         ]);
         $evenement->Fréquence=$request->Frequence;
-        $evenement->user_id=$userId;
+        $evenement->promoteur_id=$userId;
         $evenement->save();
         $evenement_id=$evenement->id;
         session(['evenement_id'=>$evenement_id]);
@@ -72,12 +74,13 @@ class EvenementController extends Controller
         
         $evenement=evenement::find($evenement->id);
         $date= new DateTime($evenement->date_heure_debut);
-        $user_id=$evenement->user_id;
-        $organisateur=User::find($user_id);
+        $promoteur_id=$evenement->promoteur_id;
+        $user_id=$evenement->promoteur->user->id;
+        $organisateur=Promoteur::find($promoteur_id);
         $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
         $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
         $same_creator=evenement::where('isOnline', true)
-                ->where('user_id',$user_id)
+                ->where('promoteur_id',$promoteur_id)
                 ->get();
         $user_id=auth()->id();
         $click=$evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement->id)->get();     
@@ -164,7 +167,7 @@ class EvenementController extends Controller
             $userId = auth()->user()->id;
             $user = User::with('evenements')->find($userId);
             if ($user) {
-                $evenement = $user->evenements->sortByDesc('created_at');
+                $evenement = $user->Promoteur->evenements->sortByDesc('created_at');
                 return view("admin.evenement.mesEvenements", compact("evenement"));
             } else {
                 return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','aucun évènement n\'a été trouvé');
@@ -220,7 +223,8 @@ class EvenementController extends Controller
                     "redirecturl"=>$redirectUrl,
                     "Type_ticket"=>$typeTicketAProgrammer
                 ]);
-            }  $evenement->isOnline=false;
+            }  
+            $evenement->isOnline=true;
             $evenement->save();
             return response()->json([
                 "success"=>true,
@@ -369,10 +373,10 @@ class EvenementController extends Controller
         $Color=["#308747","#FBAA0A","#F0343C"];
         $borderColor=array();
         $x=0;
-        
+        $DatesVente = array();
+        $nombreVendusParSemaineDeCeTicket=array();
         foreach ($type_tickets as $type_ticket) {
-            $DatesVente = array();
-            $nombreVendusParSemaineDeCeTicket=array();
+           
             // Je récupère le nombre de ticket vendu selon le jour
             if ($nombreDejour==7){
                 for ($i=$nombreDejour-1; $i >=0 ; $i--) { 
@@ -390,13 +394,29 @@ class EvenementController extends Controller
                     $nombreVenduDuJourDeCeTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
                     $nombreVendusParSemaineDeCeTicket[]=$nombreVenduDuJourDeCeTicket;
                 }
+            }elseif($nombreDejour=="billeterie"){
+                $Date_lancement=Carbon::parse($type_ticket->Date_heure_lancement);
+                $Date_fermeture=Carbon::parse($type_ticket->Date_heure_fermeture);
+                $nombreDejour= $Date_fermeture->day-$Date_lancement->day ;
+                $ecart=ceil($nombreDejour/7);
+                for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
+                    $jourDebut=Carbon::now()->today()->subDays($i)->startOfDay();
+                    $jourfin=Carbon::now()->today()->subDays($i-($ecart-1))->endOfDay();
+                    $DatesVente[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                    
+                    $nombreVenduDuJourDeCeTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                    $nombreVendusParSemaineDeCeTicket[]=$nombreVenduDuJourDeCeTicket;
+                }
+               
             }
+           
             
             $NombreVenduParTicket[$type_ticket->nom_ticket]=$nombreVendusParSemaineDeCeTicket;
             $borderColor[$type_ticket->nom_ticket]=$Color[$x];
             $x++;
         }
-
+       
+     
         //Création de la datasets à envoyer pour les ticket 
         foreach($NomTypeTicket as $nom_ticket){
 

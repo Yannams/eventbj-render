@@ -239,7 +239,8 @@
             
             $('#periode').change(function() {
                  periode = $(this).val();
-               GetData();
+            //    GetData();
+            $('#ChartsDataForms').submit()
             });
 
             $('#periode_revenu').change(function() {

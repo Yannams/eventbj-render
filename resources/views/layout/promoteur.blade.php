@@ -13,9 +13,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript">
     <style>
       {!! Vite::content('resources/css/app.css') !!}
     </style>
+  
 
 </head>
 <body  style="background-color: #f5f5f5;">
@@ -110,17 +112,24 @@
               </a>
                
               <ul class="nav nav-underline mt-1">
-                <li class="nav-item"></li>
+               
                 <li class="nav-item">
                   <a href="{{route('MesEvenements')}}" class="nav-link link-success @if(request()->url()==route('MesEvenements')) active @endif d-flex align-items-center" aria-current="page">
                     <svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#calendar"></use></svg>Mes Evenements
                   </a>
                 </li>
+               
                 <li class="nav-item">
                   <a href="{{route('billetterie')}}" class="nav-link @if(request()->url()==route('billetterie')) active @endif link-success d-flex align-items-center">
                     <svg class="bi bi-qr-code me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qrcode"></use></svg>Billetterie
                   </a>
                 </li>
+
+                <li class="nav-item">
+                  <a href="{{route('scanTicket')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex align-items-center" >
+                     verifier des tickets
+                 </a>
+               </li>
                 <li class="nav-item">
                   <a href=" {{ route('Create_event')}} " class="nav-link  @if(request()->url()==route('Create_event')) active @endif link-success d-flex align-items-center">
                     <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
@@ -141,6 +150,6 @@
       </div>
        
   </div>
-    
+  
 </body>
 </html>

@@ -141,6 +141,7 @@ class TicketController extends Controller
      */
     public function destroy(ticket $ticket)
     {
+
     }
 
     public function verifiedTransaction($type_ticket_id){ 
@@ -158,5 +159,9 @@ class TicketController extends Controller
 
     public function nombreTicket(StoreticketRequest $request){
         session(['nombreTicket'=>$request->nombreTicket]);
+    }
+
+    public function scanTicket(){
+        return view('admin.ticket.scanTicket');
     }
 }

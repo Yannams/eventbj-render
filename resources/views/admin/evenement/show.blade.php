@@ -132,7 +132,7 @@
                                     <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" width="100" height="100" class="rounded-circle" alt="">
                                 </div>
                                 <div class="p-2">
-                                    {{$organisateur->name}}
+                                    {{$organisateur->nom}}
                                      <div class="fw-bold">Organisateur</div>
                                 </div>
                             </div>

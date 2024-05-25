@@ -102,6 +102,11 @@ class TypeTicketController extends Controller
                 "prix_ticket"=>"required|numeric",
                 "frais_ticket"=>"required|numeric",
                 "place_dispo"=>"required|numeric",
+                "methodeProgrammationLancement"=>"required",
+                "Date_heure_lancement"=>"required",
+                "methodeProgrammationFermeture"=>"required",
+                "Date_heure_fermeture"=>"required",
+
             ]
             );
         $type_ticket->update($data);

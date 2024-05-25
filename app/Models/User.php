@@ -50,22 +50,19 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function evenements()
-    {
-        return $this->hasMany(evenement::class);
-    }
+   
     public function tickets():BelongsToMany
     {
         return $this->belongsToMany(Ticket::class);
     }
 
-    public function events():BelongsToMany
+    public function evenements():BelongsToMany
     {
         return $this->belongsToMany(evenement::class)->withPivot('like','nombre_click','date_click','date_like','date_unlike','created_at','updated_at');
     }
 
-    public function ProfilPromoteur():HasOne
+    public function Promoteur():HasOne
     {
-        return $this->hasOne(ProfilPromoteur::class);
+        return $this->hasOne(Promoteur::class);
     }
 }

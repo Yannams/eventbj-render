@@ -104,7 +104,7 @@
                     </div>
                     <div class="col-sm-4">
                         <label for="frais_ticket">frais prélevée</label>
-                        <input type="number" name="frais_ticket" id="frais_ticket" class="form-control" min="0" value="{{$type_ticket->frais_ticket}}">
+                        <input type="number" name="frais_ticket" id="frais_ticket" class="form-control" min="0" value="{{$type_ticket->frais_ticket}}" readonly>
                         <div class="invalid-feedback">
                             Veuillez ajouter le prix du ticket
                         </div>
@@ -116,6 +116,38 @@
                         <div class="invalid-feedback">
                             Veuillez ajouter une quantité
                         </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-4"><hr></div>
+                        <div class="col-4 d-flex justify-content-center">
+                            <div class="fw-bold">Programmer la billetterie</div>
+                        </div>
+                        <div class="col-4"><hr></div>
+                    </div>
+                    <div class="col-12">
+                        <label for="methodeProgrammationLancement">Date d'ouverture de la billetterie</label>
+                       <select name="methodeProgrammationLancement" id="methodeProgrammationLancement" class="form-select" required>
+                            <option value=""></option>
+                            <option value="ActivationEvènement" {{$type_ticket->methodeProgrammationLancement=='ActivationEvènement'?"selected":""}}>Au moment où l'évènement est activé</option>
+                            <option value="ProgrammerBilleterie" {{$type_ticket->methodeProgrammationLancement=='ProgrammerBilleterie'?"selected":""}}>Programmer ...</option>
+                            <option value="ProgrammerPlustard" {{$type_ticket->methodeProgrammationLancement=='ProgrammerPlustard'?"selected":""}}>Programmer plus tard</option>
+                       </select>
+                    </div>
+                    <div id="programmerLancement" class="col-12">
+                        
+                    </div>
+                    <div class="col-12">
+                        <label for="methodeProgrammationFermeture">Date de fermeture de la billetterie</label>
+                       <select name="methodeProgrammationFermeture" id="methodeProgrammationFermeture" class="form-select" required>
+                            <option value=""></option>
+                            <option value="FinEvenement" {{$type_ticket->methodeProgrammationFermeture=='FinEvenement'?"selected":""}}>Date de fin de l'evenement</option>
+                            <option value="ProgrammerFermeture" {{$type_ticket->methodeProgrammationFermeture=='ProgrammerFermeture'?"selected" : ""}}>Programmer ...</option>
+                            <option value="ProgrammerPlustard" {{$type_ticket->methodeProgrammationFermeture=='ProgrammerPlustard'?"selected" : ""}}>Programmer plus tard</option>
+                       </select>
+                    </div>
+                    <div id="programmerFermeture">
+
                     </div>
         
                     {{-- <input type="hidden" name="evenement_id" id="evenement_id" value="{{$evenement_id}}"> --}}
@@ -184,7 +216,42 @@
             })
             })()
     </script>
-       
+    <script>
+        if ($('#methodeProgrammationLancement').val()=='ProgrammerBilleterie') {
+            $('#programmerLancement').html("<label for=\"Date_heure_lancement\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_lancement\" id=\"Date_heure_lancement\" class=\"form-control\" value=\"{{$type_ticket->Date_heure_lancement}}\">")
+        }else{
+            $('#programmerLancement').html("")
+        }
+
+        if($('#methodeProgrammationFermeture').val()==="ProgrammerFermeture"){ 
+            $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\" value=\"{{$type_ticket->Date_heure_fermeture}}\">" );
+        }else if($('#methodeProgrammationFermeture').val()==="FinEvenement"){
+            $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\" value=\"{{$type_ticket->evenement->date_heure_fin}}\">");
+        }else{
+            $('#programmerFermeture').html("");
+        }
+        $('#methodeProgrammationLancement').change(function programmerLancement() {
+                    DateVal=$(this).val()
+                    console.log(DateVal);
+                    if(DateVal==="ProgrammerBilleterie"){
+                       $('#programmerLancement').html("<label for=\"Date_heure_lancement\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_lancement\" id=\"Date_heure_lancement\" class=\"form-control\">")
+                    }else{
+                        $('#programmerLancement').html("")
+                    }
+                })
+
+                $('#methodeProgrammationFermeture').change(function programmerFermeture() {
+                    DateVal=$(this).val()
+                    console.log(DateVal);
+                    if(DateVal==="ProgrammerFermeture"){ 
+                        $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\">");
+                    }else if(DateVal==="FinEvenement"){
+                        $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\" value=\"{{$type_ticket->evenement->date_heure_fin}}\">");
+                    }else{
+                        $('#programmerFermeture').html("");
+                    }
+                })
+    </script>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     const toastLiveExample = document.getElementById('liveToast');
@@ -195,5 +262,15 @@
                     }
                 });
             </script>
+
+        <script>
+            var prix_ticket_input=document.getElementById('prix_ticket');
+            var frais_ticket_input=document.getElementById('frais_ticket');
+            prix_ticket_input.addEventListener('input',function calulFrais() {
+                var prix_ticket= prix_ticket_input.value
+                var frais_ticket=prix_ticket*0.1
+            frais_ticket_input.value=frais_ticket
+            })
+        </script>
     </div>
     @endsection

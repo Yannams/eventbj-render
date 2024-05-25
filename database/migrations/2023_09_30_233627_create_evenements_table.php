@@ -23,8 +23,8 @@ return new class extends Migration
             $table->string('Fréquence');
             $table->unsignedBigInteger('type_evenement_id')->nullable();
             $table->foreign('type_evenement_id')->references('id')->on('type_evenements')->onDelete('cascade');
-            $table->unsignedBigInteger('user_id')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->unsignedBigInteger('promoteur_id')->nullable();
+            $table->foreign('promoteur_id')->references('id')->on('promoteurs')->onDelete('cascade');
             $table->unsignedBigInteger('type_lieu_id')->nullable();
             $table->foreign('type_lieu_id')->references('id')->on('type_lieus')->onDelete('cascade');
             $table->timestamps();
