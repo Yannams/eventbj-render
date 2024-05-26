@@ -8,13 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
-    public function afficherFormulaire (Request $request)
+    public function afficherProfil ()
     { 
-        
+        return view('auth.gererProfil');
     }
     
-    public function updateIsEntreprise(Request $request)
-    {
-        
-    }
+   
 }

@@ -104,6 +104,13 @@
           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
           <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
         </symbol>
+        <symbol id="qr-code-scan" viewBox="0 0 16 16">
+          <path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5M.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5M4 4h1v1H4z"/>
+          <path d="M7 2H2v5h5zM3 3h3v3H3zm2 8H4v1h1z"/>
+          <path d="M7 9H2v5h5zm-4 1h3v3H3zm8-6h1v1h-1z"/>
+          <path d="M9 2h5v5H9zm1 1v3h3V3zM8 8v2h1v1H8v1h2v-2h1v2h1v-1h2v-1h-3V8zm2 2H9V9h1zm4 2h-1v1h-2v1h3zm-4 2v-1H8v1z"/>
+          <path d="M12 9h2V8h-2z"/>
+        </symbol>
     </svg>
       <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top">
    
@@ -111,7 +118,7 @@
                 <img src="{{asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
               </a>
                
-              <ul class="nav nav-underline mt-1">
+              <ul class="nav nav-underline mt-1 d-lg-flex d-none">
                
                 <li class="nav-item">
                   <a href="{{route('MesEvenements')}}" class="nav-link link-success @if(request()->url()==route('MesEvenements')) active @endif d-flex align-items-center" aria-current="page">
@@ -127,7 +134,7 @@
 
                 <li class="nav-item">
                   <a href="{{route('scanTicket')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex align-items-center" >
-                     verifier des tickets
+                    <svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qr-code-scan"></use></svg> verifier des tickets
                  </a>
                </li>
                 <li class="nav-item">
@@ -138,7 +145,37 @@
                 <li class="nav-item"><a href="#" class="nav-link"></a></li>                
               </ul>
               <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5 ms-4" >
+              
+              <ul class="nav nav-pills mt-1 p-2 bg-white d-lg-none row row-cols-5 fixed-bottom">
+               
+               <li class="nav-item">
+                 <a href="{{route('MesEvenements')}}" class="nav-link link-success @if(request()->url()==route('MesEvenements')) active @endif flex-column  d-flex align-items-center" aria-current="page">
+                   <svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#calendar"></use></svg>
+                   <span class="text-wrap text-center">Mes Evenements</span>
+                 </a>
+               </li>
+              
+               <li class="nav-item">
+                 <a href="{{route('billetterie')}}" class="nav-link @if(request()->url()==route('billetterie')) active @endif link-success flex-column d-flex align-items-center">
+                   <svg class="bi bi-qr-code me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qrcode"></use></svg>
+                   <span class="text-wrap text-center"> Billetterie</span>
+                 </a>
+               </li>
 
+               <li class="nav-item">
+                 <a href="{{route('scanTicket')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex flex-column align-items-center" >
+                   <svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qr-code-scan"></use></svg>
+                   <span class="text-wrap text-center">Valider des ticket</span>
+                </a>
+              </li>
+               <li class="nav-item">
+                 <a href=" {{ route('Create_event')}} " class="nav-link  @if(request()->url()==route('Create_event')) active @endif link-success flex-column d-flex align-items-center">
+                   <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg>
+                   <span class="text-wrap text-center"> Créer un évènement</span>
+                 </a>
+               </li>
+               <li class="nav-item"><a href="#" class="nav-link"></a></li>                
+             </ul>
        </header> 
        <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
         <symbol id="plus" viewBox="0 0 16 16">

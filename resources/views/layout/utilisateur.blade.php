@@ -132,11 +132,11 @@
         <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none order-first postion-absolute top-0 start-0">
           <img src="{{ asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
         </a>
-        <div class="me-4 mb-sm-0 d-md-none d-inline ">
+        <div class="me-4 mb-sm-0 d-inline d-lg-none ">
           <svg class="bi bi-search" fill="currentColor"  width="30" height="30"><use xlink:href="#search"></use></svg>
           <svg class="bi bi-heart ms-2" fill="currentColor"  width="30" height="30"><use xlink:href="#heart"></use></svg>
         </div>    
-        <div class="w-50">
+        <div class="w-50 d-none d-lg-inline">
           <button class="btn w-100" id="Search" >
                 <div class="card rounded-pill">
                   <div class="card-body">
@@ -178,7 +178,7 @@
                 @auth
                   <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
                 @else
-                  <i class="bi bi-person-circle text-dark" style="font-size: 30px" ></i>
+                  <i class="bi bi-person-circle text-dark"></i>
                 @endauth 
               </a>
             
@@ -235,37 +235,17 @@
               </a>
           </li>
           <li class="nav-item">
-            <div class="btn-group dropstart">
-              <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
+              <a class="@if (request()->url()== route('afficherProfil')) active-profil @endif " href="{{route('afficherProfil')}}">
+                @auth
+                  <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="{{request()->url()== route('afficherProfil')?32:50}}" height="{{request()->url()== route('afficherProfil')?32:50}}" class=" rounded-5">
+                @else
+                  <svg xmlns="http://www.w3.org/2000/svg" width="{{request()->url()== route('afficherProfil')?32:50}}" height="{{request()->url()== route('afficherProfil')?32:50}}"  fill="currentColor" class="bi bi-person-circle text-dark" viewBox="0 0 16 16">
+                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                  </svg>
+                @endauth
+                
               </a>
-            
-              <ul class="dropdown-menu ">
-                  @if (auth()->check())
-                    <li>
-                      <form method="POST" action="{{ route('logout') }}">
-                          @csrf 
-                          <button type="submit">Logout</button>
-                      </form>                  
-                    </li>
-                  @else
-                    <li>
-                        <a href="{{ route('login') }}" class="dropdown-item">
-                          <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
-                          Se connecter
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('register') }}" class=" dropdown-item">
-                          <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
-                          S'inscrire
-                        </a>
-                    </li>
-                      
-                  @endif
-                  <li><a class="dropdown-item" href="#">Permuter vers organisateur</a></li>
-              </ul>
-            </div>
           </li>         
       </ul>  
     </header>
