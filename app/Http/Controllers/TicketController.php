@@ -57,7 +57,9 @@ class TicketController extends Controller
                 $ticket->statut="acheté";
                 $ticket->save();           
                 $ticket->users()->attach($user);
-                $codeQRContent = "$ticket->id $ticket->transaction_id $user $userdata->name $ticket->statut";
+                
+                $codeQRContent = json_encode(["id_ticket"=>$ticket->id, "transaction_id"=>$ticket->transaction_id, "user"=> $user, "nom_user"=> $userdata->name, "user"=> $ticket->statut]);
+
                 $folderPath = public_path('code_QR');
                 if (!file_exists($folderPath)) {
                     mkdir($folderPath, 0777, true);
