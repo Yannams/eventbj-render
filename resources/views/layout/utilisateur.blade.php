@@ -272,7 +272,6 @@
           searchBtn.classList.remove('d-none');
           SearchBarSpace.classList.add('d-none');
         }
-
         searchBtn.addEventListener("click",showSearchBar);
         SearchBarSpace.addEventListener("focusout",hideSearchBar);
 

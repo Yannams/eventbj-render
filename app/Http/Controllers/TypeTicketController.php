@@ -95,17 +95,18 @@ class TypeTicketController extends Controller
      */
     public function update(Updatetype_ticketRequest $request, type_ticket $type_ticket)
     {
+        
        $data=$request->validate(
             [
-                "image_ticket"=>"required",
+                "image_ticket"=>"extensions:jpg,png,svg",
                 "nom_ticket"=>"required",
                 "prix_ticket"=>"required|numeric",
                 "frais_ticket"=>"required|numeric",
                 "place_dispo"=>"required|numeric",
                 "methodeProgrammationLancement"=>"required",
-                "Date_heure_lancement"=>"required",
+                "Date_heure_lancement"=>"Date",
                 "methodeProgrammationFermeture"=>"required",
-                "Date_heure_fermeture"=>"required",
+                "Date_heure_fermeture"=>"Date",
 
             ]
             );

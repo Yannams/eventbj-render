@@ -1,10 +1,30 @@
 @extends('layout.promoteur')
     @section('content')
         <div id="reader" width="600px"></div>
- <script>
+        
+ 
+ 
+  <script>
         function onScanSuccess(decodedText, decodedResult) {
-            // handle the scanned code as you like, for example:
-            console.log(`Code matched = ${decodedText}`, decodedResult);
+               
+          $.ajaxSetup(
+                  {
+                      headers:{
+                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                      }
+                  }
+              )
+                $.ajax(
+                  {
+                      type:'POST',
+                      url: '/verifierTicket',
+                      data:JSON.parse(decodedText),
+                      dataType:'JSON',
+                      success: function(response){
+                         window.location.href=response.redirectTo
+                      }
+                  }
+              )
           }
           
           function onScanFailure(error) {

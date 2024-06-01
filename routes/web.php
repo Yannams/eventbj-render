@@ -44,6 +44,12 @@ Route::get('/ModifierHoraire',[EvenementController::class,'ModifierHoraire'])->n
 Route::post('/UpdaterHoraire',[EvenementController::class,'UpdateHoraire'])->name('UpdateHoraire');
 Route::get('/scanTicket',[TicketController::class,'scanTicket'])->name('scanTicket');
 Route::get('/afficherProfil',[ProfileController::class,'afficherProfil'])->name('afficherProfil');
+Route::post('/verifierTicket', [TicketController::class,'verifierTicket'])->name('verifierTicket');
+Route::get('/validTicket',[TicketController::class,'validTicket'])->name('validTicket');
+Route::get('/verifiedTicket',[TicketController::class,'verifiedTicket'])->name('verifiedTicket');
+Route::get('/invalidTicket',[TicketController::class,'invalidTicket'])->name('invalidTicket');
+
+
 
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
