@@ -1,12 +1,15 @@
 @extends('layout.promoteur')
     @section('content')
         <div id="reader" width="600px"></div>
-        
- 
+               
+        <div id="evenementAverifier" data-event-id="{{session('evenement_id')}}"></div>
  
   <script>
+     var evenementDiv=document.getElementById('evenementAverifier')
+      var evenement_Id=evenementDiv.getAttribute('data-event-id')
         function onScanSuccess(decodedText, decodedResult) {
-               
+          var evenementDiv=document.getElementById('evenementAverifier')
+          var evenement_Id=evenementDiv.getAttribute('data-event-id')
           $.ajaxSetup(
                   {
                       headers:{
@@ -18,7 +21,7 @@
                   {
                       type:'POST',
                       url: '/verifierTicket',
-                      data:JSON.parse(decodedText),
+                      data:JSON.parse({decodedText,evenementAverifier:evenement_Id}) ,
                       dataType:'JSON',
                       success: function(response){
                          window.location.href=response.redirectTo

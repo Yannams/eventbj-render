@@ -617,9 +617,6 @@ class EvenementController extends Controller
             'evolution_inscription'=>$InscriptionJournalier,
             'taux_conversion'=>$TauxConversionParJour,
             'date_conversion'=>$Date_conversion,
-           
-            
-            
         ]);
     }
 }

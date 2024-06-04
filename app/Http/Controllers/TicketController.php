@@ -214,4 +214,15 @@ class TicketController extends Controller
     public function invalidTicket(){
         return view('admin.ticket.invalidTicket');
     }
+
+    public function eventToVerify(){
+        $evenements=Auth()->user()->promoteur->evenements;
+        return view('admin.ticket.eventToVerify', compact('evenements'));
+    }
+
+    public function eventSending(Request $request){
+       $evenement_id=$request->evenement_id;
+       session(['evenement_id'=>$evenement_id]);
+       return redirect()->route('scanTicket');
+    }
 }

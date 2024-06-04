@@ -48,6 +48,9 @@ Route::post('/verifierTicket', [TicketController::class,'verifierTicket'])->name
 Route::get('/validTicket',[TicketController::class,'validTicket'])->name('validTicket');
 Route::get('/verifiedTicket',[TicketController::class,'verifiedTicket'])->name('verifiedTicket');
 Route::get('/invalidTicket',[TicketController::class,'invalidTicket'])->name('invalidTicket');
+Route::get('/eventToVerify',[TicketController::class,'eventToVerify'])->name('eventToVerify');
+Route::post('/eventSending',[TicketController::class,'eventSending'])->name('eventSending');
+
 
 
 

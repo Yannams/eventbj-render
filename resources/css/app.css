@@ -754,3 +754,8 @@
         background-color: #F8BB86;
     }
 }
+
+.eventToVerify:hover{
+  background-color: #C3E3CC;
+  border-color: #308747;
+}

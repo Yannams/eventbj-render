@@ -131,7 +131,7 @@
                 </li>
 
                 <li class="nav-item">
-                  <a href="{{route('scanTicket')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex align-items-center" >
+                  <a href="{{route('eventToVerify')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex align-items-center" >
                     <svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qr-code-scan"></use></svg> verifier des tickets
                  </a>
                </li>
@@ -161,7 +161,7 @@
                </li>
 
                <li class="nav-item">
-                 <a href="{{route('scanTicket')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex flex-column align-items-center" >
+                 <a href="{{route('eventToVerify')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex flex-column align-items-center" >
                    <svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qr-code-scan"></use></svg>
                    <span class="text-wrap text-center">Valider des ticket</span>
                 </a>
