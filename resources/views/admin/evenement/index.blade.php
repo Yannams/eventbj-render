@@ -52,8 +52,10 @@
         </div>    
     </div>
     @endif
-
- 
+    @php
+        $debut=0;
+        $fin=4;
+    @endphp
     <div class="border-0 rounded-4">
         <div class="">
             
@@ -75,174 +77,38 @@
                 <div id="responsiveCarousel" class="row flex-nowrap scrolling-wrapper "> </div>
                
                 <div class="carousel-inner">
-                  <div class="carousel-item active">
-                       <div class="row row-cols-1 row-cols-md-4 g-3 mb-4 scrolling-wrapper recommended flex-nowrap">
-                            <div class="col recommandedEvent ">
-                                <div class="card low-padding rounded-4 border-0 card-size recommandedEventCard" style="background-color:#F0343C; ">
-                                    <img src="{{asset('image/img.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
+                   
+                    @for($i=0; $i<$recommanded_events->count()/4; $i++)
+                        <div class="carousel-item">
+                            <div class="row row-cols-1 row-cols-md-4 g-3 mb-4 scrolling-wrapper recommended flex-nowrap">
+                                @for ($j=$debut; $j<$fin; $j++)
+                                @php
+                                    if ($j>$recommanded_events->count()-1) {
+                                        break;
+                                    }
+                                @endphp
+                                    <div class="col recommandedEvent ">
+                                        <div class="card low-padding rounded-4 border-0 card-size recommandedEventCard">
+                                            <img src="{{asset($recommanded_events[$j]->cover_event)}}"  class="img-recommanded card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold">{{$recommanded_events[$j]->nom_evenement}}</h5>
+                                                <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> {{date('d/m/Y',strtotime($recommanded_events[$j]->date_heure_debut))}}</p>
+                                                <div class="text-end">
+                                                    <a href="{{route('evenement.show',$recommanded_events[$j]->id)}}" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
+                                                </div>
+                                            </div>
+                                            
                                         </div>
                                     </div>
-                                    
-                                </div>
-                            </div>
-                            <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#FBAA0A;">
-                                    <img src="{{asset('image/Capture d’écran 2023-08-10 170824.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#308747;">
-                                    <img src="{{asset('image/Capture d’écran 2023-08-10 172019.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                    <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                       </div>
-                  </div>
-                  <div class="carousel-item">
-                    <div class="row row-cols-1 row-cols-md-4 g-3 mb-4 scrolling-wrapper recommended flex-nowrap">
-                        <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">ZeChill</h5>
-                                    <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                     <div class="text-end">
-                                    <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                </div>
-                                </div>
-                               
+                                 @endfor
                             </div>
                         </div>
-                        <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">ZeChill</h5>
-                                    <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                     <div class="text-end">
-                                        <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                    </div>
-                                </div>
-                               
-                            </div>
-                        </div>
-                        <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">ZeChill</h5>
-                                    <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                     <div class="text-end">
-                                        <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                    </div>
-                                </div>
-                               
-                            </div>
-                        </div>
-                        <div class="col recommandedEvent">
-                            <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                <div class="card-body">
-                                    <h5 class="card-title fw-bold">ZeChill</h5>
-                                    <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                     <div class="text-end">
-                                        <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                    </div>
-                                </div>
-                               
-                            </div>
-                        </div>
-                    </div>
-                  </div>
-                  <div class="carousel-item">
-                       <div class="row row-cols-1 row-cols-md-4 g-3 mb-4 scrolling-wrapper recommended flex-nowrap">
-                            <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                    <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                    <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                    <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <div class="col recommandedEvent">
-                                <div class="card rounded-4 border-0 card-size recommandedEventCard" style=" background-color:#B1B3C8;">
-                                    <img src="{{asset('image/be0d79da59dd006922e619434bf0df11.jpg')}}" class="card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
-                                    <div class="card-body">
-                                        <h5 class="card-title fw-bold">ZeChill</h5>
-                                        <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> 22/12/23</p>
-                                        <div class="text-end">
-                                            <a href="#" class="btn rounded-4" style="background-color: #ffffff;"><b>Voir plus...</b></a>
-                                        </div>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                       </div>
-                  </div>
+                        @php
+                            $debut+=4;
+                            $fin+=4;
+                        @endphp
+                    @endfor   
+
                 </div>
                 
             </div>
@@ -308,6 +174,48 @@
         
         @endforeach
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Récupérer les images
+            var imges = document.querySelectorAll('.img-recommanded');
+            console.log(imges);
+            var containers = document.querySelectorAll('.recommandedEventCard');
+            
+
+            for (let i = 0; i < imges.length; i++) {
+                (function(i) {
+                    var img = imges[i];
+                    var container = containers[i];
+
+                    img.onload = function() {
+                        console.log(img);
+                        // Utiliser ColorThief pour extraire la couleur dominante
+                        var colorThief = new ColorThief();
+                        var dominantColor = colorThief.getColor(img);
+
+                        var rgbColor = `rgb(${dominantColor[0]}, ${dominantColor[1]}, ${dominantColor[2]})`;
+                       
+                        // Appliquer la couleur dominante comme arrière-plan du conteneur
+                        container.style.backgroundColor = rgbColor;
+                    };
+
+                    // Si l'image est déjà chargée (cache du navigateur), déclencher l'événement onload manuellement
+                    if (img.complete) {
+                        img.onload();
+                    }
+                })(i);
+            }
+        });
+    </script>
+
+    <script>
+       
+       document.addEventListener('DOMContentLoaded',function () {
+         var recommanded=document.querySelectorAll('.carousel-item')
+         fistCarousel=recommanded[0];
+        fistCarousel.classList.add('active')
+       })
+    </script>
     <script>
         var likes=document.querySelectorAll('.btn-like');
         likes.forEach(function (like) {

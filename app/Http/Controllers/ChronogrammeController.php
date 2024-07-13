@@ -20,10 +20,10 @@ class ChronogrammeController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-    
-       
-        return view('admin.programmation.create', compact('evenement_id'));
+    {   
+        $chronogrammes=chronogramme::where('evenement_id',$_GET['event'])->get();
+        $evenement=evenement::find($_GET['event']);
+        return view('admin.programmation.create',compact('evenement','chronogrammes'));
     }
 
     /**
@@ -31,55 +31,22 @@ class ChronogrammeController extends Controller
      */
     public function store(StorechronogrammeRequest $request)
     {
-        $evenement_id = $request->input('evenement_id');
-        $evenement = Evenement::find($evenement_id);
-    
-        // Mise à jour de la date_heure_debut et date_heure_fin de l'événement
-        
-        $evenement->date_heure_debut = $request->input('date_heure_debut');
-        $evenement->date_heure_fin = $request->input('date_heure_fin');
-        $evenement->save();
-    
-        // Récupération de la date_activite depuis la première date de début
-        $date_heure_debut = new \DateTime($request->date_heure_debut);
-        $date_activite_get = $date_heure_debut->format('Y-m-d');
-        $date_activite=new \DateTime($date_activite_get);// Utilisation de "\DateTime"
-        $heure_debut = new \DateTime('00:00'); // Utilisation de "\DateTime"
-        $heure_fin = new \DateTime('23:00'); // Utilisation de "\DateTime"
-        // Récupération de date_fin à partir de la partie date de date_heure_fin
-        $date_heure_fin = new \DateTime($request->date_heure_fin);
-        $date_heure_fin_get= $date_heure_fin->format('Y-m-d');
-        $date_fin = new \DateTime($date_heure_fin_get);
-        $nom_activites = $request->input('nom_activite');
-    
-       //dd($date_activite);
-        while ($date_activite <= $date_fin) {
-            $heure = clone $heure_debut;
-            $nom_activite_index = 0;
-            while($heure <= $heure_fin) {
-                // dd( $request);
-              
-                $chronogramme = new Chronogramme();
-                $chronogramme->date_activite = $date_activite->format('Y-m-d');
-                $chronogramme->heure_debut = $heure->format('H:i');
-                $heure->modify('+1 hour');
-                $chronogramme->heure_fin = $heure->format('H:i');
-                $chronogramme->nom_activite = $nom_activites[$nom_activite_index]??null;
-                $chronogramme->evenement_id = $evenement_id;
-    
-                if ( $nom_activites[$nom_activite_index] != null) {
-                    $chronogramme->save();
-                }
-                $nom_activite_index++;
-            }
-            // Passage à la prochaine date
-             $date_activite->modify('+1 day');
-         }
-    
-        // Redirection ou autre traitement après l'enregistrement
-
-         return redirect()->route('type_ticket.create')->with('message','chronogramme créé');
-
+       $chronogramme=new chronogramme();
+       $chronogramme->evenement_id=$request->evenement_id;  
+       $chronogramme->heure_debut=$request->heure_debut;
+       $chronogramme->heure_fin=$request->heure_fin;
+       $chronogramme->nom_activite=$request->nom_activite;
+       $chronogramme->date_activite=$request->date_activite;
+       $chronogramme->save();
+       return response()->json([
+        'success'=>true,
+        'chronogramme_id'=>$chronogramme->id,
+        'evenement_id'=>$chronogramme->evenement_id,
+        'heure_debut'=>$chronogramme->heure_debut,
+        'heure_fin'=>$chronogramme->heure_fin,
+        'nom_activite'=>$chronogramme->nom_activite,
+        'date_activite'=>$chronogramme->date_activite,
+       ]);
     }
     
     
@@ -106,7 +73,20 @@ class ChronogrammeController extends Controller
      */
     public function update(UpdatechronogrammeRequest $request, chronogramme $chronogramme)
     {
-        //
+       $chronogramme = chronogramme::find($chronogramme->id);
+       $chronogramme->heure_debut=$request->heure_debut;
+       $chronogramme->heure_fin=$request->heure_fin;
+       $chronogramme->nom_activite=$request->nom_activite;
+       $chronogramme->save();
+       return response()->json([
+        'success'=>true,
+        'chronogramme_id'=>$chronogramme->id,
+        'evenement_id'=>$chronogramme->evenement_id,
+        'heure_debut'=>date('H:i',strtotime($chronogramme->heure_debut)),
+        'heure_fin'=>date('H:i',strtotime($chronogramme->heure_fin)),
+        'nom_activite'=>$chronogramme->nom_activite,
+        'date_activite'=>$chronogramme->date_activite,
+       ]);
     }
 
     /**

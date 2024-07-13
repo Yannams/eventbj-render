@@ -759,3 +759,40 @@
   background-color: #C3E3CC;
   border-color: #308747;
 }
+
+.active-filter{
+  background-color: #308747;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+}
+
+.active-filter:hover{
+  background-color: #308747;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+}
+.non-active-filter{
+  background-color: #666;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  padding: auto;
+}
+
+.non-active-filter:hover{
+  background-color: #308747;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  padding: auto;
+}

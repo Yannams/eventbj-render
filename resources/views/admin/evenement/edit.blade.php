@@ -66,7 +66,7 @@
                                 <div class="text">
                                     <span class="fs-3">Cliquer pour mettre un image de couverture</span><br>
                                 </div>
-                                <input type="file" id="cover_event" name="cover_event">
+                                <input type="file" id="cover_event" name="cover_event" accept=".png, .jpeg, .jpg, .JPEG, .JPG, .gif">
                             </label>
                         </div>
                 

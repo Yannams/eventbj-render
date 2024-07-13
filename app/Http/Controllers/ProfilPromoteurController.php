@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Promoteur;
-use App\Http\Requests\StorePromoteurRequest;
-use App\Http\Requests\UpdatePromoteurRequest;
+
+use App\Http\Requests\StoreProfil_PromoteurRequest;
+use App\Http\Requests\UpdateProfil_PromoteurRequest;
+use App\Models\Profil_promoteur;
 use Illuminate\Support\Facades\Auth;
 
-class PromoteurController extends Controller
+class ProfilPromoteurController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -28,7 +29,7 @@ class PromoteurController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StorePromoteurRequest $request)
+    public function store(StoreProfil_PromoteurRequest $request)
     {
         $validatedData=$request->validate(
             [
@@ -37,11 +38,12 @@ class PromoteurController extends Controller
             ]
             );
         
-            $promoteur=new Promoteur;
+            $promoteur=new Profil_promoteur;
             $promoteur->nom=$request->nom;
             $promoteur->type_organisateur=$request->type_organisateur;
             $promoteur->user_id=Auth::user()->id;
             $promoteur->save();
+            Auth::user()->removeRole('User');
             Auth::user()->assignRole('promoteur');
             $route=session('route');
             session()->forget('route');
@@ -53,7 +55,7 @@ class PromoteurController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Promoteur $Promoteur)
+    public function show(Profil_promoteur $Promoteur)
     {
         //
     }
@@ -61,7 +63,7 @@ class PromoteurController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Promoteur $Promoteur)
+    public function edit(Profil_promoteur $Promoteur)
     {
         //
     }
@@ -69,7 +71,7 @@ class PromoteurController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePromoteurRequest $request, Promoteur $Promoteur)
+    public function update(UpdateProfil_PromoteurRequest $request, Profil_Promoteur $Promoteur)
     {
         //
     }
@@ -77,7 +79,7 @@ class PromoteurController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Promoteur $Promoteur)
+    public function destroy(Profil_promoteur $Promoteur)
     {
         //
     }

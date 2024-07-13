@@ -1,5 +1,6 @@
-@extends('layout.promoteur')
+@extends($layout)
     @section('content')
+    
         <form action="{{route('getChartsData')}}" method="post" id="ChartsDataForms">
             @csrf
             <input type="hidden" name="evenement_id" value="{{$evenement->id}}">

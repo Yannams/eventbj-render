@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\Promoteur;
+use App\Models\Profil_promoteur;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -19,7 +19,7 @@ class PromoteurPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Promoteur $promoteur): bool
+    public function view(User $user, Profil_promoteur $profil_promoteur): bool
     {
         //
     }
@@ -35,7 +35,7 @@ class PromoteurPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Promoteur $promoteur): bool
+    public function update(User $user, Profil_promoteur $profil_promoteur): bool
     {
         //
     }
@@ -43,7 +43,7 @@ class PromoteurPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Promoteur $promoteur): bool
+    public function delete(User $user, Profil_promoteur $profil_promoteur): bool
     {
         //
     }
@@ -51,7 +51,7 @@ class PromoteurPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, Promoteur $promoteur): bool
+    public function restore(User $user, Profil_promoteur $profil_promoteur): bool
     {
         //
     }
@@ -59,7 +59,7 @@ class PromoteurPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, Promoteur $promoteur): bool
+    public function forceDelete(User $user, Profil_promoteur $profil_promoteur): bool
     {
         //
     }

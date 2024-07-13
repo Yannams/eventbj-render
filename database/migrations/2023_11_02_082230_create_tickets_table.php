@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('statut');
             $table->unsignedBigInteger('type_ticket_id')->nullable();
             $table->foreign('type_ticket_id')->references('id')->on('type_tickets')->onDelete('cascade');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

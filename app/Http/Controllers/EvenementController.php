@@ -6,7 +6,7 @@ use App\Models\chronogramme;
 use App\Models\evenement;
 use App\Http\Requests\StoreevenementRequest;
 use App\Http\Requests\UpdateevenementRequest;
-use App\Models\Promoteur;
+use App\Models\Profil_promoteur;
 use App\Models\type_evenement;
 use App\Models\type_lieu;
 use App\Models\type_ticket;
@@ -27,10 +27,13 @@ class EvenementController extends Controller
     
     public function index()
     {  
+        $recommanded_events=evenement::where('recommanded',true)
+                            ->get();
+
         $evenement = evenement::where('isOnline', true)
                     ->get();
         $type_evenement=type_evenement::all();
-        return view('admin.evenement.index', compact('evenement', 'type_evenement'));   
+        return view('admin.evenement.index', compact('evenement', 'type_evenement', 'recommanded_events'));   
     }
 
     /**
@@ -53,14 +56,14 @@ class EvenementController extends Controller
     public function store(StoreevenementRequest $request):RedirectResponse
     {
        
-        $userId = auth()->user()->Promoteur->id;
+        $userId = auth()->user()->Profil_promoteur->id;
         
         $evenement=new evenement;
         $validatedData= $request->validate([
             'Frequence'=>'required|min:3|max:10'
         ]);
         $evenement->Fréquence=$request->Frequence;
-        $evenement->promoteur_id=$userId;
+        $evenement->profil_promoteur_id=$userId;
         $evenement->save();
         $evenement_id=$evenement->id;
         session(['evenement_id'=>$evenement_id]);
@@ -71,16 +74,26 @@ class EvenementController extends Controller
      * Display the specified resource.
      */
     public function show(evenement $evenement){
+        if(auth()->user()->hasRole('Admin')){
+            $layout='layout.admin';
+        }
+        elseif(auth()->user()->hasRole('Promoteur')){
+            $layout='layout.promoteur';
+        }else{
+            $layout='layout.utilisateur';
+        }
         
         $evenement=evenement::find($evenement->id);
         $date= new DateTime($evenement->date_heure_debut);
-        $promoteur_id=$evenement->promoteur_id;
-        $user_id=$evenement->promoteur->user->id;
-        $organisateur=Promoteur::find($promoteur_id);
+        $promoteur_id=$evenement->profil_promoteur_id;
+       
+        $user_id=$evenement->Profil_promoteur->user->id;
+       
+        $organisateur=Profil_promoteur::find($promoteur_id);
         $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
         $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
         $same_creator=evenement::where('isOnline', true)
-                ->where('promoteur_id',$promoteur_id)
+                ->where('profil_promoteur_id',$promoteur_id)
                 ->get();
         $user_id=auth()->id();
         $click=$evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement->id)->get();     
@@ -88,7 +101,7 @@ class EvenementController extends Controller
             $nombre_click=['nombre_click'=>1,'like'=>false,'date_click'=>now(),'created_at'=>now(),'updated_at'=>now()];
             $evenement->users()->attach($user_id,$nombre_click);
         } 
-        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator'));
+        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator', 'layout'));
        
            
     }
@@ -167,7 +180,7 @@ class EvenementController extends Controller
             $userId = auth()->user()->id;
             $user = User::with('evenements')->find($userId);
             if ($user) {
-                $evenement = $user->Promoteur->evenements->sortByDesc('created_at');
+                $evenement = $user->Profil_promoteur->evenements->sortByDesc('created_at');
                 return view("admin.evenement.mesEvenements", compact("evenement"));
             } else {
                 return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','aucun évènement n\'a été trouvé');
@@ -229,7 +242,7 @@ class EvenementController extends Controller
             return response()->json([
                 "success"=>true,
                 "status"=>true,
-                "message"=>"evenement désactivé"
+                "message"=>"evenement mis en ligne"
             ]);
             
         
@@ -336,9 +349,17 @@ class EvenementController extends Controller
     }
 
     public function gererEvent($evenement){
+        if(auth()->user()->hasRole('Admin')){
+            $layout='layout.admin';
+        }
+        elseif(auth()->user()->hasRole('Promoteur')){
+            $layout='layout.promoteur';
+        }else{
+            $layout='layout.utilisateur';
+        }
         $evenement=evenement::find($evenement);
         $Color_tab=["#308747","#FBAA0A","#F0343C"];
-        return view('admin.evenement.gererEvent',compact('evenement','Color_tab'));
+        return view('admin.evenement.gererEvent',compact('evenement','Color_tab','layout'));
     }
 
      public function getChartsData(Request $request){
@@ -619,6 +640,7 @@ class EvenementController extends Controller
             'date_conversion'=>$Date_conversion,
         ]);
     }
+
 }
 
 

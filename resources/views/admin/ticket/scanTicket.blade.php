@@ -21,7 +21,7 @@
                   {
                       type:'POST',
                       url: '/verifierTicket',
-                      data:JSON.parse({decodedText,evenementAverifier:evenement_Id}) ,
+                      data:JSON.parse(decodedText) ,
                       dataType:'JSON',
                       success: function(response){
                          window.location.href=response.redirectTo

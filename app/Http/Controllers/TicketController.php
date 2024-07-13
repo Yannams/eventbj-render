@@ -57,8 +57,9 @@ class TicketController extends Controller
                 $ticket->transaction_id=$request->transaction_id;
                 $ticket->type_ticket_id=$request->id_type_ticket;
                 $ticket->statut="activé";
+                $ticket->user_id=$user;
                 $ticket->save();           
-                $ticket->users()->attach($user);
+        
                 
                 $codeQRContent = json_encode([
                     "id_ticket"=>$ticket->id, 
@@ -182,18 +183,18 @@ class TicketController extends Controller
     public function verifierTicket(Request $request){
        
         $id_ticket=$request->id_ticket;
-        $id_evenement=$request->id_evenement;
+        $id_evenement=session('evenement_id');
         $ticket=ticket::find($id_ticket);
         $evenement=evenement::find($id_evenement);
         // dd($request,  $ticket->transaction_id, $ticket->statut, $evenement->nom_evenement,$request->date_heure_debut, $evenement->date_heure_debut, $request->date_heu:re_fin, $evenement->date_heure_fin);
         if ($request->transaction_id==$ticket->transaction_id && $request->statut=="activé" && $request->statut==$ticket->statut && $request->nom_evenement==$evenement->nom_evenement && date('d/m/Y h:i:s', strtotime($request->date_heure_debut)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_debut)) && date('d/m/Y h:i:s', strtotime($request->date_heure_fin)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_fin))) {
-            $ticket->statut="désactivé";
+            $ticket->statut="vérifié";
             $ticket->save();
            return response()->json([
                 "qrcodevalidity"=>"valid",
                 "redirectTo"=>route('validTicket')
            ]);
-        }elseif($request->statut=="désactivé"){
+        }elseif($request->statut=="vérifié"){
             return response()->json([
                 "qrcodevalidity"=>"verifiedTicket",
                 "redirectTo"=>route('verifiedTicket')
@@ -216,7 +217,7 @@ class TicketController extends Controller
     }
 
     public function eventToVerify(){
-        $evenements=Auth()->user()->promoteur->evenements;
+        $evenements=Auth()->user()->Profil_promoteur->evenements;
         return view('admin.ticket.eventToVerify', compact('evenements'));
     }
 

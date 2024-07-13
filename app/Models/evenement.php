@@ -34,9 +34,9 @@ class evenement extends Model
         return $this->belongsToMany(User::class)->withPivot('like','nombre_click','date_click','date_like','date_unlike','created_at','updated_at');
     }
 
-    public function promoteur():BelongsTo
+    public function profil_promoteur():BelongsTo
     {
-        return $this->belongsTo(Promoteur::class);
+        return $this->belongsTo(Profil_promoteur::class);
     }
 
 }

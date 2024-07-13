@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -51,9 +52,9 @@ class User extends Authenticatable
     ];
 
    
-    public function tickets():BelongsToMany
+    public function tickets():HasMany
     {
-        return $this->belongsToMany(Ticket::class);
+        return $this->hasMany(Ticket::class);
     }
 
     public function evenements():BelongsToMany
@@ -61,8 +62,8 @@ class User extends Authenticatable
         return $this->belongsToMany(evenement::class)->withPivot('like','nombre_click','date_click','date_like','date_unlike','created_at','updated_at');
     }
 
-    public function Promoteur():HasOne
+    public function Profil_promoteur():HasOne
     {
-        return $this->hasOne(Promoteur::class);
+        return $this->hasOne(Profil_promoteur::class);
     }
 }

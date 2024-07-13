@@ -1,4 +1,4 @@
-@extends('layout.utilisateur')
+@extends($layout)
     @section('content')
     <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 g-3 py-4">
         <div class="col-lg-8">

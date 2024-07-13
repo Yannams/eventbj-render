@@ -1,197 +1,334 @@
-<? session_start()?>
 @extends('layout.promoteur')
-    @section('content')
-           
-            
-            @if (session('message'))
-            <div class="position-relative">
-                <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
-                    <div id="liveToast" class="toast text-bg-success" role="alert" aria-live="assertive" aria-atomic="true">
-                        <div class="toast-body d-flex align-items-center">
-                            <div class="p-2">
-                                <svg class="bi bi-check-all" fill="#fff" width="30" height="30">
-                                    <use xlink:href="#check"></use>
-                                </svg>
-                            </div>
-                            <div class="p-2 fw-bold fs-5">{{session('message')}}</div>
-                            <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                        </div>
-                    </div>
-                </div>    
-            </div>
-        @elseif (session('danger'))
-        <div class="position-relative">
-            <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
-                <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-body d-flex align-items-center">
-                        <div class="p-2">
-                            <svg class="bi bi-trash" fill="#fff" width="30" height="30">
-                                <use xlink:href="#deleted"></use>
-                            </svg>
-                        </div>
-                        <div class="p-2 fw-bold fs-5">{{session('danger')}}</div>
-                        <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
+
+@section('content')
+    @php
+        use Carbon\Carbon;
+        Carbon::setLocale('fr');
+        setlocale(LC_TIME, 'fr_FR.UTF-8');
+
+        $dateDebut = Carbon::parse($evenement->date_heure_debut);
+        $dateFin = Carbon::parse($evenement->date_heure_fin);
+        $currentDate = $dateDebut->copy();
+    @endphp
+    <div class="row row-cols-1" id="activitiesContainer">
+        @while ($currentDate->lte($dateFin))
+            <div class="col ActivityContainer ">
+                <div class="badge badge-tool shadow col-4" style="background-color:#ee151e">
+                    <span class="fs-3">{{ $currentDate->format('d') }}</span><br>
+                    <span>{{ $currentDate->translatedFormat('F') }}</span>
                 </div>
-            </div>    
-        </div>
-        @elseif (session('error'))
-        <div class="position-relative">
-            <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
-                <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="toast-body d-flex align-items-center">
-                        <div class="p-2">
-                            <svg class="bi bi-x-circle" fill="#fff" width="30" height="30">
-                                <use xlink:href="#error"></use>
-                            </svg>
-                        </div>
-                        <div class="p-2 fw-bold fs-5">{{session('error')}}</div>
-                        <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                </div>
-            </div>    
-        </div>
-        @endif
-        <ul class="row row-cols-4 row-cols-lg-4 row-cols-md-4 nav nav-pills mb-4" id="pillNav" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a href="{{route('select_type_lieu')}}" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-                    Type de lieu  
-                </a>
-            </li>          
-            <li class="nav-item" role="presentation">
-                <a href="{{route('evenement.create')}}" class=" fw-bold nav-link rounded checked-step me-3" role="tab" aria-selected="true" >
-                    Details de l’évènement
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="" class=" fw-bold nav-link rounded unchecked-step me-3" role="tab" aria-selected="true" >
-                    Date et heure
-                </a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a href="" class=" fw-bold nav-link rounded unchecked-step me-3" role="tab" aria-selected="true" >
-                    Création de ticket 
-                </a>
-            </li>                              
-        </ul>
-            <div class="card border-0">
-                <div class="card-body">
-                    <form action="{{route('chronogramme.store')}}" method="post">
-                        @csrf
-        
-        
-                        <input type="hidden" name="evenement_id" value="{{$evenement_id}}">
-                        
-        
-                        <div class="col-12 mb-3">
-                            <label for="date_heure_debut">Date et heure de début</label>
-                            <input type="datetime-local" name="date_heure_debut" id="date_heure_debut" class="form-control" >
-                        </div>
-                        
-                        <div class="col-12 mb-3">
-                            <label for="date_heure_fin">Date et heure de fin</label>
-                            <input type="datetime-local" name="date_heure_fin" id="date_heure_fin" class="form-control">
-                        </div>
-                        <div class="d-flex mb-4">
-                            <div class="p-2 w-100 fw-bold">Ajouter un chronogramme</div>
-                            <div class="p-2">
-                                <a class="btn" data-bs-toggle="collapse" href="#date_activite_fields" role="button" aria-expanded="false" aria-controls="chronogramme" id="">
-                                    <svg class="bi bi-plus" fill="#F0343C" width="30" height="30">
-                                        <use xlink:href="#plus"></use>
-                                    </svg>
-                                </a>
-                            </div>
-                        </div>                
-                            <div class="row g-3 mb-4">
-                                <div class="col-12">
-                                    <div id="date_activite_fields" class="collapse" >
+                @php
+                    $lastActivityEndTime = null;
+                @endphp
+                @foreach ($chronogrammes as $chronogramme)
+                    @if ($chronogramme->date_activite == $currentDate->toDateString())
+                        @php
+                            $lastActivityEndTime = $chronogramme->heure_fin;
+                        @endphp
+                        <div class="card shadow mb-3 border-0 col-8 mt-3 ms-5" style="max-width: 540px;">
+                            <div class="card-body row ActivityPlace">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <span class="text-secondary fst-italic">De</span>
+                                        <span class="text-success fw-bold">{{date('H:i', strtotime( $chronogramme->heure_debut ))}}</span>
+                                        <span class="text-secondary fst-italic">à</span>
+                                        <span class="text-danger fw-bold">{{date('H:i', strtotime( $chronogramme->heure_fin)) }}</span>
+                                        <span class="text-warning fw-bold">{{ $chronogramme->nom_activite }}</span>
+                                    </div>
+                                    <div class="col-4">
+                                       <button class="btn btn-success editActivity" data-chronogramme-id="{{$chronogramme->id}}" data-heure-debut="{{$chronogramme->heure_debut}}" data-heure-fin="{{$chronogramme->heure_fin}}" data-nom-activite="{{$chronogramme->nom_activite}}" data-date-activity="{{$chronogramme->date_activite}}">Modifier</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <script>
-                            document.getElementById('date_heure_debut').addEventListener('change', function () {
-                                generateDateFields();
-                            });
-                        
-                            document.getElementById('date_heure_fin').addEventListener('change', function () {
-                                generateDateFields();
-                            });
-                        
-                            function generateDateFields() {
-                                var dateDebut = new Date(document.getElementById('date_heure_debut').value);
-                                var dateFin = new Date(document.getElementById('date_heure_fin').value);
-                                var dateActiviteFields = document.getElementById('date_activite_fields');
-                        
-                                dateActiviteFields.innerHTML = ''; // Nettoyer le contenu existant
-                        
-                                while (dateDebut <= dateFin) {
-                                    var dateActiviteField = document.createElement('div');
-                                    dateActiviteField.innerHTML = `
-                                        <div class="row g-3 mb-4">
-                                            <div class="col-12">
-                                                <label for="date_activite" class="fw-bold">Date</label>
-                                                <input type="date" name="date_activite" class="form-control fw-bold" readonly value="${dateDebut.toISOString().split('T')[0]}">
-                                            </div>
-                                        </div>
-                                    `;
-                                    dateActiviteFields.appendChild(dateActiviteField);
-                        
-                                    for (let hour = 0; hour < 24; hour++) {
-                                        const formattedHour = hour.toString().padStart(2, '0');
-                                        const debut = `${formattedHour}:00`;
-                                        const finHour = (hour + 1) % 24;
-                                        const finFormattedHour = finHour.toString().padStart(2, '0');
-                                        let fin = `${finFormattedHour}:00`;
-                        
-                                        var heureActiviteField = document.createElement('div');
-                                        heureActiviteField.innerHTML = `
-                                            <div class="row g-3 mb-4 ms-4">
-                                                <div class="col-sm-4">
-                                                    <label for="heure_debut">Heure de début de l'activité</label>
-                                                    <input type="time" name="heure_debut" class="form-control" value="${debut}" readonly>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <label for="heure_fin">Heure de fin de l'activité</label>
-                                                    <input type="time" name="heure_fin" class="form-control" value="${fin}" readonly>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <label for="nom_activite">Nom de l'activité</label>
-                                                    <input type="text" name="nom_activite[]" class="form-control">
-                                                </div>
-                                            </div>
-                                        `;
-                                        dateActiviteFields.appendChild(heureActiviteField);
-                                    }
-                        
-                                    // Incrémenter d'un jour
-                                    dateDebut.setDate(dateDebut.getDate() + 1);
-                                }
-                            }
-                        </script>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const toastLiveExample = document.getElementById('liveToast');
-        
-                                if (toastLiveExample) {
-                                    const toastBootstrap = new bootstrap.Toast(toastLiveExample);
-                                    toastBootstrap.show();
-                                }
-                            });
-                        </script>
-                        <div class="col-12 row">
-                            <div class="col">
-                                <a href="{{route('evenement.create')}}" class="btn btn-outline-success w-100">Précédent</a>
-                            </div>
-                            <div class="col">
-                                <button type="submit" class="btn btn-success w-100">Suivant</button>
+                    @endif
+                @endforeach
+                <div class="card shadow mb-3 border-0 col-8 mt-3 ms-5" style="max-width: 540px;">
+                    <div class="card-body row ActivityPlace">
+                        <div class="col-10 fs-4 fw-bold">Ajouter une activité</div>
+                        <div class="col-2">
+                            <button class="btn btn-outline-danger addActivity" data-date-activity="{{$currentDate->toDateString()}}" data-evenement-id="{{ $evenement->id }}" data-last-end-time="{{ $lastActivityEndTime }}">
+                                <svg class="bi bi-plus" fill="currentColor" width="30" height="30">
+                                    <use xlink:href="#plus"></use>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @php
+                $currentDate->addDay();
+            @endphp
+        @endwhile
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            function addActivityToDiv(date_activite, evenement_id, activityPlace, activityContainer, lastEndTime) {
+                let newEndTime = '';
+                if (lastEndTime) {
+                    const [hours, minutes] = lastEndTime.split(':').map(Number);
+                    const endTimeDate = new Date();
+                    endTimeDate.setHours(hours + 1);
+                    endTimeDate.setMinutes(minutes);
+                    newEndTime = endTimeDate.toTimeString().substring(0, 5);
+                }
+                
+                var formHtml = `
+                    <form action="{{ route('chronogramme.store') }}" method="POST" class="needs-validation" novalidate>
+                        @csrf
+                        <input type="hidden" name="date_activite" value="${date_activite}">
+                        <input type="hidden" name="evenement_id" value="${evenement_id}">
+                        <div class="input-group">
+                            <input type="time" name="heure_debut" class="form-control w-25 heure_debutInput" value="${lastEndTime ? lastEndTime : ''}" required>
+                            <input type="time" name="heure_fin" class="form-control w-25 heure_finInput" value="${newEndTime ? newEndTime : ''}" required>
+                            <input type="text" name="nom_activite" class="form-control w-50 activityInput" required>
+                        </div>
+                    </form>
+                `;
+                activityPlace.html(formHtml);
+
+                var newCardHtml = `
+                    <div class="col ActivityContainer">
+                        <div class="card shadow mb-3 border-0 col-8 mt-3 ms-5" style="max-width: 540px;">
+                            <div class="card-body row ActivityPlace">
+                                <div class="col-10 fs-4 fw-bold">Ajouter une activité</div>
+                                <div class="col-2">
+                                    <button class="btn btn-outline-danger addActivity" data-date-activity="${date_activite}" data-evenement-id="${evenement_id}" data-last-end-time="${lastEndTime}">
+                                        <svg class="bi bi-plus" fill="currentColor" width="30" height="30">
+                                            <use xlink:href="#plus"></use>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                       
-                    </form>
-                </div>
-            </div>      
+                    </div>
+                `;
+                activityContainer.after(newCardHtml);
+            }
+            $('#activitiesContainer').on('click', '.editActivity', function(e) {
+                e.preventDefault();
+
+                const editButton = $(this);
+                const activityPlace = editButton.closest('.ActivityPlace');
+                const chronogrammeId = editButton.data('chronogramme-id');
+                const heureDebut = editButton.data('heure-debut');
+                const heureFin = editButton.data('heure-fin');
+                const nomActivite = editButton.data('nom-activite');
+                const dateActivite = editButton.data('date-activite');
+
+                const formHtml = `
+                    
+                        <input type="hidden" class="chronogrammeToModify" name="chronogramme_id" value="${chronogrammeId}">
+                        <input type="hidden" class="DateActivityToModify" name="date_activite" value="${dateActivite}">
+                        <div class="row row-cols-2">
+                            <div class="col-10">
+                                <div class="input-group">
+                                    <input type="time" name="heure_debut" class="form-control  heure_debutInputModified w-25" value="${heureDebut}" required>
+                                    <input type="time" name="heure_fin" class="form-control  heure_finInputModified w-25" value="${heureFin}" required>
+                                    <input type="text" name="nom_activite" class="form-control  activityInputModified w-50" value="${nomActivite}" required>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-success editActivityBtn">
+                                    <i class="bi-check check"></i>
+                                </button> 
+                            </div>  
+                        </div>
+                    </div
+                    
+                `;
+               
+                activityPlace.html(formHtml);
+            });
+           $('#activitiesContainer').on('click', '.editActivityBtn', function(e) {
+                e.preventDefault();
+                const activityInputModified = $('.activityInputModified');
+                const activityPlace = activityInputModified.closest('.ActivityPlace');
+                const chronogrammeId= activityPlace.find('input[name="chronogramme_id"]').val();
+                const heureDebut = activityPlace.find('.heure_debutInputModified').val();
+                const heureFin =  activityPlace.find('.heure_finInputModified').val();
+                //const dateActivite = activityInputModified.closest('.DateActivityToModify').val();
+                const nomActivite = activityInputModified.val();
+                
+
+                if (!heureDebut) {
+                    $('.heure_debutInputModified').addClass('is-invalid');
+                } else if (!heureFin) {
+                    $('.heure_finInputModified').addClass('is-invalid');
+                } else if (!nomActivite) {
+                    $('.activityInputModified').addClass('is-invalid');
+                } else if (heureDebut>heureFin) {
+                    $('.heure_debutInputModified').addClass('is-invalid');
+                    $('.heure_finInputModified').addClass('is-invalid');
+                }else
+                {
+                    modifierChronogramme(activityPlace, chronogrammeId,nomActivite,heureDebut,heureFin)
+                }
+                
+           })
+
+           function modifierChronogramme(activityPlace,chronogrammeId,nomActivite,heureDebut,heureFin) {
+                  
+            var url='{{ route('chronogramme.update',":chronogrammeId") }}'
+                url = url.replace(':chronogrammeId', chronogrammeId);
+               
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                
+                $.ajax({
+                    type: 'PUT',
+                    url: url,
+                    data: {
+                        chronogramme_id: chronogrammeId,
+                        nom_activite: nomActivite,
+                        heure_debut: heureDebut,
+                        heure_fin: heureFin
+                    },
+                    dataType: 'JSON',
+                    success: function(data) {
+                        if (data.success) {
+                            
+                            activityPlace.html(`
+                                <div class="row">
+                                    <div class="col-8 ">
+                                        <span class="text-secondary fst-italic">De</span>
+                                        <span class="text-success fw-bold">${data.heure_debut}</span>
+                                        <span class="text-secondary fst-italic">à</span>
+                                        <span class="text-danger fw-bold">${data.heure_fin}</span>
+                                        <span class="text-warning fw-bold">${data.nom_activite}</span>
+                                    </div>
+                                    <div class="col-4">
+                                       <button class="btn btn-success editActivity" data-chronogramme-id="${data.chronogramme_id}" data-heure-debut="${data.heure_debut}" data-heure-fin="${data.heure_fin}" data-nom-activite="${data.nom_activite}">Modifier</button>
+                                    </div>
+                                </div>
+                            `);
+                        }
+                    }
+                });
+           }
+
+            $('#activitiesContainer').on('click', '.addActivity', function() {
+                var addActivity = $(this);
+                var activityPlace = addActivity.closest('.ActivityPlace');
+                var activityContainer = addActivity.closest('.ActivityContainer');
+                var date_activite = addActivity.data('date-activity');
+                var evenement_id = addActivity.data('evenement-id');
+                var lastEndTime = addActivity.data('last-end-time');
            
+                var heureDebutInput = $('.heure_debutInput');
+                var heureFinInput = $('.heure_finInput');
+                var activityInput = $('.activityInput');
+                var indexHeureDebutInput = heureDebutInput.length;
+                var indexHeureFinInput = heureFinInput.length;
+                var indexActivityInput = activityInput.length;
+
+                var heureDebutInputModified = $('.heure_debutInputModified');
+                var heureFinInputModified = $('.heure_finInputModified');
+                var activityInputModified = $('.activityInputModified');
+                var indexHeureDebutInputModified = heureDebutInputModified.length;
+                var indexHeureFinInputModified = heureFinInputModified.length;
+                var indexActivityInputModified = activityInputModified.length;
+
+
+                if (indexHeureDebutInput > 0 || indexHeureFinInput > 0 || indexActivityInput > 0 || indexHeureDebutInputModified > 0 || indexHeureFinInputModified > 0 || indexActivityInputModified > 0) {
+                    if (!heureDebutInput.last().val() || !heureFinInput.last().val() || !activityInput.last().val()) {
+                        if (!heureDebutInput.last().val()) {
+                            heureDebutInput.last().addClass('is-invalid');
+                        } else if (!heureFinInput.last().val()) {
+                            heureFinInput.last().addClass('is-invalid');
+                        } else if (!activityInput.last().val()) {
+                            activityInput.last().addClass('is-invalid');
+                        }else if (!heureDebutInputModified.last().val()) {
+                            heureDebutInputModified.last().addClass('is-invalid');
+                        } else if (!heureFinInputModified.last().val()) {
+                            heureFinInputModified.last().addClass('is-invalid');
+                        } else if (!activityInputModified.last().val()) {
+                            activityInputModified.last().addClass('is-invalid');
+                        }
+                    } else {
+                        addActivityToDiv(date_activite, evenement_id, activityPlace, activityContainer, lastEndTime);
+                    }
+                } else {
+                    addActivityToDiv(date_activite, evenement_id, activityPlace, activityContainer, lastEndTime);
+                }
+            });
+
+            $('#activitiesContainer').on('blur', '.activityInput', function() {
+                var activityInput = $(this);
+                var activityPlace = activityInput.closest('.ActivityPlace');
+                var heure_debut = activityPlace.find('.heure_debutInput').val();
+                var heure_fin = activityPlace.find('.heure_finInput').val();
+                var date_activite = activityPlace.find('input[name="date_activite"]').val();
+                var nom_activite = activityPlace.find('input[name="nom_activite"]').val();
+                var evenement_id = activityPlace.find('input[name="evenement_id"]').val();
+
+                if (!heure_debut) {
+                    $('.heure_debutInput').addClass('is-invalid');
+                } else if (!heure_fin) {
+                    $('.heure_finInput').addClass('is-invalid');
+                } else if (!nom_activite) {
+                    $('.activityInput').addClass('is-invalid');
+                } else if (heure_debut>heure_fin) {
+                    $('.heure_debutInput').addClass('is-invalid');
+                    $('.heure_finInput').addClass('is-invalid');
+                }else {
+                    addChronogramme(activityPlace, heure_debut, heure_fin, date_activite, nom_activite, evenement_id, activityInput);
+                }
+            });
+
+            function addChronogramme(activityPlace, heure_debut, heure_fin, date_activite, nom_activite, evenement_id, activityInput) {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '{{ route('chronogramme.store') }}',
+                    data: {
+                        evenement_id: evenement_id,
+                        date_activite: date_activite,
+                        nom_activite: nom_activite,
+                        heure_debut: heure_debut,
+                        heure_fin: heure_fin
+                    },
+                    dataType: 'JSON',
+                    success: function(data) {
+                        if (data.success) {
+                            
+                            activityPlace.html(`
+                                <div class="row">
+                                    <div class="col-8 ">
+                                        <span class="text-secondary fst-italic">De</span>
+                                        <span class="text-success fw-bold">${data.heure_debut}</span>
+                                        <span class="text-secondary fst-italic">à</span>
+                                        <span class="text-danger fw-bold">${data.heure_fin}</span>
+                                        <span class="text-warning fw-bold">${data.nom_activite}</span>
+                                    </div>
+                                    <div class="col-4">
+                                       <button class="btn btn-success editActivity" data-chronogramme-id="{{$chronogramme->id}}" data-heure-debut="{{$chronogramme->heure_debut}}" data-heure-fin="{{$chronogramme->heure_fin}}" data-nom-activite="{{$chronogramme->nom_activite}}">Modifier</button>
+                                    </div>
+                                </div>
+                            `);
+                        }
+                    }
+                });
+            }
+
+            $('#activitiesContainer').on('change', '.is-invalid', function() {
+                    $(this).removeClass('is-invalid').addClass('is-valid');
+                    if ($('.heure_debutInput').val()<($('.heure_finInput').val())) {
+                        $('.heure_debutInput').removeClass('is-invalid').addClass('is-valid')
+                        $('.heure_finInput').removeClass('is-invalid').addClass('is-valid')
+                    }
+            });
+
             
-        </div>
-    @endsection
+        });
+    </script>
+@endsection
