@@ -11,6 +11,8 @@ use App\Http\Controllers\RBACRedirectionController;
 use App\Http\Controllers\TypeLieuController;
 use App\Http\Controllers\TypeTicketController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\IntervenantController;
+use App\Http\Controllers\UsersoftdeleteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,7 +42,7 @@ Route::post('/NombreTicket',[TicketController::class, 'nombreTicket'])->name('no
 Route::post('/like/event',[EvenementController::class,'like_event'])->name('like_event')->middleware('auth');
 Route::post('/query',[EvenementController::class,'research_event'])->name('research_event');
 Route::get('/gererEvent/{evenement}',[EvenementController::class,'gererEvent'])->name('gererEvent')->middleware('auth','role:Promoteur|Admin');
-Route::post('/getChartsData',[EvenementController::class,'getChartsData'])->name('getChartsData')->middleware('auth','role:Promoteur');
+Route::post('/getChartsData',[EvenementController::class,'getChartsData'])->name('getChartsData')->middleware('auth','role:Promoteur|Admin');
 Route::get('/billetterie',[TypeTicketController::class,'billetterie'])->name('billetterie');
 Route::get('/ModifierHoraire',[EvenementController::class,'ModifierHoraire'])->name('ModifierHoraire');
 Route::post('/UpdaterHoraire',[EvenementController::class,'UpdateHoraire'])->name('UpdateHoraire');
@@ -53,7 +55,9 @@ Route::get('/invalidTicket',[TicketController::class,'invalidTicket'])->name('in
 Route::get('/eventToVerify',[TicketController::class,'eventToVerify'])->name('eventToVerify');
 Route::post('/eventSending',[TicketController::class,'eventSending'])->name('eventSending');
 Route::get('/redirection',[RBACRedirectionController::class,'redirection'])->name('redirection');
-
+Route::get('/PromoteurShow/{evenement}',[EvenementController::class,'PromoteurShow'])->name('PromoteurShow');
+Route::post('/deleteUser',[UsersoftdeleteController::class,'softDelete'])->name('softDelete');
+Route::get('/ConfirmUserBeforeDelete/{user}',[UsersoftdeleteController::class,'ConfirmUserBeforeDelete'])->name('ConfirmUserBeforeDelete');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy']]);
@@ -62,6 +66,7 @@ Route::resource('chronogramme',ChronogrammeController::class)->middleware(['auth
 Route::resource('type_ticket', TypeTicketController::class)->middleware(['auth','role:Promoteur']);
 Route::resource('ticket', TicketController::class);
 Route::resource('Promoteur',ProfilPromoteurController::class);
+Route::resource('Intervenant',IntervenantController::class)->middleware(['auth','role:Promoteur']);
 
 Route::get('/AllEvents',[AdminController::class,'AllEvents'])->name('AllEvents')->middleware('auth','role:Admin');
 Route::post('/Administrative_activation',[AdminController::class,'Administrative_activation'])->name('Administrative_action')->middleware('auth','role:Admin');
@@ -71,4 +76,6 @@ Route::post('/Recommand_Event',[AdminController::class,'Recommand_Event'])->name
 Route::get('/users',[AdminController::class,'users'])->name('users')->middleware('auth','role:Admin');
 Route::get('/UserActivity/{user}',[AdminController::class,'UserActivity'])->name('UserActivity')->middleware('auth','role:Admin');
 Route::get('/dashboard',[AdminController::class,'dashboard'])->name('dashboard')->middleware('auth','role:Admin');
+Route::get('/AdminShowEvent/{evenement}',[AdminController::class,'AdminShowEvent'])->name('AdminShowEvent');
+Route::post('/getChartsDataAdmin',[AdminController::class,'getChartsDataAdmin'])->name('getChartsDataAdmin');
 

@@ -796,3 +796,8 @@
   width: 150px;
   padding: auto;
 }
+
+input::placeholder{
+  font-style: italic;
+}
+

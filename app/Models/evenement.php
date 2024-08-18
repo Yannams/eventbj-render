@@ -39,4 +39,9 @@ class evenement extends Model
         return $this->belongsTo(Profil_promoteur::class);
     }
 
+    public function intervenants():HasMany
+    {
+        return $this->hasMany(intervenant::class);
+    }
+
 }

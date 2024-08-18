@@ -194,6 +194,11 @@
                           @csrf
                       </form>
                   </li>
+                  <li>
+                    <a href="{{route('ConfirmUserBeforeDelete',auth()->user()->id)}}" class="justify-content-center d-flex align-items-center dropdown-item">
+                      <i class="bi bi-trash me-1"></i>Supprimer le compte  
+                    </a>
+                  </li>
                 @else
                   <li>
                       <a href="{{ route('login') }}" class="dropdown-item">

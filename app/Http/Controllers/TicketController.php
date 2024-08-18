@@ -25,8 +25,9 @@ class TicketController extends Controller
      */
     public function index()
     {
-       $ticket=ticket::all();
-      
+        $user=User::with('tickets')->find(Auth::id());
+        $ticket=$user->tickets;
+        
         return view('admin.ticket.index', compact('ticket'));
     }
 

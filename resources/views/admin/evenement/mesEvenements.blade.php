@@ -74,12 +74,17 @@
                                     </form>
                                 </li>
                                 <li>
-                                    <a href="{{route('evenement.show', $evenements)}}" class="dropdown-item"> voir</a>
+                                    <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item"> voir</a>
                                 </li>
                                 <li>
                                     <a href="{{route('chronogramme.create',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un chronogramme</a>
                                 </li>
-
+                                <li>
+                                    <a href="{{route('Intervenant.index',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un intervenant</a>
+                                </li>
+                                <li>
+                                    <a href="" class="dropdown-item"> Ajouter un nouveau ticket </a>
+                                </li>
                                 </ul>
                               </div>
                         </div>

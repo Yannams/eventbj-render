@@ -2,9 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\chronogramme;
 use App\Models\evenement;
+use App\Models\Intervenant;
+use App\Models\Profil_promoteur;
+use App\Models\ticket;
+use App\Models\type_ticket;
 use App\Models\User;
+use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
@@ -114,8 +122,10 @@ class AdminController extends Controller
   }
 
   public function users(){
-    $users=User::all();
-    return view('administrative.evenement.users',compact('users'));
+    $users=User::role(['Promoteur','User'])->get();
+    $promoteurs=User::role('Promoteur')->get();
+    
+    return view('administrative.evenement.users',compact('users','promoteurs'));
   }
 
   public function UserActivity($user){
@@ -126,4 +136,149 @@ class AdminController extends Controller
   public function dashboard(){
     return view('administrative.evenement.dashboard');
   }
+
+  public function AdminShowEvent(evenement $evenement){
+    $evenement=evenement::find($evenement->id);
+    $date= new DateTime($evenement->date_heure_debut);
+    $promoteur_id=$evenement->profil_promoteur_id;
+   
+    $user_id=$evenement->Profil_promoteur->user->id;
+   
+    $organisateur=Profil_promoteur::find($promoteur_id);
+    $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
+    $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
+    $same_creator=evenement::where('isOnline', true)
+            ->where('profil_promoteur_id',$promoteur_id)
+            ->get();
+    $user_id=auth()->id();
+    $click=$evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement->id)->get();     
+    if ($click->isEmpty()) {
+        $nombre_click=['nombre_click'=>1,'like'=>false,'date_click'=>now(),'created_at'=>now(),'updated_at'=>now()];
+        $evenement->users()->attach($user_id,$nombre_click);
+    } 
+    $intervenants=Intervenant::where('evenement_id',$evenement->id)
+                ->get();
+    return view('administrative.evenement.adminShowEvent', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator','intervenants'));        
+  }
+
+  public function getChartsDataAdmin(Request $request){
+      $users=User::withTrashed()->get();
+      $promoteurs=Profil_promoteur::all();
+      $user_periode=$request->user_periode;
+      $promoteur_periode=$request->promoteur_periode;
+      $dateInscriptions=array();
+      $nbrInscriptionPerDay=array();
+      $nbrTotalPerDay=array();
+      if($user_periode==7){
+        for($i=$user_periode; $i>=0; $i--){
+          $date=Carbon::now()->subDays($i);
+          $dateInscriptions[]=date('d/m/Y',strtotime($date)); 
+          $dateForEaches[]=$date;
+        }
+      }
+      foreach ($dateForEaches as $key => $dateForEach) {
+        $nbreInscription=count($users->where('created_at','>=',$dateForEach->startofDay())->where('created_at','<=',$dateForEach->endofDay()));
+        $nbrInscriptionPerDay[]=$nbreInscription;
+      }
+      foreach ($dateForEaches as $key => $dateForEach) {
+        $nbreDesinscription=count($users->where('deleted_at','>=',$dateForEach->startofDay())->where('created_at','<=',$dateForEach->endofDay()));
+        $nbrDesinscriptionPerDay[]=$nbreDesinscription;
+      }
+      foreach ($dateForEaches as $key => $dateForEach) {
+        $nbreInscription=count($users->where('created_at','>=',$dateForEach->startofDay())->where('created_at','<=',$dateForEach->endofDay()));
+        $nbreDesinscription=count($users->where('deleted_at','>=',$dateForEach->startofDay())->where('created_at','<=',$dateForEach->endofDay()));
+        $Total= $nbreInscription-$nbreDesinscription;
+        $nbrTotalPerDay[]=$Total;
+      }
+
+      $cliqueurs=User::whereHas('evenements',function ($query){
+        $query->where('nombre_click', true);
+      })->whereDoesntHave('tickets')->count();
+      
+      $acheteur_unique= User::whereHas('tickets.type_ticket.evenement',function ($query) {
+        $query->groupBy('evenement_id')
+              ->havingRaw('COUNT(DISTINCT evenement_id) = 1');
+    })->count();
+     
+      $acheteur_multiple=$users = DB::table('users')
+    ->join('tickets', 'users.id', '=', 'tickets.user_id')
+    ->join('type_tickets', 'tickets.type_ticket_id', '=', 'type_tickets.id')
+    ->join('evenements', 'type_tickets.evenement_id', '=', 'evenements.id')
+    ->select('users.id', 'users.name')
+    ->groupBy('users.id', 'users.name')
+    ->havingRaw('COUNT(DISTINCT evenements.id) > 1')
+    ->count();
+
+    $fantomes= User::whereDoesntHave('roles', function ($query) {
+            $query->where('name', 'admin');
+        })
+        ->leftJoin('evenement_user', 'users.id', '=', 'evenement_user.user_id')
+        ->leftJoin('tickets', 'users.id', '=', 'tickets.user_id')
+        ->whereNull('evenement_user.user_id')
+        ->whereNull('tickets.user_id')
+        ->select('users.*')
+        ->count();
+        
+
+
+        $user_segmentation= [$cliqueurs,$acheteur_unique,$acheteur_multiple,$fantomes];
+
+        if($promoteur_periode==7){
+          for($i=$promoteur_periode; $i>=0; $i--){
+            $date=Carbon::now()->subDays($i);
+            $datePromoteurs[]=date('d/m/Y',strtotime($date)); 
+            $dateForEachesPromoteurs[]=$date;
+          }
+        }
+        foreach ($dateForEachesPromoteurs as $key => $dateForEach) {
+          $nbrePromoteur=count($promoteurs->where('created_at','>=',$dateForEach->startofDay())->where('created_at','<=',$dateForEach->endofDay()));
+          $nbrPromoteurPerDay[]=$nbrePromoteur;
+        }
+        
+        $promoteur_unique = evenement::select('profil_promoteur_id')
+                            ->groupBy('profil_promoteur_id')
+                            ->havingRaw('COUNT(*) = 1')
+                            ->count();
+        $promoteur_multiple=evenement::select('profil_promoteur_id')
+                            ->groupBy('profil_promoteur_id')
+                            ->havingRaw('COUNT(*) > 1')
+                            ->count();
+        $promoteur_fantome=Profil_promoteur::whereDoesntHave('evenements')->count();
+
+        $promoteur_segmentation=[$promoteur_multiple,$promoteur_unique,$promoteur_fantome];
+
+        $sold_out = evenement::where('isOnline', 1)
+                    ->whereHas('type_tickets', function ($query) {
+                        $query->havingRaw('SUM(place_dispo) = 0');
+                    })
+                    ->count();
+        $half_sold = evenement::where('isOnline', 1)
+                    ->whereHas('type_tickets', function ($query) {
+                        $query->havingRaw('SUM(quantite-place_dispo) >= SUM(quantite/2)')
+                              ->havingRaw('SUM(place_dispo) > 0');
+                    })
+                    ->count();
+        $minor_sold= evenement::where('isOnline', 1)
+                      ->whereHas('type_tickets', function ($query) {
+                          $query->havingRaw('SUM(quantite-place_dispo) < SUM(quantite/2)');
+                      })
+                      ->count();
+      
+        $evenement_segmentation=[$sold_out,$half_sold,$minor_sold];
+        $Total_user=User::all()->count();
+      return response()->json([ 
+          'DatesInscription'=>$dateInscriptions,
+          'NbreInscriptionPerDay'=>$nbrInscriptionPerDay,
+          'NbreDesinscriptionPerDay'=>$nbrDesinscriptionPerDay,
+          'NbreTotalPerDay'=>$nbrTotalPerDay,
+          'user_segmentation'=>$user_segmentation,
+          'DatePromoteurs'=>$datePromoteurs,
+          'NbrePromoteursPerDay'=>$nbrPromoteurPerDay,
+          'promoteur_segmentation'=>$promoteur_segmentation,
+          'evenement_segmentation'=>$evenement_segmentation,
+          'total_user'=>$Total_user,
+      ]);
+  }
+
+
 }

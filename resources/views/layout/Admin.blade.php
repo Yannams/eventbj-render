@@ -17,6 +17,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       {!! Vite::content('resources/css/app.css') !!}
   </style>
@@ -164,7 +165,7 @@
           </li>
           <li class="nav-item">
               <a href="{{route('dashboard')}}" class="nav-link link-success @if (request()->url()== route('dashboard')) active @endif d-flex align-items-center" aria-current="page">
-                  <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#person"></use></svg> Dashboard
+                <i class="bi bi-speedometer2 me-2"></i> Dashboard
               </a>
           </li>
           <li class="nav-item">

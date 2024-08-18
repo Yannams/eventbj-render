@@ -49,7 +49,7 @@
                             </a>
                           
                             <ul class="dropdown-menu">
-                              <li><a class="dropdown-item" href="{{route('evenement.show',$evenement->id)}}">Voir plus</a></li>
+                              <li><a class="dropdown-item" href="{{route('AdminShowEvent',$evenement->id)}}">Voir plus</a></li>
                               <li><a class="dropdown-item" href="{{route('gererEvent',$evenement->id)}}">Voir les performances </a></li>
                               <li><button class="dropdown-item sendEvent" data-evenement-id="{{$evenement->id}}">@if ($evenement->administrative_status==true)
                                 Désactiver l'évènement

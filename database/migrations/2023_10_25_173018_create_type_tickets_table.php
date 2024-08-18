@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('frais_ticket');
             $table->string('type_ticket');
             $table->string('place_dispo');
+            $table->string('quantite');
             $table->string('image_ticket');
             $table->string('methodeProgrammationLancement');
             $table->timestamp('Date_heure_lancement')->nullable();

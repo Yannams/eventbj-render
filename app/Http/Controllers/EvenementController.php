@@ -18,6 +18,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ticket;
+use App\Models\Intervenant;
+
 
 class EvenementController extends Controller
 {
@@ -74,15 +76,6 @@ class EvenementController extends Controller
      * Display the specified resource.
      */
     public function show(evenement $evenement){
-        if(auth()->user()->hasRole('Admin')){
-            $layout='layout.admin';
-        }
-        elseif(auth()->user()->hasRole('Promoteur')){
-            $layout='layout.promoteur';
-        }else{
-            $layout='layout.utilisateur';
-        }
-        
         $evenement=evenement::find($evenement->id);
         $date= new DateTime($evenement->date_heure_debut);
         $promoteur_id=$evenement->profil_promoteur_id;
@@ -101,7 +94,9 @@ class EvenementController extends Controller
             $nombre_click=['nombre_click'=>1,'like'=>false,'date_click'=>now(),'created_at'=>now(),'updated_at'=>now()];
             $evenement->users()->attach($user_id,$nombre_click);
         } 
-        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator', 'layout'));
+        $intervenants=Intervenant::where('evenement_id',$evenement->id)
+                    ->get();
+        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator','intervenants'));
        
            
     }
@@ -639,6 +634,32 @@ class EvenementController extends Controller
             'taux_conversion'=>$TauxConversionParJour,
             'date_conversion'=>$Date_conversion,
         ]);
+    }
+
+    public function PromoteurShow(evenement $evenement){
+        $evenement=evenement::find($evenement->id);
+        $date= new DateTime($evenement->date_heure_debut);
+        $promoteur_id=$evenement->profil_promoteur_id;
+       
+        $user_id=$evenement->Profil_promoteur->user->id;
+       
+        $organisateur=Profil_promoteur::find($promoteur_id);
+        $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
+        $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
+        $same_creator=evenement::where('isOnline', true)
+                ->where('profil_promoteur_id',$promoteur_id)
+                ->get();
+        $user_id=auth()->id();
+        $click=$evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement->id)->get();     
+        if ($click->isEmpty()) {
+            $nombre_click=['nombre_click'=>1,'like'=>false,'date_click'=>now(),'created_at'=>now(),'updated_at'=>now()];
+            $evenement->users()->attach($user_id,$nombre_click);
+        } 
+        $intervenants=Intervenant::where('evenement_id',$evenement->id)
+                    ->get();
+        return view('admin.evenement.PromoteurShow', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator','intervenants'));
+       
+           
     }
 
 }

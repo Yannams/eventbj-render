@@ -15,4 +15,5 @@ class RBACRedirectionController extends Controller
             return redirect()->route('AllEvents');
         }
     }
+    
 }

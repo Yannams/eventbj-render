@@ -1,5 +1,6 @@
-@extends($layout)
+@extends('layout.utilisateur')
     @section('content')
+
     <div class="row row-cols-1 row-cols-md-1 row-cols-lg-2 g-3 py-4">
         <div class="col-lg-8">
             <div class="row row-cols-1 row-cols-md-1 row-cols-lg-1 g-4">
@@ -85,6 +86,46 @@
                         
 
                 </div>
+                <div class="col">
+                    <div class="card border-0 shadow">
+                        <div class="card-body">
+                            <div class="d-flex">
+                                <div class="p-2 w-100 fw-bold">Voir les guests</div>
+                                <div class="p-2">
+                                    <a class="btn" data-bs-toggle="collapse" href="#intervenant" role="button" aria-expanded="false" aria-controls="chronogramme" id="" >
+                                        <svg class="bi bi-plus"  fill="#F0343C" width="30" height="30">
+                                            <use xlink:href="#plus"></use>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>  
+                           </div>
+                    </div>
+                   
+                </div>
+                <div class="col">
+                    <div class="card border-0 shadow">
+                        <div id="intervenant" class="collapse" >
+                            <div class="card-body">
+                                <div class="row">
+                                    @foreach ($intervenants as $intervenant )
+                                        <div class="col-2">
+                                            <img src="{{asset($intervenant->photo_intervenant)}}" alt="" width="100px" height="100px" class="rounded-circle">
+                                            <div class="d-flex flex-column">
+                                                <div class="text-center fs-5 fw-bold">{{$intervenant->nom_intervenant}}</div>
+                                                <div class="text-center fs-6 fst-italic text-secondary">{{$intervenant->Role_intervenant}}</div>
+
+                                            </div>
+                                        </div>                                    
+                                    @endforeach
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                        
+
+                </div>
                 <div class="col ">
                     <div class="card border-0 shadow">
                         <div class="card-body">
@@ -112,7 +153,7 @@
                                     <form action="{{route('ticket_selected')}}" method="post">
                                         @csrf
                                         <input type="hidden" name="ticket" value="{{$tickets->id}}">
-                                        <button type="submit" class="btn btn-success w-100">Obtenir du ticket</button>
+                                        <button type="submit" class="btn btn-success w-100" @role('Admin')disabled @endrole>Obtenir le ticket</button>
                                     </form>
                                 </div>
                             </div>
@@ -165,5 +206,5 @@
             
             
         </div>
-    </div>   
+    </div> 
     @endsection

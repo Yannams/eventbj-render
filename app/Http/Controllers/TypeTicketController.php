@@ -62,6 +62,7 @@ class TypeTicketController extends Controller
         $type_ticket->frais_ticket=$request->frais_ticket;
         $type_ticket->type_ticket=$request->type_ticket;
         $type_ticket->place_dispo=$request->place_dispo;
+        $type_ticket->quantite=$request->place_dispo;
         $type_ticket->evenement_id=$request->evenement_id;
         $type_ticket->methodeProgrammationLancement=$request->methodeProgrammationLancement;
         $type_ticket->Date_heure_lancement=$request->Date_heure_lancement;
