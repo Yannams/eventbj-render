@@ -70,45 +70,45 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-12 ">
+                    <div class="col-6 ">
                         <label for="nom_ticket">Nom ticket</label>
                         <input type="text" name="nom_ticket" id="nom_ticket" class="form-control" minlength="3" maxlength="100" required>
                         <div class="invalid-feedback">
                             Veuillez entrer un nom d'au moins 3 caractères
                         </div>
                     </div>
-                    <div class="col-2">
-                        <label for="type_ticket">type_ticket</label>
-                        <select name="type_ticket" id="type_ticket" class="form-select" required>
-                            <option value="ticket payé">ticket payé</option>
+                    <div class="col-6">
+                        <label for="format">Format</label>
+                        <select name="format" id="format" class="form-select" required>
+                            <option value="Ticket">Ticket</option>
                             <option value="Invitation">Invitation</option>
-                            <option value="Don">Don</option>
                         </select>
                         <div class="invalid-feedback">
-                            Veuillez choisir une categorie de ticket 
+                            Veuillez choisir un format de pass 
                         </div>
                     </div>
-                
-                    <div class="col-sm-4">
-                        <label for="prix_ticket">Prix ticket</label>
-                        <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" required>
-                        <div class="invalid-feedback">
-                            Veuillez mettre le prix du ticket
+                    <div class="format_input_container row g-3 w-100">
+                        <div class="col-sm-6">
+                            <label for="prix_ticket">Prix ticket</label>
+                            <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" required>
+                            <div class="invalid-feedback">
+                                Veuillez mettre le prix du ticket
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <label for="frais_ticket">frais prélevée</label>
-                        <input type="number" name="frais_ticket" id="frais_ticket" class="form-control" min="0" required readonly>
-                        <div class="invalid-feedback">
-                            Impossible de calculer les frais de ticket
-                        </div>
-                    </div>
-                    
-                    <div class="col-sm-4">
-                        <label for="place_dispo">Quantité de ticket</label>
-                        <input type="number" name="place_dispo" id="place_dispo" class="form-control"  required>
-                        <div class="invalid-feedback">
-                            Veuillez ajouter une quantité
+                        {{-- <div class="col-sm-4">
+                            <label for="frais_ticket">frais prélevée</label>
+                            <input type="number" name="frais_ticket" id="frais_ticket" class="form-control" min="0" required readonly>
+                            <div class="invalid-feedback">
+                                Impossible de calculer les frais de ticket
+                            </div>
+                        </div> --}}
+                       
+                        <div class="col-sm-6">
+                            <label for="place_dispo">Quantité de ticket</label>
+                            <input type="number" name="place_dispo" id="place_dispo" class="form-control"  required>
+                            <div class="invalid-feedback">
+                                Veuillez ajouter une quantité
+                            </div>
                         </div>
                     </div>
                     <div class="row mt-3">
@@ -221,8 +221,7 @@
             </script>
             <script>
                 $('#methodeProgrammationLancement').change(function programmerLancement() {
-                    DateVal=$(this).val()
-                    console.log(DateVal);
+                    DateVal=$(this).val();
                     if(DateVal==="ProgrammerBilleterie"){
                        $('#programmerLancement').html("<label for=\"Date_heure_lancement\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_lancement\" id=\"Date_heure_lancement\" class=\"form-control\">")
                     }else{
@@ -231,8 +230,7 @@
                 })
 
                 $('#methodeProgrammationFermeture').change(function programmerFermeture() {
-                    DateVal=$(this).val()
-                    console.log(DateVal);
+                    DateVal=$(this).val();
                     if(DateVal==="ProgrammerFermeture"){ 
                         $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\">");
                     }else if(DateVal==="FinEvenement"){
@@ -242,7 +240,7 @@
                     }
                 })
             </script>
-            <script>
+            {{-- <script>
                 var prix_ticket_input=document.getElementById('prix_ticket');
                 var frais_ticket_input=document.getElementById('frais_ticket');
                 prix_ticket_input.addEventListener('input',function calulFrais() {
@@ -250,6 +248,52 @@
                     var frais_ticket=prix_ticket*0.1
                    frais_ticket_input.value=frais_ticket
                 })
+            </script> --}}
+            <script>
+                var format=document.querySelector('#format')
+                var formatContainer= document.querySelector('.format_input_container');
+                
+                format.addEventListener('change',function (e) {
+                   if (format.value=="Invitation") {
+                    formatContainer.innerHTML=`
+                     <div class="col-12">
+                            <label for="texte">Texte</label>
+                            <Textarea id="texte" class="form-control" name="texte"></Textarea>
+                            <div class="invalid-feedback">
+                                Veuillez entrez un texte descriptif
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <label for="place_dispo">Quantité d'invitation</label>
+                            <input type="number" name="place_dispo" id="place_dispo" class="form-control"  required>
+                            <div class="invalid-feedback">
+                                Veuillez ajouter une quantité
+                            </div>
+                        </div>`
+                   }else if(format.value=="Ticket"){
+                        formatContainer.innerHTML=`
+                            <div class="col-sm-6">
+                                <label for="prix_ticket">Prix ticket</label>
+                                <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" required>
+                                <div class="invalid-feedback">
+                                    Veuillez mettre le prix du ticket
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="place_dispo">Quantité de ticket</label>
+                                <input type="number" name="place_dispo" id="place_dispo" class="form-control"  required>
+                                <div class="invalid-feedback">
+                                    Veuillez ajouter une quantité
+                                </div>
+                            </div>
+                        `
+                   }
+                   
+                
+                    
+                })
+
+                
             </script>
     </div>
     @endsection

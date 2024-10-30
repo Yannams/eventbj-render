@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('type_tickets', function (Blueprint $table) {
             $table->id();
             $table->string('nom_ticket');
-            $table->string('prix_ticket');
-            $table->string('frais_ticket');
-            $table->string('type_ticket');
+            $table->string('prix_ticket')->nullable();
+            $table->string('frais_ticket')->nullable();
+            $table->string('format');
+            $table->text('texte')->nullable();
+            $table->string('lien')->nullable();
             $table->string('place_dispo');
             $table->string('quantite');
             $table->string('image_ticket');

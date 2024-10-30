@@ -33,7 +33,7 @@
                     <div class="card border-0 h-100 pb-5 shadow"  >
                         <div class="card-body">
                             <div class="fw-bold mb-3">localisation</div>
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.3481168183457!2d2.405072108722263!3d6.348952493614397!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1023558e21b47881%3A0xe031d320e94f6b07!2sPlace%20de%20l&#39;amazone!5e0!3m2!1sen!2sbj!4v1698851464579!5m2!1sen!2sbj" class="w-100 h-100 rounded-4" width="" height="" style=""></iframe>
+                            {!!$evenement->localisation_maps!!}
                         </div>
                     </div>
                 </div>
@@ -145,7 +145,7 @@
                 </div>   
                 <div id="ticket" class="collapse"  >
                      @foreach ($ticket as $tickets )
-                        <div class="col">
+                        <div class="col mb-3">
                             <div class="card border-0 shadow">
                                 <div class="card-body">
                                     <div class="fw-bold fs-1">{{$tickets->nom_ticket}} </div>
@@ -207,4 +207,12 @@
             
         </div>
     </div> 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Code exécuté après le chargement du DOM
+            maps=document.querySelector('iframe')
+            maps.classList.add('w-100','h-100','rounded-4');
+            
+        });
+    </script>
     @endsection

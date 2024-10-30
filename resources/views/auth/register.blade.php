@@ -7,6 +7,7 @@
     <title>Document</title>
     <link rel="icon" href="{{asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png')}}" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <title>eventbj</title>
@@ -87,9 +88,25 @@
                         </div>
                     </div>
                     <div class="col-md-6 d-flex justify-content-center">
-                        <form action="{{route('register')}}" method="post">
+                        <form action="{{route('register')}}" method="post" enctype="multipart/form-data">
                         @csrf
-                        <div class="col-12">   
+
+                        <div class="col-12">  
+                            <div class="mb-3 col-12 d-flex justify-content-center">
+                                <label for="profil_user">
+                                    <div class="position-relative" id="profil_container" style="width: 100px; height:100px">
+                                        <div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+                                            <div>
+                                                <i class="bi-person person fs-1 fw-bold text-white"></i>
+                                            </div>
+                                        </div>
+                                        <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+                                            <i class="bi-pencil pencil text-white"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                              <input type="file" name="profil_user" id="profil_user" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" >
+                            </div> 
                             <div class="row mb-2">
                                 <label for="name" class="col-12 col-form-label text-start">{{ __('Name') }}</label>
 
@@ -202,6 +219,32 @@
                     </div>
                 </div>
         </div>
+        <script>
+             $(document).ready(function(){
+        $('#profil_user').change(function (event) {
+          if (event.target.files && event.target.files[0]) {
+            
+            var reader = new FileReader();
+            // When the file is read, do this
+            reader.onload = function(e) {
+              // Create an image element
+              var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+                              <div>
+                                <img src="`+e.target.result+`" alt="" width="100px" height="100px" class="rounded-circle">
+                              </div>
+                            </div>
+                            <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+                              <i class="bi-pencil pencil text-white"></i>
+                            </div>`
+              
+              $('#profil_container').html(profil);
+            }
+            reader.readAsDataURL(event.target.files[0]);
+          }
+        })
+
+        });
+        </script>
     
 </body>
 </html>

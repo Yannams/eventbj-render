@@ -44,4 +44,9 @@ class evenement extends Model
         return $this->hasMany(intervenant::class);
     }
 
+    public function centre_interets():BelongsToMany
+    {
+        return $this->belongsToMany(Centre_interet::class)->withPivot('created_at','updated_at');;
+    }
+
 }

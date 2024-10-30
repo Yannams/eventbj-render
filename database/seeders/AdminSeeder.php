@@ -17,6 +17,7 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         $user= User::create([
+            'profil_user'=>'UsersProfiles/WhatsApp Image 2024-07-20 à 10.51.52_ddc6fb0b.jpg',
             'name' => 'admin',
             'email' => 'admin@admin.com',
             'num_user'=>'59278869',

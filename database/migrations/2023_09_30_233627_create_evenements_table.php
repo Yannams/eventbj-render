@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nom_evenement')->nullable();
             $table->string('localisation')->nullable();
+            $table->text('localisation_maps')->nullable();
             $table->boolean('isOnline')->nullable();
             $table->boolean('administrative_status')->default(true);
             $table->timestamp('date_heure_debut')->nullable();
@@ -29,6 +30,7 @@ return new class extends Migration
             $table->foreign('profil_promoteur_id')->references('id')->on('profil_promoteurs')->onDelete('cascade');
             $table->unsignedBigInteger('type_lieu_id')->nullable();
             $table->foreign('type_lieu_id')->references('id')->on('type_lieus')->onDelete('cascade');
+            $table->integer('Etape_creation');
             $table->timestamps();
         });
     }

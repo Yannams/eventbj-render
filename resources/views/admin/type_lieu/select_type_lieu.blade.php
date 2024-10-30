@@ -18,6 +18,29 @@
             </div>    
         </div>
     @enderror
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            
+            <div class="modal-body">
+                <div class="d-flex justify-content-end w-100">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              <div class="mt-5"> Voulez-vous abandonner ? si vous abandonner vous devrez reprendre la creation de l'evenement depuis le debut. Vous pouvez enregistrez et Continuer la creation de l'evnement plus tard </div>
+              <div class="d-flex align-items-center mt-5">
+                <div class="flex-grow-1">
+                    <button type="button" class="" data-bs-dismiss="modal" style="background-color: #ffffff; border:none">Annuler</button>
+                </div>
+                <div class="">
+                    <button type="button" class="btn btn-danger" id="GiveUp">Abandonner</button>
+                    <button type="button" class="btn btn-success" id="SaveProcess">Enregistrer</button>
+                </div>
+              </div>
+            </div>
+           
+          </div>
+        </div>
+      </div>
             <div class="row align-items-center">
                 <form action="{{route('typelieuSelected')}}" method="post">
                     @csrf 
@@ -28,6 +51,7 @@
                                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2 g-3">
                                         @foreach ($type_lieu as  $type_lieus )
                                         <div class="col">
+                                            <input type="hidden" name="evenement_id" id="evenement_id" value="{{$evenement_id}}">
                                             <input type="radio" class="hidden-radio" name="type_lieu_event" id="{{$type_lieus->nom_type}}"  value="{{$type_lieus->id}}" autocomplete="off">
                                             <label class="@error('type_lieu_event') button-check-error @else button-check @enderror w-100 h-100" for="{{$type_lieus->nom_type}}">
                                                 <h5>{{$type_lieus->nom_type}}</h5>
@@ -57,6 +81,55 @@
                         toastBootstrap.show();
                     }
                 });
+               
+
+                document.querySelectorAll('a').forEach(element => {
+                    element.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        link = this.href;
+                        console.log(link);
+                        
+                        function openModal() {
+                            var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+                            myModal.show();
+                        }
+                        openModal();
+
+                    })
+                });
+
+               
+                
+                SaveProcessButton=document.getElementById('SaveProcess');
+                SaveProcessButton.addEventListener('click',function(e){
+                    console.log(link);  
+                    window.location.href = link;
+                })
+                GiveUpProcessButton=document.getElementById('GiveUp'); 
+                evenement_id_input=document.getElementById('evenement_id')
+                evenement_id=evenement_id_input.value;
+                GiveUpProcessButton.addEventListener('click',function (e) {
+                    console.log(evenement_id);
+                    console.log(link);
+                    
+                    $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/GiveUpEventProcess',
+                    data: {
+                        evenement_id: evenement_id,
+                    },
+                    dataType: 'JSON',
+                    success: function(data) {
+                        window.location.href=link
+                    }
+                });
+            })
             </script>
            
     @endsection

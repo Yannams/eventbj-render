@@ -121,18 +121,23 @@
         <ul class="menu" >
             <li class="">
                 <a href="{{ route('evenement.index') }}" class="@if (request()->url() == route('evenement.index') || request()->url() == route('home') ||request()->url() == route('index') ) active-link @else non-active @endif">
-                    Tout
-                </a>
-                
+                   Pour vous
+                </a>      
             </li>
-            @foreach ( $type_evenement as $key => $type_evenements )
+            @foreach ( $Interests as $key => $Interest )
                 <li class="">
-                    <a href="{{ route('type_event', ['type' => $type_evenements->id]) }}" class="@if (request()->url() == route('type_event', ['type' => $type_evenements->id])) active-link @else non-active @endif">
-                        {{ $type_evenements->nom_type_evenement }}
+                    <a href="{{ route('filteredByInterest', ['interest' => $Interest->id]) }}" class="@if (request()->url() == route('filteredByInterest', ['interest' => $Interest->id])) active-link @else non-active @endif ">
+                        {{ $Interest->nom_ci }}
                     </a>  
                 </li>
             @endforeach
-            
+            @if (auth()->check())
+                <li class="">
+                    <a href="{{ route('autres') }}" class="@if (request()->url() == route('autres')) active-link @else non-active @endif">
+                        Autres
+                    </a>
+                </li> 
+            @endif  
         </ul>
     </div>
     <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-4">

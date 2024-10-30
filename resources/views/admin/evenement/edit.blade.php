@@ -50,6 +50,29 @@
             </div>    
         </div>
         @endif
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                
+                <div class="modal-body">
+                    <div class="d-flex justify-content-end w-100">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                  <div class="mt-5"> Voulez-vous abandonner ? si vous abandonner vous devrez reprendre la creation de l'evenement depuis le debut. Vous pouvez enregistrez et Continuer la creation de l'evnement plus tard </div>
+                  <div class="d-flex align-items-center mt-5">
+                    <div class="flex-grow-1">
+                        <button type="button" class="" data-bs-dismiss="modal" style="background-color: #ffffff; border:none">Annuler</button>
+                    </div>
+                    <div class="">
+                        <button type="button" class="btn btn-danger" id="GiveUp">Abandonner</button>
+                        <button type="button" class="btn btn-success" id="SaveProcess">Enregistrer</button>
+                    </div>
+                  </div>
+                </div>
+               
+              </div>
+            </div>
+          </div>
         @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
@@ -71,6 +94,7 @@
                         </div>
                 
                      <div class="col-12 mb-3">
+                        <input type="hidden" name="evenement_id" value="{{$evenement->id}}" id="evenement_id">
                          <label for="nom_evenement">Nom evenement</label>
                          <input type="text" name="nom_evenement" id="nom_evenement" class="form-control @error('nom_evenement') is-invalid @enderror" value="{{$evenement->nom_evenement}}" required>
                          <div class="invalid-feedback">
@@ -89,6 +113,16 @@
                             Veuilllez selectionner une option
                          </div>
                      </div>
+                     <div class="col-12 mb-3">
+                        <label for="type_evenement_id">Categorie de l'evenement</label><br>
+                        <div class="p-3 border border-1 rounded-2 InterestContainer">
+                            @foreach ($interests as $interest)
+                                <input type="checkbox" class="btn-check interest" @if(in_array($interest->id,$EventInterestArray)) checked @endif id="Interest-{{$interest->id}}" value="{{$interest->id}}" name="interest[]" autocomplete="off">
+                                <label class="btn btn-outline-success rounded-pill mb-2 interestLabel" for="Interest-{{$interest->id}}">{{$interest->nom_ci}}</label>
+                            @endforeach 
+                        </div>
+                        <div class="invalid-feedback_interest text-danger"></div>
+                    </div>
 
                      <div class="col-12 mb-3">
                         <label for="date_heure_debut">Date et heure de début</label>
@@ -106,13 +140,13 @@
                          </div>
                     </div>
 
-                     <div class="col-12 mb-3">
+                     {{-- <div class="col-12 mb-3">
                          <label for="localisation">Localisation</label>
                          <input type="text" name="localisation" id="localisation" class="form-control @error('localisation') is-invalid @enderror" value="{{$evenement->localisation}}" required>
                          <div class="invalid-feedback">
                             Veuillez mettre une localisation
                          </div>
-                     </div>
+                     </div> --}}
                      <div class="col-12 mb-3">
                          <label for="description">Description</label>
                          <textarea name="description" id="description" cols="30" rows="10" class="form-control @error('description') is-invalid @enderror" required>{{$evenement->description}}</textarea>
@@ -152,7 +186,23 @@
                 } else {
                     var date1 = $('#date_heure_debut').val();
                     var date2 = $('#date_heure_fin').val();
-    
+                    var interests=form.querySelectorAll('.interest');
+                    var interestsLabels=form.querySelectorAll('.interestLabel');
+                    var InterestContainer=form.querySelector('.InterestContainer');
+                    var InterestFeedback=form.querySelector('.invalid-feedback_interest')
+                    
+                    var isChecked= Array.from(interests).some(interest => interest.checked);
+                    if (!isChecked) {
+                        interestsLabels.forEach(interestsLabel=>{
+                            interestsLabel.classList.replace('btn-outline-success','btn-outline-danger');
+                            interestsLabel.classList.add('text-danger');
+                            InterestContainer.classList.add('border-danger');
+                            InterestFeedback.innerHTML='<i class="bi bi-exclamation-circle"></i> Veuilllez selectionner une option'
+                            event.preventDefault();
+                            event.stopPropagation();
+                        })
+                    }
+                    
                     var dateDebut = new Date(date1);
                     var dateFin = new Date(date2);
                     var today = new Date();
@@ -178,7 +228,7 @@
                     }
                 }
             }, false);
-    
+            
             form.querySelector('#date_heure_debut').addEventListener('change', () => {
                 updateValidationClasses('date_heure_debut');
             });
@@ -187,6 +237,26 @@
                 updateValidationClasses('date_heure_fin');
             });
     
+            var interestsLabels=form.querySelectorAll('.interestLabel');
+            var InterestContainer=form.querySelector('.InterestContainer');
+            var InterestFeedback=form.querySelector('.invalid-feedback_interest')
+
+            interestsLabels.forEach(interestLabel=>{
+                interestLabel.addEventListener('click', (e)=>{
+                   
+                    if (interestLabel.classList.contains('btn-outline-danger')){
+                        console.log('ok');
+    
+                        interestsLabels.forEach(interestLabel2=>{
+                            interestLabel2.classList.replace('btn-outline-danger','btn-outline-success');
+                            interestLabel2.classList.remove('text-danger');
+                            InterestContainer.classList.replace('border-danger','border-success');
+                            InterestFeedback.innerHTML=""
+                        });
+                        // interestLabel.classList.replace('btn-outline-success','btn-success');
+                    }
+                })
+            })
             function updateValidationClasses(id) {
                 const element = $('#' + id);
                 const dateValue = element.val();
@@ -244,6 +314,52 @@
                 label.css('border-color', 'transparent');
             });
         });
+
+        document.querySelectorAll('a').forEach(element => {
+                    element.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        link = this.href;
+                        function openModal() {
+                            var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
+                            myModal.show();
+                        }
+                        openModal();
+
+                    })
+                });
+
+               
+                
+                SaveProcessButton=document.getElementById('SaveProcess');
+                SaveProcessButton.addEventListener('click',function(e){
+                    console.log(link);  
+                    window.location.href = link;
+                })
+                GiveUpProcessButton=document.getElementById('GiveUp');
+                evenement_id_input=document.getElementById('evenement_id')
+                evenement_id=evenement_id_input.value;
+                GiveUpProcessButton.addEventListener('click',function (e) {
+                    console.log(evenement_id);
+                    
+                    $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/GiveUpEventProcess',
+                    data: {
+                        evenement_id: evenement_id,
+                    },
+                    dataType: 'JSON',
+                    success: function(data) {
+                        window.location.href=link
+                    }
+                });
+            })
+
     </script>
     
           <script>

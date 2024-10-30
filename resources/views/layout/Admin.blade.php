@@ -172,7 +172,7 @@
             <div class="btn-group dropstart">
               <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 @auth
-                  <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5">
+                  <img src="{{asset(auth()->user()->profil_user)}}" alt="profil" width="50" height="50" class="rounded-5">
                 @else
                   <i class="bi bi-person-circle text-dark fs-3 me-1"></i>
                 @endauth 

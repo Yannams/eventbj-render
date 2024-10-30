@@ -7,13 +7,21 @@ use Illuminate\Http\Request;
 class RBACRedirectionController extends Controller
 {
     public function redirection(){
-        if (auth()->user()->hasRole('User')) {
-            return redirect()->route('evenement.index');
-        } elseif (auth()->user()->hasRole('Promoteur')) {
-            return redirect()->route('MesEvenements');
-        }elseif (auth()->user()->hasRole('Admin')) {
-            return redirect()->route('AllEvents');
+        if (url()->previous()==route('register')){
+            return redirect()->route('Centre_interet.index');
+        }else {
+            if (auth()->user()->hasRole('User')) {
+                return redirect()->route('evenement.index');
+            } elseif (auth()->user()->hasRole('Promoteur')) {
+                return redirect()->route('MesEvenements');
+            }elseif (auth()->user()->hasRole('Admin')) {
+                return redirect()->route('AllEvents');
+            }
         }
+      
     }
     
+    // public function SelectInterest(){
+    //     return view('layout.SelectInterest');
+    // }
 }

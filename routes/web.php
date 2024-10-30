@@ -13,6 +13,7 @@ use App\Http\Controllers\TypeTicketController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\IntervenantController;
 use App\Http\Controllers\UsersoftdeleteController;
+use App\Http\Controllers\CentreInteretController;
 
 /*
 |--------------------------------------------------------------------------
@@ -58,15 +59,23 @@ Route::get('/redirection',[RBACRedirectionController::class,'redirection'])->nam
 Route::get('/PromoteurShow/{evenement}',[EvenementController::class,'PromoteurShow'])->name('PromoteurShow');
 Route::post('/deleteUser',[UsersoftdeleteController::class,'softDelete'])->name('softDelete');
 Route::get('/ConfirmUserBeforeDelete/{user}',[UsersoftdeleteController::class,'ConfirmUserBeforeDelete'])->name('ConfirmUserBeforeDelete');
+Route::post('/GiveUpEventProcess',[EvenementController::class,'GiveUpEventProcess'])->name('GiveUpEventProcess');
+Route::get('/lastEventRedirection/{evenement}', [EvenementController::class,'lastEventRedirection'])->name('lastEventRedirection')->middleware(['auth','role:Promoteur']);
+Route::get('/UnauthorizedUser',[EvenementController::class,'UnauthorizedUser'])->name('UnauthorizedUser')->middleware(['auth','role:Promoteur']);
+Route::get('/filteredByInterests/{interest}',[EvenementController::class,'filteredByInterests'])->name('filteredByInterest');
+Route::get('evenement/autres',[EvenementController::class,'autres'])->name('autres');
+Route::get('evenement/localisation/create',[EvenementController::class,'localisation'])->name('localisation')->middleware('auth');
+Route::post('evenement/localisation/store',[EvenementController::class,'localisationStore'])->name('localisationStore')->middleware('auth');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy']]);
 //Route::resource('type_lieu', TypeLieuController::class);
 Route::resource('chronogramme',ChronogrammeController::class)->middleware(['auth','role:Promoteur']);
 Route::resource('type_ticket', TypeTicketController::class)->middleware(['auth','role:Promoteur']);
-Route::resource('ticket', TicketController::class);
+Route::resource('ticket', TicketController::class)->middleware('auth');
 Route::resource('Promoteur',ProfilPromoteurController::class);
 Route::resource('Intervenant',IntervenantController::class)->middleware(['auth','role:Promoteur']);
+Route::resource('Centre_interet',CentreInteretController::class)->middleware(['auth']);
 
 Route::get('/AllEvents',[AdminController::class,'AllEvents'])->name('AllEvents')->middleware('auth','role:Admin');
 Route::post('/Administrative_activation',[AdminController::class,'Administrative_activation'])->name('Administrative_action')->middleware('auth','role:Admin');

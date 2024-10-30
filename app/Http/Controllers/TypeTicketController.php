@@ -14,14 +14,18 @@ class TypeTicketController extends Controller
      */
     public function index()
     {
-        $evenement_id=session('evenement_id');
-        $evenement= Evenement::with('type_tickets')->find($evenement_id);
-        if ($evenement) {
-            $typeTickets = $evenement->type_tickets;
-            return view("admin.type_ticket.index", compact("typeTickets"));
-        } else {
-            // Gérez le cas où l'événement n'a pas été trouvé
-           // return view("admin.type_ticket.index", compact("evenement"));
+        if(session('evenement_id') && session('TypeLieu') && session('evenement_nom') && session('type_ticket') && session('localisation')){
+            $evenement_id=session('evenement_id');
+            $evenement = evenement::find($evenement_id);
+            $promoteur=auth()->user()->profil_promoteur->id;
+            if($evenement->profil_promoteur_id==$promoteur){
+                $typeTickets=$evenement->type_tickets;
+                return view("admin.type_ticket.index", compact("typeTickets"));
+            } else {
+                return redirect()->route('UnauthorizedUser');
+            }
+        }else {
+            return redirect()->route('Create_event');
         }
     }
 
@@ -30,10 +34,18 @@ class TypeTicketController extends Controller
      */
     public function create()
     {
-
-        $evenement_id=session('evenement_id');
-        $evenement=evenement::find($evenement_id);
-        return view('admin.type_ticket.create', compact('evenement_id','evenement'));
+        if(session('evenement_id') && session('TypeLieu') && session('evenement_nom')&& session('localisation')){
+            $evenement_id=session('evenement_id');
+            $evenement = evenement::find($evenement_id);
+            $promoteur=auth()->user()->profil_promoteur->id;
+            if($evenement->profil_promoteur_id==$promoteur){
+                return view('admin.type_ticket.create', compact('evenement_id','evenement'));
+            }else{
+                return redirect()->route('UnauthorizedUser');
+            }
+        }else{
+            return redirect()->route('Create_event');
+        }
     }
 
     /**
@@ -58,9 +70,13 @@ class TypeTicketController extends Controller
         $imagePath='image_ticket/'.$fileName;
         $type_ticket->image_ticket=$imagePath;
         $type_ticket->nom_ticket=$request->nom_ticket;
-        $type_ticket->prix_ticket=$request->prix_ticket;
-        $type_ticket->frais_ticket=$request->frais_ticket;
-        $type_ticket->type_ticket=$request->type_ticket;
+        if($request->format=="Ticket"){
+            $type_ticket->prix_ticket=$request->prix_ticket;
+        }elseif($request->format=="Invitation"){
+            $type_ticket->texte=$request->texte;
+        }
+        // $type_ticket->frais_ticket=$request->frais_ticket;
+        $type_ticket->format=$request->format;
         $type_ticket->place_dispo=$request->place_dispo;
         $type_ticket->quantite=$request->place_dispo;
         $type_ticket->evenement_id=$request->evenement_id;
@@ -69,7 +85,9 @@ class TypeTicketController extends Controller
         $type_ticket->methodeProgrammationFermeture=$request->methodeProgrammationFermeture;
         $type_ticket->Date_heure_fermeture=$request->Date_heure_fermeture;
         $type_ticket->save();
-
+        $evenement=evenement::find($request->evenement_id);
+        $evenement->Etape_creation=5;
+        $evenement->save();
         session(['type_ticket'=>$type_ticket->id]);
         return redirect()->route("type_ticket.index")->with('message','Ticket créé');
     }

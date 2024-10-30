@@ -73,10 +73,21 @@ class TypeLieuController extends Controller
 
     public function select_type_lieu()
     {   
-        $type_lieu= type_lieu::all();
-        $evenement_id=session('evenement_id');
-        $evenement = evenement::find($evenement_id);
-        return view('admin.type_lieu.select_type_lieu', compact('type_lieu','evenement_id','evenement'));
+        if(session('evenement_id')){
+            $evenement_id=session('evenement_id');
+            $evenement = evenement::find($evenement_id);
+            $promoteur=auth()->user()->profil_promoteur->id;
+            if($evenement->profil_promoteur_id==$promoteur){
+                $type_lieu= type_lieu::all();
+                return view('admin.type_lieu.select_type_lieu', compact('type_lieu','evenement_id','evenement'));
+            }else {
+                return  redirect()->route('UnauthorizedUser');
+            }
+
+        }else {
+            return redirect()->route('Create_event');
+        }
+        
     }
 
 
@@ -88,7 +99,11 @@ class TypeLieuController extends Controller
         $validatedData= $request->validate([
             'type_lieu_event'=>'required'
         ]);  
+       
         $evenement=evenement::find(session('evenement_id'));
+        $evenement->type_lieu_id=$request->type_lieu_event;
+        $evenement->Etape_creation=2;
+        $evenement->save();
         session(['TypeLieu'=>$request->type_lieu_event]); 
         return redirect()->route('evenement.edit',$evenement);
     }

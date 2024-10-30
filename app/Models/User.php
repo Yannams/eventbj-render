@@ -24,6 +24,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'profil_user',
         'name',
         'email',
         'num_user', 
@@ -71,5 +72,10 @@ class User extends Authenticatable
     public function intervenants():HasMany
     {
         return $this->hasMany(Intervenant::class);
+    }
+
+    public function centre_interets():BelongsToMany
+    {
+        return $this->belongsToMany(Centre_interet::class)->withPivot('created_at','updated_at');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\chronogramme;
 use App\Models\evenement;
+use App\Models\Centre_interet;
 use App\Http\Requests\StoreevenementRequest;
 use App\Http\Requests\UpdateevenementRequest;
 use App\Models\Profil_promoteur;
@@ -19,7 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ticket;
 use App\Models\Intervenant;
-
+use Illuminate\Support\Facades\Validator;
 
 class EvenementController extends Controller
 {
@@ -29,13 +30,28 @@ class EvenementController extends Controller
     
     public function index()
     {  
-        $recommanded_events=evenement::where('recommanded',true)
-                            ->get();
-
-        $evenement = evenement::where('isOnline', true)
+        $recommanded_events=evenement::where('recommanded',true)->get();
+        if(auth()->check()){
+            $user_id=auth()->user()->id;
+            $user=User::find($user_id);
+            $Interests=$user->centre_interets()->get();
+            $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
+            $evenement=evenement::where('isOnline',true)->where('date_heure_fin','>=',now())->whereHas('centre_interets',function($query){
+                $user=User::find(auth()->user()->id);
+                $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
+                $InterestArray=$InterestsIds->toArray();
+                $query->whereIn('centre_interet_id',$InterestArray);
+           })->get();
+        }else{
+            $Interests=Centre_interet::all();
+            $evenement = evenement::where('isOnline', true)
+                    ->where('date_heure_fin','>=',now())
                     ->get();
+        }
+      
+        
         $type_evenement=type_evenement::all();
-        return view('admin.evenement.index', compact('evenement', 'type_evenement', 'recommanded_events'));   
+        return view('admin.evenement.index', compact('evenement', 'type_evenement', 'recommanded_events','Interests'));   
     }
 
     /**
@@ -66,6 +82,7 @@ class EvenementController extends Controller
         ]);
         $evenement->Fréquence=$request->Frequence;
         $evenement->profil_promoteur_id=$userId;
+        $evenement->Etape_creation=1;
         $evenement->save();
         $evenement_id=$evenement->id;
         session(['evenement_id'=>$evenement_id]);
@@ -84,7 +101,7 @@ class EvenementController extends Controller
        
         $organisateur=Profil_promoteur::find($promoteur_id);
         $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
-        $ticket= type_ticket::where('evenement_id',$evenement->id)->get();
+        $ticket= type_ticket::where('evenement_id',$evenement->id)->where('format','Ticket')->get();
         $same_creator=evenement::where('isOnline', true)
                 ->where('profil_promoteur_id',$promoteur_id)
                 ->get();
@@ -105,9 +122,26 @@ class EvenementController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(evenement $evenement, Request $request){
-        $typeLieuId = $request->query('type_lieu_event');
-        $type_evenement=type_evenement::all();
-        return view('admin.evenement.edit', compact('evenement','type_evenement', 'typeLieuId'));
+        
+       
+        if(session('evenement_id')&& session('TypeLieu')){
+            $typeLieuId = session('TypeLieu');
+            $evenement_id=session('evenement_id');
+            $evenement = evenement::find($evenement_id);
+            $promoteur=auth()->user()->profil_promoteur->id;
+            $EventInterest=$evenement->centre_interets()->pluck('centre_interet_id');
+            $EventInterestArray=$EventInterest->toArray();
+            if($evenement->profil_promoteur_id==$promoteur){
+                $type_evenement=type_evenement::all();
+                $interests=Centre_interet::all();
+                return view('admin.evenement.edit', compact('evenement','type_evenement', 'typeLieuId','interests','EventInterestArray'));
+            }else{
+                return redirect()->route('UnauthorizedUser');
+            }
+        }else{
+            return redirect()->route('Create_event');
+        }
+        
     }
 
     /**
@@ -119,13 +153,12 @@ class EvenementController extends Controller
         $evenement=evenement::find($evenement->id);
         $ValidatedData=$request->validate([
             'nom_evenement'=>'required|min:1|max:100',
-            'localisation'=>'required',
             'date_heure_debut'=>'required|after:today|before:date_heure_fin',
             'date_heure_fin'=>'required|after:today|after:date_heure_debut',
-            'type_evenement_id'=>'required'
+            'type_evenement_id'=>'required',
         ]);
         $evenement->nom_evenement=$request->nom_evenement;
-        $evenement->localisation=$request->localisation;
+        // $evenement->localisation=$request->localisation;
         $evenement->date_heure_debut=$request->date_heure_debut;
         $evenement->date_heure_fin=$request-> date_heure_fin;
         $evenement->type_evenement_id=$request->type_evenement_id;
@@ -154,11 +187,19 @@ class EvenementController extends Controller
             $defaultImagePath = 'image/concert.jpeg';
             $evenement->cover_event=$defaultImagePath;
         }
-        $typelieu=$request->input('type_lieu_selected');
-        $evenement->type_lieu_id=$typelieu;      
+        $evenement->Etape_creation=3;   
         $evenement->save();
+        $interests=$request->interest;
+        $EventInterest=$evenement->centre_interets()->pluck('centre_interet_id');
+        $EventInterestArray=$EventInterest->toArray();
+        foreach($interests as $interest){
+            if(!in_array($interest,$EventInterestArray)){
+                $evenement->centre_interets()->attach($interest);
+            }
+        }
+       
         session(['evenement_nom'=>$evenement->nom_evenement]);
-        return redirect()->route('type_ticket.create')->with('message', 'evenement créé');    
+        return redirect()->route('localisation')->with('message', 'evenement créé');    
 
     }
 
@@ -281,21 +322,72 @@ class EvenementController extends Controller
     
 
     }
+    public function filteredByInterests($interest){
+        $interest=Centre_interet::find($interest);
+        $evenement=$interest->evenements;
+        $recommanded_events=evenement::where('recommanded',true)->get();
+        if(auth()->check()){
+            $user_id=auth()->user()->id;
+            $user=User::find($user_id);
+            $Interests=$user->centre_interets()->get();
+        }else{
+            $Interests=Centre_interet::all();
+        }
+        return view('admin.evenement.index',compact('evenement','recommanded_events','Interests'));
+    }
+
+    public function autres(){
+        $recommanded_events=evenement::where('recommanded',true)->get();
+        if(auth()->check()){
+            $user_id=auth()->user()->id;
+            $user=User::find($user_id);
+            $Interests=$user->centre_interets()->get();
+            $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
+            $evenement=evenement::where('isOnline',true)->where('date_heure_fin','>=',now())->whereHas('centre_interets',function($query){
+                $user=User::find(auth()->user()->id);
+                $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
+                $InterestArray=$InterestsIds->toArray();
+                $query->whereNotIn('centre_interet_id',$InterestArray);
+           })->get();
+        }else{
+            $Interests=Centre_interet::all();
+            $evenement = evenement::where('isOnline', true)
+                    ->where('date_heure_fin','>=',now())
+                    ->get();
+        }
+      
+        
+        $type_evenement=type_evenement::all();
+        return view('admin.evenement.index', compact('evenement', 'type_evenement', 'recommanded_events','Interests'));   
+    }
+    
 
     public function filteredByTypeEvents($type){
-      
-            $evenement = evenement::where('isOnline', true)
-                ->where('type_evenement_id', $type)
-                ->get();
+        $evenement = evenement::where('isOnline', true)
+            ->where('type_evenement_id', $type)
+            ->get();
         $type_evenement=type_evenement::all();
-        return view('admin.evenement.index', compact('evenement', 'type_evenement'));
-       
-        
+        return view('admin.evenement.index', compact('evenement', 'type_evenement')); 
     }
+    
     public function Create_event(){
-        session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket']);
+        session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket','localisation']);
         if(Auth::user()->hasRole('Promoteur')){
-            return view('admin.evenement.create_event');
+            if(session('Create_new')){
+                session()->forget(['Create_new']);
+                return view('admin.evenement.create_event');
+            }else{
+                $lastEvent=Auth::user()->profil_promoteur->evenements()->latest()->first();
+                if($lastEvent){
+                    if($lastEvent->Etape_creation!=5){
+                        return redirect()->route('lastEventRedirection',$lastEvent->id);
+                    }else{
+                        return view('admin.evenement.create_event');
+                    }
+                }else{
+                    return view('admin.evenement.create_event');
+                }
+            }
         }else{
             session(['route'=>'Create_event']);
             return redirect()->route('Promoteur.create'); 
@@ -662,6 +754,74 @@ class EvenementController extends Controller
            
     }
 
+    public function GiveUpEventProcess(Request $request){
+        $evenement_id=$request->evenement_id;
+        $evenement=evenement::find($evenement_id);
+        $evenement->delete();
+        session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket','localisation']);
+        // dd(session(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket','localisation']));
+        return response()->json([
+            "success"=>true,
+            "message"=>"Creation de l'evenement abandonne"
+        ]);
+    }
+
+    public function lastEventRedirection(evenement $evenement){
+        $evenement= evenement::find($evenement->id);
+        if($evenement->Etape_creation==1){
+            session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket','localisation']);
+            session(['evenement_id'=>$evenement->id]);
+        }elseif($evenement->Etape_creation==2){
+           session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket','localisation']);
+            session(['evenement_id'=>$evenement->id,'TypeLieu'=>$evenement->type_lieu_id]);
+            
+        }elseif($evenement->Etape_creation==3){
+           session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket','localisation']);
+            session(['evenement_id'=>$evenement->id,'TypeLieu'=>$evenement->type_lieu_id,'evenement_nom'=>$evenement->nom_evenement]);
+        }elseif($evenement->Etape_creation==4){
+           session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket','localisation']);
+            session(['evenement_id'=>$evenement->id,'TypeLieu'=>$evenement->type_lieu_id,'evenement_nom'=>$evenement->nom_evenement, 'localisation'=>$evenement->localisation]);
+        }
+        return view('admin.evenement.lastEventRedirection',compact('evenement'));
+    }
+
+    public function UnauthorizedUser(){
+        return view('layout.UnauthorizedUser');
+    }
+
+    public function localisation(){
+        if(session('evenement_id') && session('TypeLieu') && session('evenement_nom')){
+            $evenement_id=session('evenement_id');
+            $evenement = evenement::find($evenement_id);
+            $promoteur=auth()->user()->profil_promoteur->id;
+            if($evenement->profil_promoteur_id==$promoteur){
+                return view('admin.evenement.localisation',compact('evenement'));
+            }else{
+                return redirect()->route('UnauthorizedUser');
+            }
+        }else{
+            return redirect()->route('Create_event');
+        }
+        
+       
+    }
+    
+    public function localisationStore(Request $request){
+        $evenement_id=session('evenement_id');
+        $evenement=evenement::find($evenement_id);
+        Validator::extend('google_maps_iframe', function($attribute, $value, $parameters, $validator) {
+            // Vérifie si le contenu contient un <iframe> avec une URL Google Maps
+            return preg_match('/<iframe.*src="https:\/\/www\.google\.com\/maps\/.*"><\/iframe>/', $value);
+        });
+        $ValidatedData=$request->validate([
+            'localisation'=>'required',
+            'localisation_maps'=>'required|google_maps_iframe',
+        ]);
+        $evenement->localisation=$request->localisation;
+        $evenement->localisation_maps=$request->localisation_maps;
+        $evenement->Etape_creation=4;
+        $evenement->save();
+        session(["localisation"=>$evenement->localisation]);
+        return redirect()->route('type_ticket.create');
+    }
 }
-
-
