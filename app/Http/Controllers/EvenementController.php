@@ -96,12 +96,10 @@ class EvenementController extends Controller
         $evenement=evenement::find($evenement->id);
         $date= new DateTime($evenement->date_heure_debut);
         $promoteur_id=$evenement->profil_promoteur_id;
-       
         $user_id=$evenement->Profil_promoteur->user->id;
-       
         $organisateur=Profil_promoteur::find($promoteur_id);
         $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
-        $ticket= type_ticket::where('evenement_id',$evenement->id)->where('format','Ticket')->get();
+        $type_tickets= type_ticket::where('evenement_id',$evenement->id)->where('format','Ticket')->where('Date_heure_lancement','<=',now())->where('Date_heure_fermeture','>=',now())->get();
         $same_creator=evenement::where('isOnline', true)
                 ->where('profil_promoteur_id',$promoteur_id)
                 ->get();
@@ -113,7 +111,7 @@ class EvenementController extends Controller
         } 
         $intervenants=Intervenant::where('evenement_id',$evenement->id)
                     ->get();
-        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'ticket', 'same_creator','intervenants'));
+        return view('admin.evenement.show', compact('evenement', 'date','organisateur','chronogramme', 'type_tickets', 'same_creator','intervenants'));
        
            
     }
@@ -212,7 +210,9 @@ class EvenementController extends Controller
         return redirect()->route('MesEvenements')->with('danger', 'Evenement supprimé !');
     }
     public function MyEvents(){
-        if(Auth::user()->hasRole('Promoteur')){
+        $user_id=Auth::user()->id;
+        $user=User::find($user_id);
+        if($user->hasRole('Promoteur')){
             $userId = auth()->user()->id;
             $user = User::with('evenements')->find($userId);
             if ($user) {

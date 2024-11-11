@@ -56,7 +56,7 @@ class User extends Authenticatable
    
     public function tickets():HasMany
     {
-        return $this->hasMany(Ticket::class);
+        return $this->hasMany(ticket::class);
     }
 
     public function evenements():BelongsToMany

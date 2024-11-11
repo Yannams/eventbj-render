@@ -133,7 +133,8 @@ class TicketController extends Controller
      */
     public function show(ticket $ticket)
     {
-        //
+        $data = Ticket::find($ticket->id);
+        return view('admin.ticket.generatedTicket',compact('data'));
     }
 
     /**
@@ -175,6 +176,13 @@ class TicketController extends Controller
 
     public function nombreTicket(StoreticketRequest $request){
         session(['nombreTicket'=>$request->nombreTicket]);
+        $user=Auth::user();
+        return response()->json([
+            'nombreTicket'=>$request->nombreTicket,
+            'name'=>$user->name,
+            'email'=>$user->email,
+            'numero'=>$user->num_user,
+        ]);
     }
 
     public function scanTicket(){

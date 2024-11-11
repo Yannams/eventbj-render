@@ -14,6 +14,9 @@
                             <input type="number" class="form-control" name="nombre_ticket" id="nombre_ticket" class="form-control" min="0" value="0" disabled>
                             <button class="btn btn-outline-secondary" type="button" ><svg class="bi bi-plus border-3" fill="#000000" width="30" onclick="increaseValue()" height="30"><use xlink:href="#plus"></use></svg></button>
                         </div>
+                        <div class="invalidNbreTicket text-danger">
+
+                        </div>
                     </div>
                 </div>
                 <h3 class="col">Resume de la commande </h3>
@@ -28,40 +31,52 @@
                 <form class="formulaire2" method="post" onsubmit="return false;">
                    
                     <input type="hidden" name="montant" value="">
-                    <button type="submit" class="btn btn-success kkiapay-button col-12">Obtenir</button>
+                    <button type="submit" class="btn btn-success col-12">Obtenir</button>
                 </form>
                 
                 <script>
-                    var formulaire2 = document.querySelector(".formulaire2");
-                
+                   var formulaire2 = document.querySelector(".formulaire2");
+
                     formulaire2.addEventListener("submit", function(e) {
                         e.preventDefault();
-                        var dataToSend={
-                            nombreTicket:$('#nombre_ticket').val()
+
+                        var nombreTicket = $('#nombre_ticket').val();
+                       
+                        
+                        if (nombreTicket > 0) {
+                            
+                            var dataToSend = {
+                                nombreTicket: nombreTicket
+                            };
+
+
+                            $.ajax({
+                                url: "/NombreTicket" ,
+                                type: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                                },
+                                dataType: 'json',
+                                data: dataToSend,
+                                success: function(data) {
+                                    console.log('Réponse réussie:', data);
+
+                                    // Appeler initializeApp après un succès de la requête
+                                    initializeApp("{{ route('verifiedTransation', ['type_ticket' => $type_ticket->id]) }}",data.name,data.email,data.numero);
+                                },
+                                error: function(error) {
+                                    console.log('Erreur:', error);
+                                }
+                            });
+                        } else {
+                            console.log(nombreTicket);
+                            $('.invalidNbreTicket').html('Le nombre de tickets doit être supérieur à 0');
                         }
-                        console.log(dataToSend);
-                        $.ajax({
-                            url: "{{route('nombreTicket')}}" ,
-                            type: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-                            },
-                            dataType: 'json', // le type de données que vous attendez en réponse
-                            data: dataToSend, // les données à envoyer
-                            success: function(data) {
-                            // La fonction à exécuter en cas de succès
-                            console.log('Réponse réussie:', data);
-                            },
-                            error: function(error) {
-                            // La fonction à exécuter en cas d'erreur
-                            console.error('Erreur de requête AJAX:', error);
-                            }
-                        })
-                        initializeApp("{{ route('verifiedTransation',['type_ticket'=>$type_ticket->id])}}");
                     });
+
                 
 
-                    function initializeApp(callbackUrl) {
+                    function initializeApp(callbackUrl,name,email,numero) {
                         
                         
                         openKkiapayWidget({
@@ -70,8 +85,11 @@
                             callback: callbackUrl,
                             data: "",
                             theme: "#308747",
+                            name:name,
+                            email:email,
+                            phone:numero,
                             sandbox: true,
-                            key: "e1ed75f092f611eeb66e33e3292024ab"
+                            key: "33a40fc0652511efbf02478c5adba4b8"
                         });
                     }
                 </script>
@@ -124,12 +142,11 @@
                     }
                 </script>
 
+        <script src="https://cdn.kkiapay.me/k.js"></script>
   
-                <script amount=""  callback="{{route('ticket.store')}}" data="" position="center"  theme="#0095ff" sandbox="true" key="d996a8407a9111eea7c1213b731c024f" src="https://cdn.kkiapay.me/k.js"></script>
             </div>
            
         </div>
         
-
        
     @endsection

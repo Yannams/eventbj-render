@@ -144,23 +144,41 @@
                         
                 </div>   
                 <div id="ticket" class="collapse"  >
-                     @foreach ($ticket as $tickets )
+                    @if ($type_tickets->count()>0)
+                        @foreach ($type_tickets as $type_ticket )
+                            <div class="col mb-3">
+                                <div class="card border-0 shadow">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div class="fw-bold fs-1">{{$type_ticket->nom_ticket}} </div>
+                                            <div class="fw-bold fs-3">{{$type_ticket->prix_ticket}} XOF</div>
+                                        </div>
+                                            @if ($type_ticket->place_dispo <=0)
+                                                <div class="fw-bold fs-3 text-danger">Sold out </div>
+                                            @else
+                                                <form action="{{route('ticket_selected')}}" method="post">
+                                                    @csrf
+                                                    <input type="hidden" name="ticket" value="{{$type_ticket->id}}">
+                                                    <button type="submit" class="btn btn-success w-100" @role('Admin')disabled @endrole>Obtenir le ticket</button>
+                                                </form>
+                                            @endif
+                                        
+                                            
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @else
                         <div class="col mb-3">
                             <div class="card border-0 shadow">
                                 <div class="card-body">
-                                    <div class="fw-bold fs-1">{{$tickets->nom_ticket}} </div>
-                                    <div class="fw-bold fs-3">{{$tickets->prix_ticket}} XOF</div>
-                                    <form action="{{route('ticket_selected')}}" method="post">
-                                        @csrf
-                                        <input type="hidden" name="ticket" value="{{$tickets->id}}">
-                                        <button type="submit" class="btn btn-success w-100" @role('Admin')disabled @endrole>Obtenir le ticket</button>
-                                    </form>
+                                    Billeterie non-ouverte
                                 </div>
                             </div>
                         </div>
-                      @endforeach
-                              
-                    </div> 
+                    @endif              
+                </div> 
             </div>  
         </div> 
         <div class="col-lg-4">
