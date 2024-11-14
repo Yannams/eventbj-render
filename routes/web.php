@@ -66,6 +66,7 @@ Route::get('/filteredByInterests/{interest}',[EvenementController::class,'filter
 Route::get('evenement/autres',[EvenementController::class,'autres'])->name('autres');
 Route::get('evenement/localisation/create',[EvenementController::class,'localisation'])->name('localisation')->middleware('auth');
 Route::post('evenement/localisation/store',[EvenementController::class,'localisationStore'])->name('localisationStore')->middleware('auth');
+Route::get('download/ticket/{ticket}',[TicketController::class,'downloadTicket'])->name('downloadTicket')->middleware('auth');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy']]);

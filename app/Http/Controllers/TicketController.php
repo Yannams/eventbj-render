@@ -235,4 +235,23 @@ class TicketController extends Controller
        session(['evenement_id'=>$evenement_id]);
        return redirect()->route('scanTicket');
     }
+
+    public function downloadTicket(Ticket $ticket){
+        $data = Ticket::find($ticket->id);
+          // Génération du contenu HTML
+          $html = view('admin.ticket.generatedTicket',compact('data'));
+
+          // Initialisation de Dompdf (via le fournisseur de service)
+          $dompdf = app(Dompdf::class);
+
+          // Chargement du contenu HTML
+          $dompdf->loadHtml($html);
+          
+          $dompdf->setPaper('A4', 'portrait');
+
+          // Rendu et sortie du PDF
+          $dompdf->render();
+
+          return $dompdf->stream('document.pdf', ['Attachment' => 1]); 
+    }
 }
