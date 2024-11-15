@@ -97,7 +97,7 @@ class TypeTicketController extends Controller
      */
     public function show(type_ticket $type_ticket)
     {
-        //
+         
     }
 
     /**
@@ -138,13 +138,13 @@ class TypeTicketController extends Controller
      */
     public function destroy(type_ticket $type_ticket)
     {
-        //
+       
+        $type_ticket->delete();
+        return redirect()->route('type_ticket.index')->with('message','ticket supprimé');
     }
 
     public function terminus(){
         session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket']);
-
-        
         return redirect()->route('MesEvenements');
     }
 

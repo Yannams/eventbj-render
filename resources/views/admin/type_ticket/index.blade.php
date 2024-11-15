@@ -75,6 +75,11 @@
                             <td>{{$type_ticket->place_dispo}}</td>
                             <td>
                                 <a href="{{route('type_ticket.edit',$type_ticket->id)}}" class="btn btn-success">Modifier</a>
+                               <form action="{{route('type_ticket.destroy',$type_ticket->id)}}" method="POST">
+                                    @csrf
+                                    @method('delete')
+                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                               </form>
                             </td>
                         </tr>
                         @endforeach
