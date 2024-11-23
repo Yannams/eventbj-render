@@ -26,6 +26,7 @@
             <table class="table align-middle">
                 <thead>
                   <tr>
+                    {{session('evenement_id')}}
                     <th scope="col">#</th>
                     <th scope="col">Nom évènement</th>
                     <th scope="col">Statut </th>
@@ -62,31 +63,34 @@
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
                                 <ul class="dropdown-menu">
-                                  <li>
-                                    <a href="{{route('gererEvent',$evenements->id)}}" class=" dropdown-item">gérer</a>
-                                </li>
-                                  <li><a href="" class="dropdown-item">Modifier l'évènement</a></li>
-                                  <li> 
-                                    <form action="{{ route('evenement.destroy', $evenements) }}" method="POST" style="display: inline;" id="supprimer-etudiant-{{ $evenements->id }}">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="dropdown-item">Supprimer</button>
-                                    </form>
-                                </li>
-                                <li>
-                                    <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item"> voir</a>
-                                </li>
-                                <li>
-                                    <a href="{{route('chronogramme.create',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un chronogramme</a>
-                                </li>
-                                <li>
-                                    <a href="{{route('Intervenant.index',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un intervenant</a>
-                                </li>
-                                <li>
-                                    <a href="" class="dropdown-item"> Ajouter un nouveau ticket </a>
-                                </li>
+                                    <li>
+                                        <a href="{{route('gererEvent',$evenements->id)}}" class=" dropdown-item">gérer</a>
+                                    </li>
+                                    <li><a href="{{route('EditEvent',$evenements->id)}}" class="dropdown-item">Modifier l'évènement</a></li>
+                                    <li> 
+                                        <form action="{{ route('evenement.destroy', $evenements) }}" method="POST" style="display: inline;" id="supprimer-etudiant-{{ $evenements->id }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="dropdown-item">Annuler </button>
+                                        </form>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item"> voir</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('chronogramme.create',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un chronogramme</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('Intervenant.index',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un intervenant</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('AddTicket',$evenements->id)}}" class="dropdown-item"> Ajouter un nouveau ticket </a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('localisationEdit',$evenements->id)}}" class="dropdown-item"> Modifier la localisation </a>
+                                    </li>
                                 </ul>
-                              </div>
+                            </div>
                         </div>
                     </div>
                      
@@ -127,7 +131,7 @@
                             success: function(data) {
                                 if (data.success==true) {
                                     if (data.status==true) {
-                                        sendEvent.innerHTML="désactiver l'évènement"
+                                        sendEvent.innerHTML="Désactiver l'évènement"
                                         OnlineStatus[index].innerHTML="en ligne"
                                     }else{
                                         sendEvent.innerHTML="Mettre en ligne"

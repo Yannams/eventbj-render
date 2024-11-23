@@ -72,7 +72,6 @@
           </div>
         </div>
       </div>
-        @include('layout.stepform')
         <div class="card border-0">
             <div class="card-body">
                 <form action="{{route('localisationStore')}}" method="POST">
@@ -85,35 +84,31 @@
                             veuillez suivre les etapes precedentes
                         </div>
                     </div>
-                    @if ($evenement->type_lieu->nom_type=='physique')
-
-                        <div class="mb-2">
-                                Pour creer la localisation google maps.
-                                <ul class="list-unstyled ms-3">
-                                    <li><i class="bi bi-1-circle me-2 text-success"></i> Allez sur <a href="https://www.google.com/maps" target="_blank" class="link-success">google maps</a>    </li>
-                                    <li><i class="bi bi-2-circle me-2 text-warning"></i> Recherchez le lieu en question</li>
-                                    <li><i class="bi bi-3-circle me-2 text-danger"></i> cliquer sur partager </li>
-                                    <li><i class="bi bi-4-circle me-2 text-success"></i> cliquer sur inserer une carte</li>
-                                    <li><i class="bi bi-5-circle me-2 text-warning"></i> cliquer sur copier le contenu html</li>
-                                    <li><i class="bi bi-6-circle me-2 text-danger"></i> Collez dans la zone de texte en bas</li>
-                                </ul>
-                        
+                    <div>
+                        Pour creer la localisation google maps.
+                        <ul class="list-unstyled ms-3">
+                            <li><i class="bi bi-1-circle me-2 text-success"></i> Allez sur <a href="https://www.google.com/maps" target="_blank" class="link-success">google maps</a>    </li>
+                            <li><i class="bi bi-2-circle me-2 text-warning"></i> Recherchez le lieu en question</li>
+                            <li><i class="bi bi-3-circle me-2 text-danger"></i> cliquer sur partager </li>
+                            <li><i class="bi bi-4-circle me-2 text-success"></i> cliquer sur inserer une carte</li>
+                            <li><i class="bi bi-5-circle me-2 text-warning"></i> cliquer sur copier le contenu html</li>
+                            <li><i class="bi bi-6-circle me-2 text-danger"></i> Collez dans la zone de texte en bas</li>
+                        </ul>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label for="localisation_maps">Localisation map</label>
+                        <input type="text" name="localisation_maps" id="localisation_maps" class="form-control @error('localisation_maps') is-invalid @enderror" value="{{$evenement->localisation_maps}}" required>
+                        <div class="invalid-feedback">
+                            veuillez entrer une indication à votre évènement
                         </div>
-                        <div class="col-12 mb-3">
-                            <label for="localisation_maps">Localisation map</label>
-                            <input type="text" name="localisation_maps" id="localisation_maps" class="form-control @error('localisation_maps') is-invalid @enderror" value="{{$evenement->localisation_maps}}" required>
-                            <div class="invalid-feedback">
-                                veuillez entrer une indication à votre évènement
-                            </div>
-                        </div>
-                    @endif 
+                    </div>
 
                     <div class="col-12 mb-3 row">
                         <div class="col">
-                            <a href="{{route('select_type_lieu')}}" class="btn btn-outline-success w-100">Précédent</a>
+                            <a href="{{route('MesEvenements')}}" class="btn btn-outline-success w-100">Annuler</a>
                         </div>
                          <div class="col">
-                            <button type="submit" class="btn btn-success w-100">Suivant</button>  
+                            <button type="submit" class="btn btn-success w-100">Modifier</button>  
                          </div>
                            
                      </div>   

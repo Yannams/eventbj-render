@@ -67,6 +67,9 @@ Route::get('evenement/autres',[EvenementController::class,'autres'])->name('autr
 Route::get('evenement/localisation/create',[EvenementController::class,'localisation'])->name('localisation')->middleware('auth');
 Route::post('evenement/localisation/store',[EvenementController::class,'localisationStore'])->name('localisationStore')->middleware('auth');
 Route::get('download/ticket/{ticket}',[TicketController::class,'downloadTicket'])->name('downloadTicket')->middleware('auth');
+Route::get('/EditEvent/{evenement}',[EvenementController::class,'EditEvent'])->name('EditEvent')->middleware(['auth','role:Promoteur']);
+Route::get('/AddTicket/{evenement}',[TypeTicketController::class,'AddTicket'])->name('AddTicket')->middleware(['auth','role:Promoteur']);
+Route::get('/localisationEdit/{evenement}',[EvenementController::class,'localisationEdit'])->name('localisationEdit')->middleware(['auth','role:Promoteur']);
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy']]);
@@ -77,6 +80,7 @@ Route::resource('ticket', TicketController::class)->middleware('auth');
 Route::resource('Promoteur',ProfilPromoteurController::class);
 Route::resource('Intervenant',IntervenantController::class)->middleware(['auth','role:Promoteur']);
 Route::resource('Centre_interet',CentreInteretController::class)->middleware(['auth']);
+
 
 Route::get('/AllEvents',[AdminController::class,'AllEvents'])->name('AllEvents')->middleware('auth','role:Admin');
 Route::post('/Administrative_activation',[AdminController::class,'Administrative_activation'])->name('Administrative_action')->middleware('auth','role:Admin');

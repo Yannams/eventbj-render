@@ -51,6 +51,25 @@
     </div>
   @endif
     @include('layout.stepform')
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal fade" id="ModalToDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    êtes-vous sûr de vouloir supprimer ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-danger" id="SubmitDelete">Supprimer</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="card border-0">
         <div class="card-body">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -73,12 +92,12 @@
                             <td>{{$type_ticket->nom_ticket}}</td>
                             <td>{{$type_ticket->prix_ticket}}</td>
                             <td>{{$type_ticket->place_dispo}}</td>
-                            <td>
-                                <a href="{{route('type_ticket.edit',$type_ticket->id)}}" class="btn btn-success">Modifier</a>
-                               <form action="{{route('type_ticket.destroy',$type_ticket->id)}}" method="POST">
+                            <td class="d-flex align-items-center">
+                                <a href="{{route('type_ticket.edit',$type_ticket->id)}}" class="btn btn-success me-2">Modifier</a>
+                               <form action="{{route('type_ticket.destroy',$type_ticket->id)}}" method="POST" id="DeleteForm">
                                     @csrf
                                     @method('delete')
-                                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                                    <button type="submit" class="btn btn-danger" id="Delete">Supprimer</button>
                                </form>
                             </td>
                         </tr>
@@ -104,6 +123,18 @@
                             toastBootstrap.show();
                         }
                     });
+
+                   deleteButton= document.querySelector('#Delete');
+                   deleteButton.addEventListener('click',function(e){
+                        e.preventDefault();
+                        let myModal = new bootstrap.Modal(document.getElementById('ModalToDelete'));
+                        myModal.show();
+                   })
+                   SubmitDelete=document.querySelector('#SubmitDelete');
+                   DeleteForm=document.querySelector('#DeleteForm')
+                   SubmitDelete.addEventListener('click',function (e){
+                        DeleteForm.submit();
+                   })
                 </script>
             </div>
         </div>

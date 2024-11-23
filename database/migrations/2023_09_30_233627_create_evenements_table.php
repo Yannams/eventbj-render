@@ -23,6 +23,7 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->string('cover_event')->nullable();
             $table->string('Fréquence');
+            $table->string('etat')->default('brouillon');
             $table->boolean('recommanded')->default(false);
             $table->unsignedBigInteger('type_evenement_id')->nullable();
             $table->foreign('type_evenement_id')->references('id')->on('type_evenements')->onDelete('cascade');

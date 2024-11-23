@@ -68,10 +68,8 @@
                                    <div class="card-title fw-semibold">Revenu total:  <i class="bi bi-coin" style="color: #FBAA0A"></i> {{$revenu_total}} </div> 
                                    <div class="card-text">
                                         @foreach ($evenement->type_tickets as $type_ticket )
-
                                             <div class="d-flex align-items-center">
-                                                <span>
-                                                    
+                                                <span> 
                                                     <i class="bi bi-dot fs-1" style="color:{{$Color_tab[$x]}}"></i>
                                                 </span> 
                                                 <span class="fw-semibold">{{$type_ticket->nom_ticket}}:</span>

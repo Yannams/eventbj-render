@@ -185,7 +185,9 @@ class EvenementController extends Controller
             $defaultImagePath = 'image/concert.jpeg';
             $evenement->cover_event=$defaultImagePath;
         }
-        $evenement->Etape_creation=3;   
+        if(url()->previous()!=route('EditEvent',$evenement->id)){
+            $evenement->Etape_creation=3;  
+        } 
         $evenement->save();
         $interests=$request->interest;
         $EventInterest=$evenement->centre_interets()->pluck('centre_interet_id');
@@ -195,9 +197,12 @@ class EvenementController extends Controller
                 $evenement->centre_interets()->attach($interest);
             }
         }
-       
-        session(['evenement_nom'=>$evenement->nom_evenement]);
-        return redirect()->route('localisation')->with('message', 'evenement créé');    
+       if(url()->previous()!=route('EditEvent',$evenement->id)){
+            session(['evenement_nom'=>$evenement->nom_evenement]);
+            return redirect()->route('localisation')->with('message', 'évènement créé'); 
+       }else{
+            return redirect()->route('MesEvenements')->with('message','évènement modifié');
+       }   
 
     }
 
@@ -206,8 +211,11 @@ class EvenementController extends Controller
      */
     public function destroy(evenement $evenement)
     {
-        $evenement->delete();
-        return redirect()->route('MesEvenements')->with('danger', 'Evenement supprimé !');
+        
+        $evenement=evenement::find($evenement->id);
+        $evenement->etat='Annulé';
+        $evenement->save();
+        return redirect()->route('MesEvenements')->with('message', 'Evenement annulé !');
     }
     public function MyEvents(){
         $user_id=Auth::user()->id;
@@ -216,7 +224,7 @@ class EvenementController extends Controller
             $userId = auth()->user()->id;
             $user = User::with('evenements')->find($userId);
             if ($user) {
-                $evenement = $user->Profil_promoteur->evenements->sortByDesc('created_at');
+                $evenement = $user->Profil_promoteur->evenements->where('etat','!=','Annulé')->sortByDesc('created_at');
                 return view("admin.evenement.mesEvenements", compact("evenement"));
             } else {
                 return view("admin.evenement.mesEvenements", compact("evenement"))->with('problème','aucun évènement n\'a été trouvé');
@@ -242,6 +250,7 @@ class EvenementController extends Controller
         
         if($evenement->isOnline==true){
             $evenement->isOnline=false;
+            $evenement->etat= 'désactivé';
             $evenement->save();
             return response()->json([
                 "success"=>true,
@@ -274,6 +283,7 @@ class EvenementController extends Controller
                 ]);
             }  
             $evenement->isOnline=true;
+            $evenement->etat='publié';
             $evenement->save();
             return response()->json([
                 "success"=>true,
@@ -445,7 +455,7 @@ class EvenementController extends Controller
             $layout='layout.utilisateur';
         }
         $evenement=evenement::find($evenement);
-        $Color_tab=["#308747","#FBAA0A","#F0343C"];
+        $Color_tab=["#308747","#FBAA0A","#F0343C","#874F30","#0A2FFB"];
         return view('admin.evenement.gererEvent',compact('evenement','Color_tab','layout'));
     }
 
@@ -813,15 +823,50 @@ class EvenementController extends Controller
             // Vérifie si le contenu contient un <iframe> avec une URL Google Maps
             return preg_match('/<iframe.*src="https:\/\/www\.google\.com\/maps\/.*"><\/iframe>/', $value);
         });
-        $ValidatedData=$request->validate([
+        $rules=[
             'localisation'=>'required',
-            'localisation_maps'=>'required|google_maps_iframe',
-        ]);
+        ];
+        if($request->localisation_maps){
+            $rules['localisation_maps']='required|google_maps_iframe';
+        }
+        $ValidatedData=$request->validate($rules);
         $evenement->localisation=$request->localisation;
         $evenement->localisation_maps=$request->localisation_maps;
-        $evenement->Etape_creation=4;
+        if(url()->previous()!=route('localisationEdit', $evenement_id)){
+            $evenement->Etape_creation=4;
+        }
         $evenement->save();
-        session(["localisation"=>$evenement->localisation]);
-        return redirect()->route('type_ticket.create');
+        if(url()->previous()!=route('localisationEdit', $evenement_id)){
+            session(["localisation"=>$evenement->localisation]);
+            return redirect()->route('type_ticket.create');
+        }else{
+            session()->forget(['evenement_id']);
+            return redirect()->route('MesEvenements');
+        }
+    }
+
+    public function EditEvent (evenement $evenement){
+        $evenement=evenement::find($evenement->id);
+        $promoteur=auth()->user()->profil_promoteur->id;
+        $EventInterest=$evenement->centre_interets()->pluck('centre_interet_id');
+        $EventInterestArray=$EventInterest->toArray();
+        if($evenement->profil_promoteur_id==$promoteur){
+            $type_evenement=type_evenement::all();
+            $interests=Centre_interet::all();
+            return view('admin.evenement.editEvent', compact('evenement','type_evenement','interests','EventInterestArray'));
+        }else{
+            return redirect()->route('UnauthorizedUser');
+        }
+    }
+
+    public function LocalisationEdit(evenement $evenement){
+        $promoteur_id=auth()->user()->profil_promoteur->id;
+        if($evenement->profil_promoteur_id==$promoteur_id){
+            session(['evenement_id'=> $evenement->id]);
+            return view('admin.evenement.localisationEdit',compact('evenement'));
+        }
+        else{
+            return redirect()->route('UnauthorizedUser');
+        }
     }
 }

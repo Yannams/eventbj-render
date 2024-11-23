@@ -86,10 +86,17 @@ class TypeTicketController extends Controller
         $type_ticket->Date_heure_fermeture=$request->Date_heure_fermeture;
         $type_ticket->save();
         $evenement=evenement::find($request->evenement_id);
-        $evenement->Etape_creation=5;
+        if (url()->previous()!= route('AddTicket', $evenement->id)) {
+            $evenement->Etape_creation=5;
+        }
+       
         $evenement->save();
-        session(['type_ticket'=>$type_ticket->id]);
-        return redirect()->route("type_ticket.index")->with('message','Ticket créé');
+        if (url()->previous()!= route('AddTicket', $evenement->id)) {
+            session(['type_ticket'=>$type_ticket->id]);
+            return redirect()->route("type_ticket.index")->with('message','Ticket créé');
+        }else{
+            return redirect()->route('MesEvenements')->with('message','Ticket créé');
+        }
     }
 
     /**
@@ -152,5 +159,15 @@ class TypeTicketController extends Controller
 
         $evenements=evenement::all();
         return view('admin.type_ticket.billetterie',compact('evenements'));
+    }
+
+    public function AddTicket(evenement $evenement){
+        $promoteur_id=auth()->user()->profil_promoteur_id;
+        if($evenement->profil_promoteur_id==$promoteur_id ){
+            $evenement_id=$evenement->id;
+            return view('admin.type_ticket.AddTicket',compact('evenement_id','evenement'));
+        }else{
+            return redirect()->route('UnauthorizedUser');
+        }
     }
 }
