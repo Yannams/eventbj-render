@@ -53,6 +53,7 @@ class TypeTicketController extends Controller
      */
     public function store(Storetype_ticketRequest $request)
     {
+        $evenement=evenement::find($request->evenement_id);
         $type_ticket= new type_ticket;
         $img = $request->file('image_ticket');
         $destinationPath = public_path('image_ticket'); // Le chemin de destination où vous souhaitez déplacer le fichier
@@ -84,8 +85,11 @@ class TypeTicketController extends Controller
         $type_ticket->Date_heure_lancement=$request->Date_heure_lancement;
         $type_ticket->methodeProgrammationFermeture=$request->methodeProgrammationFermeture;
         $type_ticket->Date_heure_fermeture=$request->Date_heure_fermeture;
+        if($evenement->type_lieu->nom_type=='En ligne'){
+            $type_ticket->event_link=$request->event_link;
+        }
         $type_ticket->save();
-        $evenement=evenement::find($request->evenement_id);
+       
         if (url()->previous()!= route('AddTicket', $evenement->id)) {
             $evenement->Etape_creation=5;
         }

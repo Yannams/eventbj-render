@@ -29,14 +29,16 @@
                         </div>
                     </div>
                 </div>  
-                <div class="col" style="height: 500px;">
-                    <div class="card border-0 h-100 pb-5 shadow"  >
-                        <div class="card-body">
-                            <div class="fw-bold mb-3">localisation</div>
-                            {!!$evenement->localisation_maps!!}
+                @if ($evenement->type_lieu->nom_type == 'physique')
+                    <div class="col" style="height: 500px;">
+                        <div class="card border-0 h-100 pb-5 shadow"  >
+                            <div class="card-body">
+                                <div class="fw-bold mb-3">localisation</div>
+                                {!!$evenement->localisation_maps!!}
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif  
                 <div class="col">
                     <div class="card border-0 shadow">
                         <div class="card-body">

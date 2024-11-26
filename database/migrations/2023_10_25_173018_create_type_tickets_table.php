@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('format');
             $table->text('texte')->nullable();
             $table->string('lien')->nullable();
+            $table->string('event_link')->nullable();
             $table->string('place_dispo');
             $table->string('quantite');
             $table->string('image_ticket');
