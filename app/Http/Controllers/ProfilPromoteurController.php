@@ -32,10 +32,10 @@ class ProfilPromoteurController extends Controller
     public function store(StoreProfil_PromoteurRequest $request)
     {
         $validatedData=$request->validate(
-            [
-                'nom'=>'required',
-                'type_organisateur'=>'required'
-            ]
+                [
+                    'nom'=>'required',
+                    'type_organisateur'=>'required'
+                ]
             );
         
             $promoteur=new Profil_promoteur;

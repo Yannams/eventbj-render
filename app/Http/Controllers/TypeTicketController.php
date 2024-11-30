@@ -131,7 +131,6 @@ class TypeTicketController extends Controller
                 "image_ticket"=>"extensions:jpg,png,svg",
                 "nom_ticket"=>"required",
                 "prix_ticket"=>"required|numeric",
-                "frais_ticket"=>"required|numeric",
                 "place_dispo"=>"required|numeric",
                 "methodeProgrammationLancement"=>"required",
                 "Date_heure_lancement"=>"Date",
@@ -139,7 +138,7 @@ class TypeTicketController extends Controller
                 "Date_heure_fermeture"=>"Date",
 
             ]
-            );
+        );
         $type_ticket->update($data);
         return redirect()->route('billetterie');
     }
@@ -166,7 +165,7 @@ class TypeTicketController extends Controller
     }
 
     public function AddTicket(evenement $evenement){
-        $promoteur_id=auth()->user()->profil_promoteur_id;
+        $promoteur_id=auth()->user()->profil_promoteur->id;
         if($evenement->profil_promoteur_id==$promoteur_id ){
             $evenement_id=$evenement->id;
             return view('admin.type_ticket.AddTicket',compact('evenement_id','evenement'));

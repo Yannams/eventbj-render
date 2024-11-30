@@ -83,41 +83,49 @@
                             Veuillez entrer un nom d'au moins 3 caractères
                         </div>
                     </div>
-                    <div class="col-2">
-                        <label for="type_ticket">type_ticket</label>
-                        <select name="type_ticket" id="type_ticket" class="form-control" required>
-                            <option value="ticket payé">ticket payé</option>
-                            <option value="Invitation">Invitation</option>
-                            <option value="Don">Don</option>
-                        </select>
+                    <div class="col-12">
+                        <label for="format">Format</label>
+                        <select name="format" id="format" class="form-select" required>
+                            <option value="Ticket" {{$type_ticket->format=="Ticket" ? 'selected' : ''}}>Ticket</option>
+                            <option value="Invitation"  {{$type_ticket->format=="Invitation" ? 'selected' :''}} >Invitation</option>
+                        </select>            
                         <div class="invalid-feedback">
-                            Veuillez choisir une categorie de ticket 
+                            Veuillez choisir un format de pass
                         </div>
                     </div>
-                
-                    <div class="col-sm-4">
-                        <label for="prix_ticket">Prix ticket</label>
-                        <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" required value="{{$type_ticket->prix_ticket}}">
-                        <div class="invalid-feedback">
-                            Veuillez mettre le prix du ticket
+                    <div class="format_input_container row g-3 w-100">
+                        <div class="col-sm-6">
+                            <label for="prix_ticket">Prix ticket</label>
+                            <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" value="{{$type_ticket->prix_ticket}}" required>
+                            <div class="invalid-feedback">
+                                Veuillez mettre le prix du ticket
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <label for="frais_ticket">frais prélevée</label>
-                        <input type="number" name="frais_ticket" id="frais_ticket" class="form-control" min="0" value="{{$type_ticket->frais_ticket}}" readonly>
-                        <div class="invalid-feedback">
-                            Veuillez ajouter le prix du ticket
+                        {{-- <div class="col-sm-4">
+                            <label for="frais_ticket">frais prélevée</label>
+                            <input type="number" name="frais_ticket" id="frais_ticket" class="form-control" min="0" required readonly>
+                            <div class="invalid-feedback">
+                                Impossible de calculer les frais de ticket
+                            </div>
+                        </div> --}}
+                       
+                        <div class="col-sm-6">
+                            <label for="place_dispo">Quantité de ticket</label>
+                            <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}" required>
+                            <div class="invalid-feedback">
+                                Veuillez ajouter une quantité
+                            </div>
                         </div>
+                        @if ($type_ticket->evenement->type_lieu->nom_type == "En ligne")
+                            <div class="col-sm-12">
+                                <label for="event_link">Lien de l'évènement</label>
+                                <input type="text" name="event_link" id="event_link" class="form-control" value="{{$type_ticket->event_link}}"  required>
+                                <div class="invalid-feedback">
+                                    Veuillez ajouter un lien
+                                </div>
+                            </div>
+                        @endif
                     </div>
-                    
-                    <div class="col-sm-4">
-                        <label for="place_dispo">Quantité de ticket</label>
-                        <input type="number" name="place_dispo" id="place_dispo" class="form-control"  required value="{{$type_ticket->place_dispo}}">
-                        <div class="invalid-feedback">
-                            Veuillez ajouter une quantité
-                        </div>
-                    </div>
-
                     <div class="row mt-3">
                         <div class="col-4"><hr></div>
                         <div class="col-4 d-flex justify-content-center">

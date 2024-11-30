@@ -84,7 +84,7 @@
                             <option value="Invitation">Invitation</option>
                         </select>
                         <div class="invalid-feedback">
-                            Veuillez choisir un format de pass 
+                            Veuillez choisir un format de pass
                         </div>
                     </div>
                     <div class="format_input_container row g-3 w-100">

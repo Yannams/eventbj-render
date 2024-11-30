@@ -73,9 +73,7 @@ class EvenementController extends Controller
      */
     public function store(StoreevenementRequest $request):RedirectResponse
     {
-       
-        $userId = auth()->user()->Profil_promoteur->id;
-        
+        $userId = auth()->user()->Profil_promoteur->id; 
         $evenement=new evenement;
         $validatedData= $request->validate([
             'Frequence'=>'required|min:3|max:10'
@@ -867,6 +865,16 @@ class EvenementController extends Controller
         }
         else{
             return redirect()->route('UnauthorizedUser');
+        }
+    }
+
+    public function eventRedirecting(type_ticket $type_ticket, $token){
+        $user_id=Auth::user()->id;
+        $type_ticket_id=$type_ticket->id;
+        $ExpectedToken=hash('sha256', $user_id . $type_ticket_id . config('app.key'));
+        //$token=$_GET['token'];
+        if($token== $ExpectedToken){
+           return view('admin.evenement.OnlineEvent',compact('type_ticket'));
         }
     }
 }

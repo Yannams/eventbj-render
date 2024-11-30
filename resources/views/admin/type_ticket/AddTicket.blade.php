@@ -110,6 +110,16 @@
                                 Veuillez ajouter une quantité
                             </div>
                         </div>
+
+                        @if ($evenement->type_lieu->nom_type == "En ligne")
+                            <div class="col-sm-12">
+                                <label for="event_link">Lien de l'évènement</label>
+                                <input type="text" name="event_link" id="event_link" class="form-control"  required>
+                                <div class="invalid-feedback">
+                                    Veuillez ajouter un lien
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <div class="row mt-3">
                         <div class="col-4"><hr></div>

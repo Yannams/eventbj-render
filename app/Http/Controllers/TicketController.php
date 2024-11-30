@@ -61,66 +61,89 @@ class TicketController extends Controller
                 $ticket->user_id=$user;
                 $ticket->save();           
         
-                
-                $codeQRContent = json_encode([
-                    "id_ticket"=>$ticket->id, 
-                    "transaction_id"=>$ticket->transaction_id, 
-                    "user"=> $user, 
-                    "nom_user"=> $userdata->name, 
-                    "statut"=> $ticket->statut,
-                    "id_evenement"=>$ticket->type_ticket->evenement->id,
-                    "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
-                    "date_heure_debut"=>$ticket->type_ticket->evenement->date_heure_debut,
-                    "date_heure_fin"=>$ticket->type_ticket->evenement->date_heure_fin,
-                ]);
-                
-                $folderPath = public_path('code_QR');
-                if (!file_exists($folderPath)) {
-                    mkdir($folderPath, 0777, true);
+                if($type_ticket->evenement->type_lieu->nom_type =="physique"){
+                    $codeQRContent = json_encode([
+                        "id_ticket"=>$ticket->id, 
+                        "transaction_id"=>$ticket->transaction_id, 
+                        "user"=> $user, 
+                        "nom_user"=> $userdata->name, 
+                        "statut"=> $ticket->statut,
+                        "id_evenement"=>$ticket->type_ticket->evenement->id,
+                        "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
+                        "date_heure_debut"=>$ticket->type_ticket->evenement->date_heure_debut,
+                        "date_heure_fin"=>$ticket->type_ticket->evenement->date_heure_fin,
+                    ]);
+                    
+                    $folderPath = public_path('code_QR');
+                    if (!file_exists($folderPath)) {
+                        mkdir($folderPath, 0777, true);
+                    }
+                    $fileName = uniqid() . '.svg';
+                    $filePath = $folderPath . '\\' . $fileName;
+                    QrCode::format('svg')->generate($codeQRContent,$filePath);
+                    $QrCodePath='code_QR/'.$fileName;
+                    $ticket->code_QR = $QrCodePath; // Correction ici, utilisez $filePath au lieu de $qrCodePath
+                    $ticket->save(); 
+                    $data = $ticket; // Récupérer les données pour le PDF
+                    $type_ticket->place_dispo--;
+                    $type_ticket->save();
+                    // Génération du contenu HTML
+                    $html = view('admin.ticket.generatedTicket',compact('data'));
+
+                    // Initialisation de Dompdf (via le fournisseur de service)
+                    $dompdf = app(Dompdf::class);
+
+                    // Chargement du contenu HTML
+                    $dompdf->loadHtml($html);
+                    
+                    $dompdf->setPaper('A4', 'portrait');
+
+                    // Rendu et sortie du PDF
+                    $dompdf->render();
+                    $output = $dompdf->output();
+                    
+                    file_put_contents(public_path('ticketPdf/ticket'.Auth::user()->id.'_'.$ticket->id.'_'.trim($data->type_ticket->evenement->nom_evenement).'.pdf'), $output);         
+                    
+                    $filePath=public_path('ticketPdf/ticket'.Auth::user()->id.'_'.$ticket->id.'_'.trim($data->type_ticket->evenement->nom_evenement).'.pdf');
+
+                    $attach[]=$filePath;
+                }else{
+                    $user_id=Auth::user()->id;
+                    $type_ticket_id=$type_ticket->id;
+                    $token=hash('sha256', $user_id . $type_ticket_id . config('app.key'));
+                    $link =route('eventRedirecting',['type_ticket'=>$type_ticket_id,'token'=>$token]);
+                    $ticket->LienUnique=$link;
+                    $ticket->save();
+                    $data=$ticket;
+                    $attach[]=$link;
                 }
-                $fileName = uniqid() . '.svg';
-                $filePath = $folderPath . '\\' . $fileName;
-                QrCode::format('svg')->generate($codeQRContent,$filePath);
-                $QrCodePath='code_QR/'.$fileName;
-                $ticket->code_QR = $QrCodePath; // Correction ici, utilisez $filePath au lieu de $qrCodePath
-                $ticket->save(); 
-                $data = $ticket; // Récupérer les données pour le PDF
-                $type_ticket->place_dispo--;
-                $type_ticket->save();
-                // Génération du contenu HTML
-                $html = view('admin.ticket.generatedTicket',compact('data'));
-
-                // Initialisation de Dompdf (via le fournisseur de service)
-                $dompdf = app(Dompdf::class);
-
-                // Chargement du contenu HTML
-                $dompdf->loadHtml($html);
-                
-                $dompdf->setPaper('A4', 'portrait');
-
-                // Rendu et sortie du PDF
-                $dompdf->render();
-                $output = $dompdf->output();
-                
-                file_put_contents(public_path('ticketPdf/ticket'.Auth::user()->id.'_'.$ticket->id.'_'.trim($data->type_ticket->evenement->nom_evenement).'.pdf'), $output);         
-                
-                $filePath=public_path('ticketPdf/ticket'.Auth::user()->id.'_'.$ticket->id.'_'.trim($data->type_ticket->evenement->nom_evenement).'.pdf');
-
-                $attach[]=$filePath;
                 
             }
             $mailData=[
                 'subject'=>'Tickets pour '. $data->type_ticket->evenement->nom_evenement,
-                'body'=>'Bonjour '.Auth::user()->name.' Veuillez trouver ci-joint les tickets pour '.$data->type_ticket->evenement->nom_evenement,
             ];
+            if($data->type_ticket->evenement->type_lieu->nom_type=="physique"){
+               $mailData['body']='Bonjour '.Auth::user()->name.' Veuillez trouver ci-joint les tickets pour '.$data->type_ticket->evenement->nom_evenement;
+               Mail::to(Auth::user()->email)
+               ->send(new InfoUser($mailData,$attach)); 
+            }elseif($data->type_ticket->evenement->type_lieu->nom_type=="En ligne"){
+                $mailData['body'] = "Bonjour". Auth::user()->name .",\n Veuillez trouver ci-dessous les liens pour ". $data->type_ticket->evenement->nom_evenement .":\n\n";
 
-            Mail::to(Auth::user()->email)
-                ->send(new InfoUser($mailData,$attach)); 
+                // Ajouter tous les liens dans le corps du message
+                foreach ($attach as $link) {
+                    $mailData['body'] .=  $link ;
+                }
+                $attach=[];
+
+                // Envoi du mail avec tous les liens dans un unique message
+                Mail::to(Auth::user()->email)
+                    ->send(new InfoUser($mailData,$attach)); 
+             }
+          
            
             return redirect()->route('ticket.index');
         }
-            else
-        {
+        else{
             return redirect()->route('login');
         }
 

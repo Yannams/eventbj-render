@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tickets', function (Blueprint $table) {
             $table->id();
             $table->string('code_QR')->nullable();
+            $table->string('LienUnique')->nullable();
             $table->string('transaction_id');
             $table->string('statut');
             $table->unsignedBigInteger('type_ticket_id')->nullable();
