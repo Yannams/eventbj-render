@@ -79,10 +79,19 @@
                         @csrf
                         <input type="hidden" name="date_activite" value="${date_activite}">
                         <input type="hidden" name="evenement_id" value="${evenement_id}">
-                        <div class="input-group">
-                            <input type="time" name="heure_debut" class="form-control w-25 heure_debutInput" value="${lastEndTime ? lastEndTime : ''}" required>
-                            <input type="time" name="heure_fin" class="form-control w-25 heure_finInput" value="${newEndTime ? newEndTime : ''}" required>
-                            <input type="text" name="nom_activite" class="form-control w-50 activityInput" required>
+                        <div class="row"> 
+                            <div class="col-10">
+                                <div class="input-group">
+                                    <input type="time" name="heure_debut" class="form-control w-25 heure_debutInput" value="${lastEndTime ? lastEndTime : ''}" required>
+                                    <input type="time" name="heure_fin" class="form-control w-25 heure_finInput" value="${newEndTime ? newEndTime : ''}" required>
+                                    <input type="text" name="nom_activite" class="form-control w-50 activityInput" required>
+                                </div>
+                            </div>
+                            <div class="col-2">
+                                <button class="btn btn-success AddActivityBtn" id="AddActivityBtn">
+                                    <i class="bi-check check"></i>
+                                </button> 
+                            </div>
                         </div>
                     </form>
                 `;
@@ -257,7 +266,8 @@
                 }
             });
 
-            $('#activitiesContainer').on('blur', '.activityInput', function() {
+            $('#AddActivityBtn').on('click', '.activityInput', function(e) {
+                e.preventDefault();
                 var activityInput = $(this);
                 var activityPlace = activityInput.closest('.ActivityPlace');
                 var heure_debut = activityPlace.find('.heure_debutInput').val();
@@ -310,9 +320,11 @@
                                         <span class="text-danger fw-bold">${data.heure_fin}</span>
                                         <span class="text-warning fw-bold">${data.nom_activite}</span>
                                     </div>
+                                 
                                     <div class="col-4">
-                                       <button class="btn btn-success editActivity" data-chronogramme-id="{{$chronogramme->id}}" data-heure-debut="{{$chronogramme->heure_debut}}" data-heure-fin="{{$chronogramme->heure_fin}}" data-nom-activite="{{$chronogramme->nom_activite}}">Modifier</button>
+                                        <button class="btn btn-success editActivity" data-chronogramme-id="${data.heure_debut}" data-heure-debut="${data.heure_debut}" data-nom-activite="${data.nom_activite}">Modifier</button>
                                     </div>
+                                 
                                 </div>
                             `);
                         }

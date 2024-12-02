@@ -159,7 +159,7 @@
                      <input type="hidden" name="type_lieu_selected" value="{{$typeLieuId}}">
                      <div class="col-12 mb-3 row">
                         <div class="col">
-                            <a href="{{route('select_type_lieu')}}" class="btn btn-outline-success w-100">Précédent</a>
+                            <a href="{{route('Create_event')}}" class="btn btn-outline-success w-100">Précédent</a>
                         </div>
                          <div class="col">
                             <button type="submit" class="btn btn-success w-100">Suivant</button>  

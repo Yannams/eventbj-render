@@ -103,7 +103,7 @@
                             <label for="localisation_maps">Localisation map</label>
                             <input type="text" name="localisation_maps" id="localisation_maps" class="form-control @error('localisation_maps') is-invalid @enderror" value="{{$evenement->localisation_maps}}" required>
                             <div class="invalid-feedback">
-                                veuillez entrer une indication à votre évènement
+                                veuillez suivre les étapes ci-dessus citer
                             </div>
                         </div>
                     @endif 

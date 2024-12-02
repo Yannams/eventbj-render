@@ -32,16 +32,21 @@ class EvenementController extends Controller
     {  
         $recommanded_events=evenement::where('recommanded',true)->get();
         if(auth()->check()){
-            $user_id=auth()->user()->id;
-            $user=User::find($user_id);
-            $Interests=$user->centre_interets()->get();
-            $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
-            $evenement=evenement::where('isOnline',true)->where('date_heure_fin','>=',now())->whereHas('centre_interets',function($query){
-                $user=User::find(auth()->user()->id);
+          
+            if(Auth::user()->centre_interets->count()>0){
+                $user_id=auth()->user()->id;
+                $user=User::find($user_id);
+                $Interests=$user->centre_interets()->get();
                 $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
-                $InterestArray=$InterestsIds->toArray();
-                $query->whereIn('centre_interet_id',$InterestArray);
-           })->get();
+                $evenement=evenement::where('isOnline',true)->where('date_heure_fin','>=',now())->whereHas('centre_interets',function($query){
+                    $user=User::find(auth()->user()->id);
+                    $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
+                    $InterestArray=$InterestsIds->toArray();
+                    $query->whereIn('centre_interet_id',$InterestArray);
+                })->get();
+            }else {
+                return redirect()->route('Centre_interet.index');
+            }
         }else{
             $Interests=Centre_interet::all();
             $evenement = evenement::where('isOnline', true)
@@ -80,11 +85,14 @@ class EvenementController extends Controller
         ]);
         $evenement->Fréquence=$request->Frequence;
         $evenement->profil_promoteur_id=$userId;
-        $evenement->Etape_creation=1;
+        $evenement->type_lieu_id=2;
+        $evenement->Etape_creation=2;
         $evenement->save();
+      
         $evenement_id=$evenement->id;
+        session(['TypeLieu'=>$evenement->type_lieu_id]); 
         session(['evenement_id'=>$evenement_id]);
-        return redirect()->route('select_type_lieu');   
+        return redirect()->route('evenement.edit',$evenement);   
     }
 
     /**
