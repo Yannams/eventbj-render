@@ -156,10 +156,12 @@ class EvenementController extends Controller
        
         $evenement=evenement::find($evenement->id);
         $ValidatedData=$request->validate([
+            'cover_event'=>'required',
             'nom_evenement'=>'required|min:1|max:100',
             'date_heure_debut'=>'required|after:today|before:date_heure_fin',
             'date_heure_fin'=>'required|after:today|after:date_heure_debut',
             'type_evenement_id'=>'required',
+            'interest'=>'required',
         ]);
         $evenement->nom_evenement=$request->nom_evenement;
         // $evenement->localisation=$request->localisation;

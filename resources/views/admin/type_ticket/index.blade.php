@@ -88,16 +88,16 @@
                     <tbody>
                         @foreach ($typeTickets as $type_ticket )
                         <tr>
-                            <th scope="row"><img src="{{$type_ticket->image_ticket}}" class="rounded" width="50px" alt=""></th>
+                            <th scope="row"><img src="{{$type_ticket->image_ticket}}" class="rounded" width="50px" alt="" ></th>
                             <td>{{$type_ticket->nom_ticket}}</td>
                             <td>{{$type_ticket->prix_ticket}}</td>
                             <td>{{$type_ticket->place_dispo}}</td>
                             <td class="d-flex align-items-center">
                                 <a href="{{route('type_ticket.edit',$type_ticket->id)}}" class="btn btn-success me-2">Modifier</a>
-                               <form action="{{route('type_ticket.destroy',$type_ticket->id)}}" method="POST" id="DeleteForm">
+                               <form action="{{route('type_ticket.destroy',$type_ticket->id)}}" method="POST" id="DeleteForm" onsubmit="disableSubmitButton(this)">
                                     @csrf
                                     @method('delete')
-                                    <button type="submit" class="btn btn-danger" id="Delete">Supprimer</button>
+                                    <button type="submit" class="btn btn-danger" id="Delete submitButton">Supprimer</button>
                                </form>
                             </td>
                         </tr>
@@ -135,6 +135,9 @@
                    SubmitDelete.addEventListener('click',function (e){
                         DeleteForm.submit();
                    })
+                   function disableSubmitButton(form) {
+                        form.querySelector('#submitButton').disabled = true;
+                    }
                 </script>
             </div>
         </div>

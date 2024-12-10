@@ -93,8 +93,8 @@ class IntervenantController extends Controller
      */
     public function update(UpdateIntervenantRequest $request, Intervenant $intervenant)
     { 
-        $intervenant_id=$request->intervenant_id;
-        $intervenant=Intervenant::find($intervenant_id);
+      
+        $intervenant=Intervenant::find($request->intervenant_id);
         $intervenant->nom_intervenant=$request->nom_intervenant;
         $intervenant->Role_intervenant=$request->role_intervenant;
         if($request->hasFile('photo_intervenant'))
@@ -115,11 +115,6 @@ class IntervenantController extends Controller
             $imagePath='profil_intervenant/'.$fileName;
             $intervenant->photo_intervenant= $imagePath;
         } 
-        else
-        {
-            $intervenant->photo_intervenant= $intervenant->photo_intervenant;
-        }
-        
         $intervenant->save();
         return redirect()->route('Intervenant.index',['event'=>$intervenant->evenement_id]);
     }

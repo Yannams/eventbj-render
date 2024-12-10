@@ -30,7 +30,7 @@
             <div class="modal fade" id="createIntervenant" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
-                    <form action="{{route('Intervenant.store')}}" method="POST" enctype="multipart/form-data">
+                    <form action="{{route('Intervenant.store')}}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate >
                         @csrf
                       <div class="modal-header">
                         <h1 class="modal-title fs-5" id="exampleModalLabel">Ajouter un intervenant</h1>
@@ -39,7 +39,7 @@
                       <div class="modal-body">
                           <div class="row">
                               <div class="mb-3 col-12 d-flex justify-content-center">
-                                  <label for="photo_intervenant">
+                                  <label for="photo_intervenant" style="@error('profil_container') border:#F0343C @enderror">
                                       <div class="position-relative" id="profil_container" style="width: 100px; height:100px">
                                           <div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
                                               <div>
@@ -49,17 +49,27 @@
                                           <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
                                               <i class="bi-pencil pencil text-white"></i>
                                           </div>
-                                      </div>
+                                      </div>                  
+                                     
                                   </label>
-                                <input type="file" name="photo_intervenant" id="photo_intervenant" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" >
+                                  <div class="invalid-feedback">
+                                    veuillez ajouter une photo 
+                                  </div>
+                                <input type="file" name="photo_intervenant" id="photo_intervenant" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" required>
                               </div>
                               <div class="mb-3 col-12">
                                 <label for="nom_intervenant" class="col-form-label">Pseudo :</label>
-                                  <input type="text" name="nom_intervenant" id="nom_intervenant" class="form-control" placeholder="ex: DJ Doe">
+                                <input type="text" name="nom_intervenant" id="nom_intervenant" class="form-control @error('nom_intervenant') is-invalid @enderror" placeholder="ex: DJ Doe" required>
+                                <div class="invalid-feedback">
+                                    Le nom de l'intervenant est requis 
+                                </div>
                               </div>
                               <div class="mb-3 col-12">
                                   <label for="role_intervenant" class="col-form-label">Role :</label>
-                                  <input type="text" name="role_intervenant" id="role_intervenant" class="form-control" placeholder="ex: DJ">
+                                  <input type="text" name="role_intervenant" id="role_intervenant" class="form-control @error('role_intervenant') is-invalid @enderror" placeholder="ex: DJ" required>
+                                  <div class="invalid-feedback">
+                                    Veuillez ajouter le role de l'intervenant 
+                                  </div>
                               </div>
                               <input type="hidden" name="evenement_id" value="{{$evenement_id}}">
                               <input type="hidden" name="promoteur_id" value="{{Auth()->user()->Profil_promoteur->id}}">
@@ -67,7 +77,7 @@
                       </div>
                       <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                        <button type="submit" class="btn btn-success">Ajouter</button>
+                        <button type="submit" class="btn btn-success" id="submitButton">Ajouter</button>
                       </div>
                     </form>
                   </div>
@@ -76,38 +86,22 @@
             <div class="modal fade" id="EditIntervenant" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
-                  <form action="" id="EditIntervenantForm" method="POST" enctype="multipart/form-data">
+                 <form action="" id="EditIntervenantForm" method="POST" enctype="multipart/form-data" novalidate class="needs-validation">
                       @csrf
                       @method('PUT')
-                      <input type="hidden" name="intervenant_id" id="intervenant_idInput" >
+                      <div id="intervenant_idDiv">
+
+                      </div>
                     <div class="modal-header">
                       <h1 class="modal-title fs-5" id="exampleModalLabel">Modifier l'intervenant</h1>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="mb-3 col-12 d-flex justify-content-center">
-                                <label for="photo_intervenant_edit">
-                                    <div class="position-relative" id="profil_container_edit" style="width: 100px; height:100px">
-                                        <div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
-                                            <div>
-                                                <i class="bi-person person fs-1 fw-bold text-white"></i>
-                                            </div>
-                                        </div>
-                                        <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
-                                            <i class="bi-pencil pencil text-white"></i>
-                                        </div>
-                                    </div>
-                                </label>
-                                <input type="file" name="photo_intervenant" id="photo_intervenant_edit" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" >
-                            </div>
-                            <div class="mb-3 col-12">
-                              <label for="nom_intervenant_edit" class="col-form-label">Pseudo :</label>
-                              <input type="text" name="nom_intervenant" id="nom_intervenant_edit" class="form-control" placeholder="ex: DJ Doe">
-                            </div>
-                            <div class="mb-3 col-12">
-                                <label for="role_intervenant_edit" class="col-form-label">Role :</label>
-                                <input type="text" name="role_intervenant" id="role_intervenant_edit" class="form-control" placeholder="ex: DJ">
+                            <div id="IntervenantInfo" class="w-100 text-center">
+                              <div class="spinner-border " role="status">
+                                <span class="visually-hidden">Loading...</span>
+                              </div>
                             </div>
                             <input type="hidden" name="evenement_id" value="{{$evenement_id}}">
                             <input type="hidden" name="promoteur_id" value="{{Auth()->user()->Profil_promoteur->id}}">
@@ -224,28 +218,55 @@
                 url: url,
                 data:{intervenant_id: intervenant_id},
                 dataType:'JSON',
+               
                 success: function(data) {
                   const profil_container = EditIntervenant.find('#profil_container_edit');
                   const nom_intervenant=EditIntervenant.find('#nom_intervenant_edit')
                   const role_intervenant=EditIntervenant.find('#role_intervenant_edit')
-                  const intervenant_idInput=EditIntervenant.find('#intervenant_idInput')
                   const EditIntervenantForm=$(EditIntervenant.find('#EditIntervenantForm'))
                   console.log(EditIntervenantForm);
-                  var profil=`<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
-                              <div>
-                                <img src="`+data.photo_intervenant+`" alt="" width="100px" height="100px" class="rounded-circle">
+                  var formToEdit=`
+                    <div  class="mb-3 col-12 d-flex justify-content-center">
+                          <label for="photo_intervenant_edit">
+                              <div class="position-relative" id="profil_container_edit" style="width: 100px; height:100px">
+                                  <div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+                                    <div>
+                                      <img src="`+data.photo_intervenant+`" alt="" width="100px" height="100px" class="rounded-circle">
+                                    </div>  
+                                  </div>
+                                  <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+                                      <i class="bi-pencil pencil text-white"></i>
+                                  </div>
                               </div>
-                            </div>
-                            <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
-                              <i class="bi-pencil pencil text-white"></i>
-                            </div>`
-                  profil_container.html(profil);
-                  nom_intervenant.val(data.nom_intervenant);
-                  role_intervenant.val(data.role_intervenant);
-                  intervenant_idInput.val(data.intervenant_id);
-                  url='{{route('Intervenant.update',":intervenant_id")}}'
+                          </label>
+                          <input type="file" name="photo_intervenant" id="photo_intervenant_edit" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" >
+                          <div class="invalid-feedback">
+                            veuillez ajouter une photo 
+                          </div>
+                      </div>
+                      <div class="mb-3 col-12">
+                        <label for="nom_intervenant_edit" class="col-form-label">Pseudo :</label>
+                        <input type="text" name="nom_intervenant" id="nom_intervenant_edit" class="form-control" placeholder="ex: DJ Doe" value="`+data.nom_intervenant+`" required>
+                        <div class="invalid-feedback">
+                            Le nom de l'intervenant est requis 
+                        </div>
+                      </div>
+                      <div class="mb-3 col-12">
+                          <label for="role_intervenant_edit" class="col-form-label">Role :</label>
+                          <input type="text" name="role_intervenant" id="role_intervenant_edit" class="form-control" placeholder="ex: DJ" value="`+data.role_intervenant+`" required>
+                          <div class="invalid-feedback">
+                            Veuillez ajouter le role de l'intervenant 
+                          </div>
+                    </div>
+                  `;
+                      
+                  var intervenant_idInput=`<input type="hidden" name="intervenant_id" id="intervenant_idInput" value="`+intervenant_id+`">`;
+                  url='{{route('Intervenant.update',["Intervenant"=>":intervenant_id"])}}'
                   url=url.replace(':intervenant_id',intervenant_id)
                   EditIntervenantForm.attr('action',url);
+                  $('#intervenant_idDiv').html(intervenant_idInput);
+                  $('#IntervenantInfo').removeClass('text-center');
+                  $('#IntervenantInfo').html(formToEdit);
 
                  
                 }
@@ -300,8 +321,26 @@
   //               DeleteButton.html('<i class="bi-trash trash text-white"></i>');
   //           }
   //       })
-  })
+  });
     
+           (() => {
+            'use strict'
+
+            // Fetch all the forms we want to apply custom Bootstrap validation styles to
+            const forms = document.querySelectorAll('.needs-validation')
+
+            // Loop over them and prevent submission
+            Array.from(forms).forEach(form => {
+              form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                  event.preventDefault()
+                  event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+              }, false)
+            })
+          })()
     </script>
     @endsection
 

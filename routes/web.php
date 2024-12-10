@@ -71,6 +71,7 @@ Route::get('/EditEvent/{evenement}',[EvenementController::class,'EditEvent'])->n
 Route::get('/AddTicket/{evenement}',[TypeTicketController::class,'AddTicket'])->name('AddTicket')->middleware(['auth','role:Promoteur']);
 Route::get('/localisationEdit/{evenement}',[EvenementController::class,'localisationEdit'])->name('localisationEdit')->middleware(['auth','role:Promoteur']);
 Route::get('/eventRedirecting/{type_ticket}/{token}',[EvenementController::class,'eventRedirecting'])->name('eventRedirecting')->middleware(['auth']);
+Route::get('/evenement/{evenement}/typeTicket',[TypeTicketController::class,'AllTickets'])->name('AllTickets');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy']]);

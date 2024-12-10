@@ -63,6 +63,8 @@
     </div>
 
     <script>
+      
+        
         $(document).ready(function() {
             function addActivityToDiv(date_activite, evenement_id, activityPlace, activityContainer, lastEndTime) {
                 let newEndTime = '';
@@ -75,7 +77,7 @@
                 }
                 
                 var formHtml = `
-                    <form action="{{ route('chronogramme.store') }}" method="POST" class="needs-validation" novalidate>
+                    <form  method="POST" class="needs-validation" id="addActivityForm" novalidate>
                         @csrf
                         <input type="hidden" name="date_activite" value="${date_activite}">
                         <input type="hidden" name="evenement_id" value="${evenement_id}">
@@ -103,7 +105,7 @@
                             <div class="card-body row ActivityPlace">
                                 <div class="col-10 fs-4 fw-bold">Ajouter une activité</div>
                                 <div class="col-2">
-                                    <button class="btn btn-outline-danger addActivity" data-date-activity="${date_activite}" data-evenement-id="${evenement_id}" data-last-end-time="${lastEndTime}">
+                                    <button class="btn btn-outline-danger addActivity" data-date-activity="${date_activite}" data-evenement-id="${evenement_id}" data-last-end-time="${newEndTime}">
                                         <svg class="bi bi-plus" fill="currentColor" width="30" height="30">
                                             <use xlink:href="#plus"></use>
                                         </svg>
@@ -198,6 +200,16 @@
                         heure_fin: heureFin
                     },
                     dataType: 'JSON',
+                    beforeSend: function () {
+                        $('.editActivityBtn').html(`
+                            <div class="spinner-border text-light" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                            </div>
+                        `);
+
+                        $('.addActivity').prop("disabled",true);
+
+                    },
                     success: function(data) {
                         if (data.success) {
                             
@@ -216,6 +228,9 @@
                                 </div>
                             `);
                         }
+                    },
+                    complete: function() {
+                        $('.addActivity').prop("disabled",false);
                     }
                 });
            }
@@ -266,7 +281,7 @@
                 }
             });
 
-            $('#AddActivityBtn').on('click', '.activityInput', function(e) {
+            $('#activitiesContainer').on('click', '.AddActivityBtn', function(e) {
                 e.preventDefault();
                 var activityInput = $(this);
                 var activityPlace = activityInput.closest('.ActivityPlace');
@@ -308,6 +323,16 @@
                         heure_fin: heure_fin
                     },
                     dataType: 'JSON',
+                    beforeSend: function () {
+                        $('#AddActivityBtn').html(`
+                            <div class="spinner-border text-light" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                            </div>
+                        `);
+
+                        $('.addActivity').prop("disabled",true);
+
+                    },
                     success: function(data) {
                         if (data.success) {
                             
@@ -322,12 +347,15 @@
                                     </div>
                                  
                                     <div class="col-4">
-                                        <button class="btn btn-success editActivity" data-chronogramme-id="${data.heure_debut}" data-heure-debut="${data.heure_debut}" data-nom-activite="${data.nom_activite}">Modifier</button>
+                                        <button class="btn btn-success editActivity" data-chronogramme-id="${data.chronogramme_id}" data-heure-debut="${data.heure_debut}" data-nom-activite="${data.nom_activite}">Modifier</button>
                                     </div>
                                  
                                 </div>
                             `);
                         }
+                    },
+                    complete: function() {
+                        $('.addActivity').prop("disabled",false);
                     }
                 });
             }
@@ -342,5 +370,9 @@
 
             
         });
+
+        function disableSubmitButton(form) {
+            form.querySelector('#submitButton').disabled = true;
+        }
     </script>
 @endsection

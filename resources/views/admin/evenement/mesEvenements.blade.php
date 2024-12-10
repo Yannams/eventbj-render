@@ -74,8 +74,12 @@
                                             <button type="submit" class="dropdown-item">Annuler </button>
                                         </form>
                                     </li>
+                                    
                                     <li>
                                         <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item"> voir</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{route('AllTickets',$evenements->id)}}" class="dropdown-item"> voir tous les tickets </a>
                                     </li>
                                     <li>
                                         <a href="{{route('chronogramme.create',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un chronogramme</a>

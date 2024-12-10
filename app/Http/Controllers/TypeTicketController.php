@@ -53,54 +53,76 @@ class TypeTicketController extends Controller
      */
     public function store(Storetype_ticketRequest $request)
     {
-        $evenement=evenement::find($request->evenement_id);
-        $type_ticket= new type_ticket;
-        $img = $request->file('image_ticket');
-        $destinationPath = public_path('image_ticket'); // Le chemin de destination où vous souhaitez déplacer le fichier
-
-        // Assurez-vous que le répertoire de destination existe
-        if (!file_exists($destinationPath)) {
-            mkdir($destinationPath, 0755, true);
-        }
-
-        $fileName = time() . '_' . $img->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
-
-        $img->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
-
-        // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
-        $imagePath='image_ticket/'.$fileName;
-        $type_ticket->image_ticket=$imagePath;
-        $type_ticket->nom_ticket=$request->nom_ticket;
-        if($request->format=="Ticket"){
-            $type_ticket->prix_ticket=$request->prix_ticket;
-        }elseif($request->format=="Invitation"){
-            $type_ticket->texte=$request->texte;
-        }
-        // $type_ticket->frais_ticket=$request->frais_ticket;
-        $type_ticket->format=$request->format;
-        $type_ticket->place_dispo=$request->place_dispo;
-        $type_ticket->quantite=$request->place_dispo;
-        $type_ticket->evenement_id=$request->evenement_id;
-        $type_ticket->methodeProgrammationLancement=$request->methodeProgrammationLancement;
-        $type_ticket->Date_heure_lancement=$request->Date_heure_lancement;
-        $type_ticket->methodeProgrammationFermeture=$request->methodeProgrammationFermeture;
-        $type_ticket->Date_heure_fermeture=$request->Date_heure_fermeture;
-        if($evenement->type_lieu->nom_type=='En ligne'){
-            $type_ticket->event_link=$request->event_link;
-        }
-        $type_ticket->save();
-       
-        if (url()->previous()!= route('AddTicket', $evenement->id)) {
-            $evenement->Etape_creation=5;
-        }
-       
-        $evenement->save();
-        if (url()->previous()!= route('AddTicket', $evenement->id)) {
-            session(['type_ticket'=>$type_ticket->id]);
-            return redirect()->route("type_ticket.index")->with('message','Ticket créé');
+        if ($request->evenement_id != '' ) {
+            $evenement=evenement::find($request->evenement_id);
+            $rules=[
+                'image_ticket'=> 'required',
+                'nom_ticket'=>'required',
+                'format'=>'required',
+                'prix_ticket'=>'required',
+                'place_dispo'=>'required',
+                "methodeProgrammationLancement"=>"required",
+                "methodeProgrammationFermeture"=>"required",
+            ] ;
+            if($request->methodeProgrammationLancement=='ProgrammerBilleterie'){
+                $rules['Date_heure_lancement']="required|after_or_equal:today|before:Date_heure_fermeture|before_or_equal:$evenement->date_heure_fin";
+            }
+            if($request->methodeProgrammationFermeture=='FinEvenement'||$request->methodeProgrammationFermeture=='ProgrammerFermeture'){
+                $rules['Date_heure_fermeture']="required|after_or_equal:Date_heure_lancement|before_or_equal:$evenement->date_heure_fin";
+            }
+            $validateData=$request->validate($rules);
+           
+            $type_ticket= new type_ticket;
+            $img = $request->file('image_ticket');
+            $destinationPath = public_path('image_ticket'); // Le chemin de destination où vous souhaitez déplacer le fichier
+    
+            // Assurez-vous que le répertoire de destination existe
+            if (!file_exists($destinationPath)) {
+                mkdir($destinationPath, 0755, true);
+            }
+    
+            $fileName = time() . '_' . $img->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
+    
+            $img->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
+    
+            // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
+            $imagePath='image_ticket/'.$fileName;
+            $type_ticket->image_ticket=$imagePath;
+            $type_ticket->nom_ticket=$request->nom_ticket;
+            if($request->format=="Ticket"){
+                $type_ticket->prix_ticket=$request->prix_ticket;
+            }elseif($request->format=="Invitation"){
+                $type_ticket->texte=$request->texte;
+            }
+            // $type_ticket->frais_ticket=$request->frais_ticket;
+            $type_ticket->format=$request->format;
+            $type_ticket->place_dispo=$request->place_dispo;
+            $type_ticket->quantite=$request->place_dispo;
+            $type_ticket->evenement_id=$request->evenement_id;
+            $type_ticket->methodeProgrammationLancement=$request->methodeProgrammationLancement;
+            $type_ticket->Date_heure_lancement=$request->Date_heure_lancement;
+            $type_ticket->methodeProgrammationFermeture=$request->methodeProgrammationFermeture;
+            $type_ticket->Date_heure_fermeture=$request->Date_heure_fermeture;
+            if($evenement->type_lieu->nom_type=='En ligne'){
+                $type_ticket->event_link=$request->event_link;
+            }
+            $type_ticket->save();
+           
+            if (url()->previous()!= route('AddTicket', $evenement->id)) {
+                $evenement->Etape_creation=5;
+            }
+           
+            $evenement->save();
+            if (url()->previous()!= route('AddTicket', $evenement->id)) {
+                session(['type_ticket'=>$type_ticket->id]);
+                return redirect()->route("type_ticket.index")->with('message','Ticket créé');
+            }else{
+                return redirect()->route('MesEvenements')->with('message','Ticket créé');
+            }
         }else{
-            return redirect()->route('MesEvenements')->with('message','Ticket créé');
+            return redirect()->back()->with('error','une erreur s\'est produite');
         }
+       
     }
 
     /**
@@ -169,6 +191,16 @@ class TypeTicketController extends Controller
         if($evenement->profil_promoteur_id==$promoteur_id ){
             $evenement_id=$evenement->id;
             return view('admin.type_ticket.AddTicket',compact('evenement_id','evenement'));
+        }else{
+            return redirect()->route('UnauthorizedUser');
+        }
+    }
+
+    public function AllTickets(evenement $evenement){
+        $promoteur_id=auth()->user()->profil_promoteur->id;
+        if($evenement->profil_promoteur_id==$promoteur_id ){
+            $typeTickets=$evenement->type_tickets;
+            return view('admin.type_ticket.AllTickets',compact('typeTickets','evenement'));
         }else{
             return redirect()->route('UnauthorizedUser');
         }

@@ -53,7 +53,7 @@
     <div class="card border-0">
         <div class="card-body">
             
-            <form action="{{route('type_ticket.update',$type_ticket->id)}}" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+            <form action="{{route('type_ticket.update',$type_ticket->id)}}" method="post"  enctype="multipart/form-data" onsubmit="disableSubmitButton(this)">
                 @csrf
                 @method('PUT')
                 
@@ -72,16 +72,19 @@
                             </div>
                             <div class="text">
                                 <span class="fs-3">Cliquer pour mettre un image de couverture</span><br>
-                            </div>
+                                @error('image_ticket') <span class="fs-3 text-danger">{{$message}}</span><br> @enderror
+                            </div>                            
                             <input type="file" id="image_ticket" name="image_ticket">
                         </label>
                     </div>
                     <div class="col-12 ">
                         <label for="nom_ticket">Nom ticket</label>
                         <input type="text" name="nom_ticket" id="nom_ticket" class="form-control" minlength="3" maxlength="100" required value="{{$type_ticket->nom_ticket}}">
-                        <div class="invalid-feedback">
-                            Veuillez entrer un nom d'au moins 3 caractères
-                        </div>
+                        @error('nom_ticket')
+                            <div class="invalid-feedback">
+                            {{$message}}
+                            </div>
+                        @enderror
                     </div>
                     <div class="col-12">
                         <label for="format">Format</label>
@@ -89,17 +92,21 @@
                             <option value="Ticket" {{$type_ticket->format=="Ticket" ? 'selected' : ''}}>Ticket</option>
                             <option value="Invitation"  {{$type_ticket->format=="Invitation" ? 'selected' :''}} >Invitation</option>
                         </select>            
-                        <div class="invalid-feedback">
-                            Veuillez choisir un format de pass
-                        </div>
+                        @error('format')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror
                     </div>
                     <div class="format_input_container row g-3 w-100">
                         <div class="col-sm-6">
                             <label for="prix_ticket">Prix ticket</label>
                             <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" value="{{$type_ticket->prix_ticket}}" required>
-                            <div class="invalid-feedback">
-                                Veuillez mettre le prix du ticket
-                            </div>
+                            @error('prix_ticket')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
                         </div>
                         {{-- <div class="col-sm-4">
                             <label for="frais_ticket">frais prélevée</label>
@@ -112,17 +119,21 @@
                         <div class="col-sm-6">
                             <label for="place_dispo">Quantité de ticket</label>
                             <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}" required>
-                            <div class="invalid-feedback">
-                                Veuillez ajouter une quantité
-                            </div>
+                            @error('place_dispo')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
                         </div>
                         @if ($type_ticket->evenement->type_lieu->nom_type == "En ligne")
                             <div class="col-sm-12">
                                 <label for="event_link">Lien de l'évènement</label>
                                 <input type="text" name="event_link" id="event_link" class="form-control" value="{{$type_ticket->event_link}}"  required>
-                                <div class="invalid-feedback">
-                                    Veuillez ajouter un lien
-                                </div>
+                                @error('event_link')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
                             </div>
                         @endif
                     </div>
@@ -141,10 +152,20 @@
                             <option value="ProgrammerBilleterie" {{$type_ticket->methodeProgrammationLancement=='ProgrammerBilleterie'?"selected":""}}>Programmer ...</option>
                             <option value="ProgrammerPlustard" {{$type_ticket->methodeProgrammationLancement=='ProgrammerPlustard'?"selected":""}}>Programmer plus tard</option>
                        </select>
+                        @error('methodeProgrammationLancement')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror
                     </div>
                     <div id="programmerLancement" class="col-12">
                         
                     </div>
+                    @error('Date_heure_lancement')
+                        <div class="invalid-feedback">
+                            {{$message}}
+                        </div>
+                    @enderror 
                     <div class="col-12">
                         <label for="methodeProgrammationFermeture">Date de fermeture de la billetterie</label>
                        <select name="methodeProgrammationFermeture" id="methodeProgrammationFermeture" class="form-select" required>
@@ -153,18 +174,27 @@
                             <option value="ProgrammerFermeture" {{$type_ticket->methodeProgrammationFermeture=='ProgrammerFermeture'?"selected" : ""}}>Programmer ...</option>
                             <option value="ProgrammerPlustard" {{$type_ticket->methodeProgrammationFermeture=='ProgrammerPlustard'?"selected" : ""}}>Programmer plus tard</option>
                        </select>
+                       @error('methodeProgrammationFermeture')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror 
                     </div>
                     <div id="programmerFermeture">
 
                     </div>
-        
+                    @error('Date_heure_fermeture')
+                    <div class="invalid-feedback">
+                            {{$message}}
+                        </div>
+                    @enderror 
                     {{-- <input type="hidden" name="evenement_id" id="evenement_id" value="{{$evenement_id}}"> --}}
                     <div class="col-12 mt-4 row">
                         <div class="col">
                             <a href="" class="btn btn-outline-success w-100">Précédent</a>
                         </div>
                         <div class="col">
-                            <button type="submit" class="btn btn-success w-100">suivant</button>
+                            <button type="submit" id="submitButton" class="btn btn-success w-100">suivant</button>
                         </div>
                     </div>  
                 </div>
@@ -279,6 +309,9 @@
                 var frais_ticket=prix_ticket*0.1
             frais_ticket_input.value=frais_ticket
             })
+            function disableSubmitButton(form) {
+                form.querySelector('#submitButton').disabled = true;
+            }
         </script>
     </div>
     @endsection

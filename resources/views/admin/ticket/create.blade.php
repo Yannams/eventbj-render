@@ -28,10 +28,10 @@
                     
                     
                 </div>
-                <form class="formulaire2" method="post" onsubmit="return false;">
+                <form class="formulaire2" method="post" onsubmit="disableSubmitButton(this);">
                    
                     <input type="hidden" name="montant" value="">
-                    <button type="submit" class="btn btn-success col-12">Obtenir</button>
+                    <button type="submit" id="submitButton" class="btn btn-success col-12">Obtenir</button>
                 </form>
                 
                 <script>
@@ -58,11 +58,21 @@
                                 },
                                 dataType: 'json',
                                 data: dataToSend,
+                                beforeSend:function(){
+                                    $('#submitButton').html(`
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    `);
+                                },
                                 success: function(data) {
                                     console.log('Réponse réussie:', data);
 
                                     // Appeler initializeApp après un succès de la requête
                                     initializeApp("{{ route('verifiedTransation', ['type_ticket' => $type_ticket->id]) }}",data.name,data.email,data.numero);
+                                },
+                                complete:function(){
+                                    $('#submitButton').html('Obtenir');
                                 },
                                 error: function(error) {
                                     console.log('Erreur:', error);
@@ -105,6 +115,7 @@
 
                 <script>
                     function increaseValue() {
+                                $('#submitButton').attr('disabled', false);
                                 var inputElement = document.getElementById('nombre_ticket');
                                 inputElement.value = parseInt(inputElement.value) + 1;
                                 var nbre_ticket = document.getElementById('nombre_ticket').value;
@@ -121,6 +132,7 @@
                     
                 
                     function decreaseValue() {
+                        $('#submitButton').attr('disabled', false);
                         var inputElement = document.getElementById('nombre_ticket');
                         var currentValue = parseInt(inputElement.value);
                         var resumeDiv = document.getElementById('resume');
@@ -139,6 +151,9 @@
                                 resumeDiv.innerHTML = "";
                                 document.querySelector('input[name="montant"]').removeAttribute('value');
                             }
+                    }
+                    function disableSubmitButton(form) {
+                        form.querySelector('#submitButton').disabled = true;
                     }
                 </script>
 

@@ -51,7 +51,7 @@
 @endif
 
         <div class="container mt-5">
-            <form action="{{route('Promoteur.store')}}" method="POST">
+            <form action="{{route('Promoteur.store')}}" method="POST" onsubmit="disableSubmitButton(this)">
                 @csrf
                 <div class="row g-3">
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
@@ -77,8 +77,7 @@
                         <label for="nom">Nom</label>
                         <input type="text" name="nom" id="nom" class="form-control">
                     </div>
-                    <button type="submit" class="btn btn-success col">Suivant</button> 
-              
+                    <button type="submit" id="submitButton" class="btn btn-success col">Suivant</button> 
                 </div>
               
                 
@@ -93,5 +92,8 @@
                     toastBootstrap.show();
                 }
             });
+            function disableSubmitButton(form) {
+                form.querySelector('#submitButton').disabled = true;
+            }
         </script>
     @endsection

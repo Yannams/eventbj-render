@@ -90,7 +90,7 @@
                         <div class="p-5  d-flex justify-content-center">
                            
                                 <div class="col-10">
-                                    <form action="{{route('login')}}" method="post">
+                                    <form action="{{route('login')}}" method="post" onsubmit="disableSubmitButton(this)">
                                         @csrf
                                         <div class="row row-cols-1 g-4">
                                             <div class="col">
@@ -132,7 +132,7 @@
                                                
                                             </div>
                                             <div class="col">
-                                                <button type="submit" class="btn btn-success w-100">Se connecter</button>
+                                                <button type="submit" id="submitButton" class="btn btn-success w-100">Se connecter</button>
                                             </div>
                                             <div class="col text-dark">
                                                 <div class="row">
@@ -179,7 +179,11 @@
                     </div>
                 </div>
         </div>
-    
+    <script>
+        function disableSubmitButton(form) {
+            form.querySelector('#submitButton').disabled = true;
+        }
+    </script>
 </body>
 </html>
 

@@ -15,11 +15,20 @@
                         <option value="ProgrammerBilleterie" @if ($typeTicket->methodeProgrammationLancement=='ProgrammerBilleterie')selected @endif>Programmer ...</option>
                         <option value="ProgrammerPlustard" @if ($typeTicket->methodeProgrammationLancement=='ProgrammerPlustard')selected @endif>Programmer plus tard</option>
                    </select>
+                   @error('Date_heure_lancement')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror 
                 </div>
                 <div id="programmerLancement[{{$typeTicket->id}}]">
 
                 </div>
-                
+                @error('Date_heure_lancement')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror 
                 <div class="col-12 mt-3 mb-3">
                     <label for="methodeProgrammationFermeture">Date de fermeture de la billetterie</label>
                     <select name="methodeProgrammationFermeture[{{$typeTicket->id}}]" id="methodeProgrammationFermeture" class="form-select" required data-type-ticket="{{$typeTicket->id}}">
@@ -28,10 +37,20 @@
                          <option value="ProgrammerFermeture" @if ($typeTicket->methodeProgrammationFermeture=='ProgrammerFermeture')selected @endif>Programmer ...</option>
                          <option value="ProgrammerPlustard" @if ($typeTicket->methodeProgrammationFermeture=='ProgrammerPlustard')selected @endif>Programmer plus tard</option>
                     </select>
+                    @error('methodeProgrammationFermeture')
+                        <div class="invalid-feedback">
+                            {{$message}}
+                        </div>
+                    @enderror 
                 </div>
                 <div id="programmerFermeture[{{$typeTicket->id}}]">
                     
                 </div>
+                @error('Date_heure_fermeture')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror 
 
             </div>
         </div>  

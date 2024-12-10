@@ -20,7 +20,7 @@
     @enderror
   
         <div class="row align-items-center">
-            <form action="{{route('evenement.store')}}" method="post"> 
+            <form action="{{route('evenement.store')}}" method="post" onsubmit="disableSubmitButton(this)"> 
                 @csrf
               
                 <div class="card border-0">
@@ -48,7 +48,7 @@
                                 </div>
                             </div>
                             <div class="col">
-                                <button type="submit" class="btn btn-success w-100">Suivant</button>
+                                <button type="submit" class="btn btn-success w-100" id="submitButton">Suivant</button>
                             </div>
                         </div>              
                     </div>    
@@ -64,5 +64,9 @@
                     toastBootstrap.show();
                 }
             });
+
+            function disableSubmitButton(form) {
+                form.querySelector('#submitButton').disabled = true;
+            }
         </script>
     @endsection

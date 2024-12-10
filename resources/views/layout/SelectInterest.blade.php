@@ -1,6 +1,6 @@
 @extends('layout.utilisateur')
     @section('content')
-    <form action="{{route('Centre_interet.store')}}" class="text-center" method="POST">
+    <form action="{{route('Centre_interet.store')}}" class="text-center" method="POST" onsubmit="disableSubmitButton(this)">
         @csrf
         <h1 class=" fw-bold mb-1">Dites-nous vos passions! <h1>
         <h3 class=" fw-semibold mb-5">Cela nous permettra de vous proposer des évènement à votre goût !</h3>
@@ -14,6 +14,11 @@
                 @endforeach
             </div>
         </div>
-        <button type="submit" class="mt-5 rounded-pill btn btn-danger">Continuer <i class="bi bi-arrow-right-circle-fill"></i></button>
+        <button type="submit" id="submitButton" class="mt-5 rounded-pill btn btn-danger">Continuer <i class="bi bi-arrow-right-circle-fill"></i></button>
     </form>
+    <script>
+          function disableSubmitButton(form) {
+                    form.querySelector('#submitButton').disabled = true;
+                }
+    </script>
     @endsection

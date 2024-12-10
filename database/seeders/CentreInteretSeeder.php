@@ -37,5 +37,6 @@ class CentreInteretSeeder extends Seeder
         Centre_interet::create(['nom_ci'=>'Danse']);
         Centre_interet::create(['nom_ci'=>'Lecture']);
         Centre_interet::create(['nom_ci'=>'Humour']);
+        Centre_interet::create(['nom_ci'=>'Autres']);
     }
 }

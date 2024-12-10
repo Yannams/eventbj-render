@@ -150,10 +150,10 @@
                                 <div class="card-body">
                                     <div class="fw-bold fs-1">{{$tickets->nom_ticket}} </div>
                                     <div class="fw-bold fs-3">{{$tickets->prix_ticket}} XOF</div>
-                                    <form action="{{route('ticket_selected')}}" method="post">
+                                    <form action="{{route('ticket_selected')}}" method="post" onsubmit="disableSubmitButton(this)">
                                         @csrf
                                         <input type="hidden" name="ticket" value="{{$tickets->id}}">
-                                        <button type="submit" class="btn btn-success w-100" @role('Admin')disabled @endrole>Obtenir le ticket</button>
+                                        <button type="submit" id="submitButton" class="btn btn-success w-100" @role('Admin')disabled @endrole>Obtenir le ticket</button>
                                     </form>
                                 </div>
                             </div>
@@ -207,4 +207,9 @@
             
         </div>
     </div> 
+    <script>
+         function disableSubmitButton(form) {
+                form.querySelector('#submitButton').disabled = true;
+            }
+    </script>
     @endsection

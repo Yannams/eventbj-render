@@ -56,5 +56,7 @@ class FortifyServiceProvider extends ServiceProvider
             return view('auth.reset-password', ['request' => $request]);
         });
 
+       
+
     }
 }

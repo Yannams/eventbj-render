@@ -74,15 +74,17 @@
       </div>
         <div class="card border-0">
             <div class="card-body">
-                <form action="{{route('localisationStore')}}" method="POST">
+                <form action="{{route('localisationStore')}}" method="POST" onsubmit="disableSubmitButton(this)">
                     @csrf
                     <div class="col-12 mb-3">
                         <input type="hidden" name="evenement_id" id="evenement_id" value="{{session('evenement_id')}}">
                         <label for="localisation">{{$evenement->type_lieu->nom_type=='physique'?'Indication':'Application de l\'évènement'}}</label>
                         <input type="text" name="localisation" id="localisation" class="form-control @error('localisation') is-invalid @enderror" value="{{$evenement->localisation}}" required>
-                        <div class="invalid-feedback">
-                            veuillez suivre les etapes precedentes
-                        </div>
+                        @error('localisation')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror
                     </div>
                     <div>
                         Pour creer la localisation google maps.
@@ -108,7 +110,7 @@
                             <a href="{{route('MesEvenements')}}" class="btn btn-outline-success w-100">Annuler</a>
                         </div>
                          <div class="col">
-                            <button type="submit" class="btn btn-success w-100">Modifier</button>  
+                            <button type="submit" class="btn btn-success w-100" id="submitButton">Modifier</button>  
                          </div>
                            
                      </div>   
@@ -176,5 +178,8 @@
                 }
             });
         })
+            function disableSubmitButton(form) {
+                form.querySelector('#submitButton').disabled = true;
+            }
         </script>  
     @endsection

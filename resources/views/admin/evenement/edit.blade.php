@@ -76,19 +76,22 @@
         @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
-            <form action="{{route('evenement.update', $evenement)}}" method="post" enctype="multipart/form-data" class="m-3 needs-validation" novalidate>
+            <form action="{{route('evenement.update', $evenement)}}" method="post" enctype="multipart/form-data" class="m-3 " onsubmit="disableSubmitButton(this)">
                 @csrf
                 @method('PUT')
      
                     
                         <div class="col-12 mb-3 d-flex justify-content-center">
-                            <label class="custum-file-upload" for="cover_event">
+                            <label class="custum-file-upload" style="@error('cover_event') border:solid 0.5px #F0343C; @enderror" for="cover_event">
                                 <div class="icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
                                 </div>
                                 <div class="text d-flex flex-column text-center ">
                                     <span class="fs-3 text-1">Cliquer pour mettre une image de couverture</span><br>
-                                    <span class="fs-5 text-2">Veuillez ajouter de préférence une image sans texte</span>
+                                    <span class="fs-5 text-2">Veuillez ajouter de préférence une image sans texte</span><br>
+                                    @error('cover_event')
+                                        <span class="fs-3 text-danger">Veuillez ajouter une image de couverture</span>
+                                    @enderror
                                 </div>
                                 <input type="file" id="cover_event" name="cover_event" accept=".png, .jpeg, .jpg, .JPEG, .JPG, .gif">
                             </label>
@@ -97,63 +100,80 @@
                      <div class="col-12 mb-3">
                         <input type="hidden" name="evenement_id" value="{{$evenement->id}}" id="evenement_id">
                          <label for="nom_evenement">Nom evenement</label>
-                         <input type="text" name="nom_evenement" id="nom_evenement" class="form-control @error('nom_evenement') is-invalid @enderror" value="{{$evenement->nom_evenement}}" required>
-                         <div class="invalid-feedback">
-                            veuillez donner un nom à votre évènement
-                         </div>
+                         <input type="text" name="nom_evenement" id="nom_evenement" class="form-control @error('nom_evenement') is-invalid @enderror" value="{{old('nom_evenement') ?: $evenement->nom_evenement}}" >
+                         @error('nom_evenement')
+                            <div class="invalid-feedback">
+                               {{$message}}
+                            </div>  
+                         @enderror
+                        
                      </div>
                      <div class="col-12 mb-3">
                          <label for="type_evenement_id">Type de l'evenement</label>
-                         <select name="type_evenement_id" id="type_evenement_id" class="form-control @error('type_evenement_id') is-invalid @enderror"required>
+                         <select name="type_evenement_id" id="type_evenement_id" class="form-control @error('type_evenement_id') is-invalid @enderror">
                             @foreach ($type_evenement as $type_evenements )
                                  <option value="{{$type_evenements->id}}" @if ($evenement->type_evenement_id==$type_evenements->id) selected @endif>{{$type_evenements->nom_type_evenement}}</option>
                             @endforeach 
                              
                          </select>
-                         <div class="invalid-feedback">
-                            Veuilllez selectionner une option
-                         </div>
+                         @error('type_evenement_id')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                         @enderror
+                         
                      </div>
                      <div class="col-12 mb-3">
-                        <label for="type_evenement_id">Categorie de l'evenement</label><br>
+                        <label for="interest">Categorie de l'evenement</label><br>
                         <div class="p-3 border border-1 rounded-2 InterestContainer">
                             @foreach ($interests as $interest)
-                                <input type="checkbox" class="btn-check interest" @if(in_array($interest->id,$EventInterestArray)) checked @endif id="Interest-{{$interest->id}}" value="{{$interest->id}}" name="interest[]" autocomplete="off">
-                                <label class="btn btn-outline-success rounded-pill mb-2 interestLabel" for="Interest-{{$interest->id}}">{{$interest->nom_ci}}</label>
+                                <input type="checkbox" class="btn-check interest " @if(in_array($interest->id,$EventInterestArray)) checked @elseif(old('interest')) @if (in_array($interest->id,old('interest'))) checked @endif @endif id="Interest-{{$interest->id}}" value="{{$interest->id}}" name="interest[]" autocomplete="off">
+                                <label class="btn  btn-outline-success @error('interest') btn-outline-danger @enderror rounded-pill mb-2 interestLabel" for="Interest-{{$interest->id}}">{{$interest->nom_ci}}</label>
                             @endforeach 
                         </div>
-                        <div class="invalid-feedback_interest text-danger"></div>
+                       @error('interest')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>   
+                       @enderror
                     </div>
 
                      <div class="col-12 mb-3">
                         <label for="date_heure_debut">Date et heure de début</label>
-                        <input type="datetime-local" name="date_heure_debut" id="date_heure_debut" class="form-control @error('date_heure_debut') is-invalid @enderror" value="{{$evenement->date_heure_debut}}" required>
-                        <div class="invalid-feedback">
-                            La date de debut doit être supérieur à celle du jour et inférieur à celle de fin
-                         </div>
+                        <input type="datetime-local" name="date_heure_debut" id="date_heure_debut" class="form-control @error('date_heure_debut') is-invalid @enderror" value="{{ old('date_heure_debut') ?: $evenement->date_heure_debut}}" >
+                        @error('date_heure_debut')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror    
+                           
                     </div>
                 
                     <div class="col-12 mb-3">
                         <label for="date_heure_fin">Date et heure de fin</label>
-                        <input type="datetime-local" name="date_heure_fin" id="date_heure_fin" class="form-control @error('date_heure_fin') is-invalid @enderror" value="{{$evenement->date_heure_fin}}" required>
-                        <div class="invalid-feedback">
-                            La date de fin doit être supérieur à celle du jour et supérieur à celle de début
-                         </div>
+                        <input type="datetime-local" name="date_heure_fin" id="date_heure_fin" class="form-control @error('date_heure_fin') is-invalid @enderror" value="{{old('date_heure_fin') ?: $evenement->date_heure_fin}}" >
+                        @error('date_heure_fin')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror 
                     </div>
 
                      {{-- <div class="col-12 mb-3">
                          <label for="localisation">Localisation</label>
-                         <input type="text" name="localisation" id="localisation" class="form-control @error('localisation') is-invalid @enderror" value="{{$evenement->localisation}}" required>
+                         <input type="text" name="localisation" id="localisation" class="form-control @error('localisation') is-invalid @enderror" value="{{$evenement->localisation}}" >
                          <div class="invalid-feedback">
                             Veuillez mettre une localisation
                          </div>
                      </div> --}}
                      <div class="col-12 mb-3">
                          <label for="description">Description</label>
-                         <textarea name="description" id="description" cols="30" rows="10" class="form-control @error('description') is-invalid @enderror" required>{{$evenement->description}}</textarea>
-                         <div class="invalid-feedback">
-                            Veuillez mettre une description
-                         </div>
+                         <textarea name="description" id="description" cols="30" rows="10" class="form-control @error('description') is-invalid @enderror" >{{$evenement->description}}</textarea>
+                         @error('description')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror 
                      </div>
                      <div></div>
                      <input type="hidden" name="type_lieu_selected" value="{{$typeLieuId}}">
@@ -162,7 +182,7 @@
                             <a href="{{route('Create_event')}}" class="btn btn-outline-success w-100">Précédent</a>
                         </div>
                          <div class="col">
-                            <button type="submit" class="btn btn-success w-100">Suivant</button>  
+                            <button type="submit" id="submitButton" class="btn btn-success w-100">Suivant</button>  
                          </div>
                            
                      </div>         
@@ -170,7 +190,7 @@
      
         </div>      
     </div>
-    <script>
+    {{-- <script>
     (() => {
         'use strict';
     
@@ -284,7 +304,7 @@
         });
     })();
     
-    </script>
+    </script> --}}
 
     <script>
         $(document).ready(function() {
@@ -371,6 +391,10 @@
                     toastBootstrap.show();
                 }
             });
+
+            function disableSubmitButton(form) {
+                form.querySelector('#submitButton').disabled = true;
+            }
         </script>
     </div>    
     @endsection
