@@ -16,6 +16,8 @@
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <style>
       {!! Vite::content('resources/css/app.css')!!}
     </style>
@@ -114,7 +116,7 @@
     </svg>
       <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top">
    
-              <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
+              <a href="{{route('MesEvenements')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
                 <img src="{{asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
               </a>
                
@@ -144,8 +146,49 @@
                 </li>
                 <li class="nav-item"><a href="#" class="nav-link"></a></li>                
               </ul>
-              <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="50" height="50" class="rounded-5 ms-4" >
+              {{-- <img src="{{asset(auth()->user()->profil_user)}}" alt="profil" width="50" height="50" class="rounded-5 ms-4" > --}}
+              <div class="btn-group dropstart">
+                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  @auth
+                    <img src="{{asset(auth()->user()->profil_user)}}" alt="profil" width="50" height="50" class="rounded-5">
+                  @else
+                    <i class="bi bi-person-circle text-dark fs-3 me-1"></i>
+                  @endauth 
+                </a>
               
+                <ul class="dropdown-menu ">
+                    @if (auth()->check())
+                    <li>
+                        <a href="{{route('logout')}}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="justify-content-center d-flex align-items-center dropdown-item">
+                            <svg class="bi bi-box-arrow-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#logout"></use></svg> Se déconnecter  
+                        </a>
+                        <form  method="post" action="{{route('logout')}}"  id="logout-form" style="display: none">
+                            @csrf
+                        </form>
+                    </li>
+                    <li>
+                      <a href="{{route('ConfirmUserBeforeDelete',auth()->user()->id)}}" class="justify-content-center d-flex align-items-center dropdown-item">
+                        <i class="bi bi-trash me-1"></i>Supprimer le compte  
+                      </a>
+                    </li>
+                  @else
+                    <li>
+                        <a href="{{ route('login') }}" class="dropdown-item">
+                          <svg class="bi bi-box-arrow-in-right me-1" fill="currentColor" width="16" height="16"><use xlink:href="#login"></use></svg> 
+                          Se connecter
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('register') }}" class=" dropdown-item">
+                          <svg class="bi bi-person-add me-1" fill="currentColor" width="16" height="16"><use xlink:href="#person-add"></use></svg> 
+                          S'inscrire
+                        </a>
+                    </li>
+                      
+                  @endif
+                    <li><a class="dropdown-item" href="{{route('evenement.index')}}">Permuter vers participant</a></li>
+                </ul>
+              </div>
               <ul class="nav nav-pills mt-1 p-2 bg-white d-lg-none row row-cols-5 fixed-bottom">
                
                <li class="nav-item">

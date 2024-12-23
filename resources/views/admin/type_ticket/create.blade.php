@@ -50,6 +50,25 @@
           </div>    
       </div>
     @endif
+    <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel">Recadrer image</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="img-container">
+                <img id="uploadedAvatar" src="https://avatars0.githubusercontent.com/u/3456749">
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
+                <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
    @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
@@ -71,6 +90,7 @@
                             </label>
                         </div>
                     </div>
+                    <input type="hidden" name="croppedCover" id="croppedCover">
                     <div class="col-6 ">
                         <label for="nom_ticket">Nom ticket</label>
                         <input type="text" name="nom_ticket" id="nom_ticket" class="form-control @error('nom_ticket') is-invalid @enderror" value="{{old('nom_ticket')}}" >
@@ -351,7 +371,76 @@
                         $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\" readonly value=\"{{$evenement->date_heure_fin}}\">");
                     }
                 })
+                window.addEventListener('DOMContentLoaded', function () {
+                var avatar = document.getElementById('profile-img');
+                var image = document.getElementById('uploadedAvatar');
+                var input = document.getElementById('image_ticket');
+                var cropBtn = document.getElementById('crop');
+                var $modal = $('#cropAvatarmodal');
+                var cropper;
+
+                $('[data-toggle="tooltip"]').tooltip();
+
+                input.addEventListener('change', function (e) {
+                    var files = e.target.files;
+                    var done = function (url) {
+                    // input.value = '';
+                    
+                    image.src = url;
+                    $modal.modal('show');
+                    };
+                    // var reader;
+                    // var file;
+                    // var url;
+
+                    if (files && files.length > 0) {
+                    let file = files[0];
+
+                        // done(URL.createObjectURL(file));
+                    // if (URL) {
+                    // } 
+                    
+                    // else if (FileReader) {
+                        reader = new FileReader();
+                        reader.onload = function (e) {
+                        done(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                    // }
+                    }
+      });
+      
+      
+      
+
+      $modal.on('shown.bs.modal', function () {
+        cropper = new Cropper(image, {
+          aspectRatio: 16 / 9,
+          viewMode: 3,
+        });
+      }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+      });
+
+      cropBtn.addEventListener('click', function () {
+        cropper.getCroppedCanvas().toBlob((blob) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                // Mettre l'image recadrée en Base64 dans l'input caché
+                document.getElementById('croppedCover').value = reader.result;
+
+                // Fermer le modal
                 
+                $modal.modal('hide');
+            };
+
+            reader.readAsDataURL(blob);
+        });
+      });
+      
+    }); 
             </script>
     </div>
     @endsection

@@ -6,6 +6,8 @@ use App\Models\type_ticket;
 use App\Http\Requests\Storetype_ticketRequest;
 use App\Http\Requests\Updatetype_ticketRequest;
 use App\Models\evenement;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class TypeTicketController extends Controller
 {
@@ -53,10 +55,13 @@ class TypeTicketController extends Controller
      */
     public function store(Storetype_ticketRequest $request)
     {
+
         if ($request->evenement_id != '' ) {
+           
             $evenement=evenement::find($request->evenement_id);
             $rules=[
                 'image_ticket'=> 'required',
+                'croppedCover'=>'required|string',
                 'nom_ticket'=>'required',
                 'format'=>'required',
                 'prix_ticket'=>'required',
@@ -64,29 +69,39 @@ class TypeTicketController extends Controller
                 "methodeProgrammationLancement"=>"required",
                 "methodeProgrammationFermeture"=>"required",
             ] ;
-            if($request->methodeProgrammationLancement=='ProgrammerBilleterie'){
+            if($request->methodeProgrammationLancement=='ProgrammerBilleterie' && ($request->methodeProgrammationFermeture=='FinEvenement'|| $request->methodeProgrammationFermeture=='ProgrammerFermeture')){
                 $rules['Date_heure_lancement']="required|after_or_equal:today|before:Date_heure_fermeture|before_or_equal:$evenement->date_heure_fin";
-            }
-            if($request->methodeProgrammationFermeture=='FinEvenement'||$request->methodeProgrammationFermeture=='ProgrammerFermeture'){
                 $rules['Date_heure_fermeture']="required|after_or_equal:Date_heure_lancement|before_or_equal:$evenement->date_heure_fin";
-            }
+            }elseif (($request->methodeProgrammationLancement=='ProgrammerPlustard'||$request->methodeProgrammationLancement=='ActivationEvènement')&& ($request->methodeProgrammationFermeture=='ProgrammerFermeture'||$request->methodeProgrammationFermeture=='FinEvenement')) {
+                $rules['Date_heure_fermeture']="required|before_or_equal:$evenement->date_heure_fin";
+            }elseif ($request->methodeProgrammationLancement=='ProgrammerBilleterie' && $request->methodeProgrammationFermeture=='ProgrammerPlustard') {
+                $rules['Date_heure_lancement']="required|after_or_equal:today|before_or_equal:$evenement->date_heure_fin";
+            }         
             $validateData=$request->validate($rules);
            
             $type_ticket= new type_ticket;
-            $img = $request->file('image_ticket');
-            $destinationPath = public_path('image_ticket'); // Le chemin de destination où vous souhaitez déplacer le fichier
+            $croppedCover=$request->croppedCover;
+            list($type, $croppedCover) = explode(';', $croppedCover);
+            list(, $croppedCover)      = explode(',', $croppedCover);
+            $croppedCover = base64_decode($croppedCover);
+            $manager = new ImageManager(new Driver());
     
-            // Assurez-vous que le répertoire de destination existe
-            if (!file_exists($destinationPath)) {
-                mkdir($destinationPath, 0755, true);
+            // Décodage et création de l'image
+            $image = $manager->read($croppedCover) ;
+        
+            // Redimensionnement proportionnel avec une largeur maximale de 800px sans agrandir l'image
+            $image = $image->scaleDown(width: 800);
+        
+            // Encodage de l'image en JPEG avec une qualité de 70%
+            $encoded = $image->toJpeg(95); 
+               
+            $destinationPath=public_path('image_ticket');
+            if(!file_exists($destinationPath)){
+                mkdir($destinationPath,0775,true);
             }
-    
-            $fileName = time() . '_' . $img->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
-    
-            $img->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
-    
-            // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
-            $imagePath='image_ticket/'.$fileName;
+            $fileName=time(). '_cover_'.$request->nom_evenement;
+            $encoded->save($destinationPath.'/'.$fileName);
+            $imagePath='image_ticket/' . $fileName;
             $type_ticket->image_ticket=$imagePath;
             $type_ticket->nom_ticket=$request->nom_ticket;
             if($request->format=="Ticket"){
@@ -108,8 +123,9 @@ class TypeTicketController extends Controller
             }
             $type_ticket->save();
            
-            if (url()->previous()!= route('AddTicket', $evenement->id)) {
+            if (url()->previous()!= route('AddTicket', $evenement->id)||session('previousLink')==route('StartWithoutTicket',$evenement->id)) {
                 $evenement->Etape_creation=5;
+                session()->forget(['previousLink']);
             }
            
             $evenement->save();
@@ -117,7 +133,7 @@ class TypeTicketController extends Controller
                 session(['type_ticket'=>$type_ticket->id]);
                 return redirect()->route("type_ticket.index")->with('message','Ticket créé');
             }else{
-                return redirect()->route('MesEvenements')->with('message','Ticket créé');
+                return redirect()->route('AllTickets',$type_ticket->evenement_id)->with('message','Ticket créé');
             }
         }else{
             return redirect()->back()->with('error','une erreur s\'est produite');
@@ -147,22 +163,52 @@ class TypeTicketController extends Controller
      */
     public function update(Updatetype_ticketRequest $request, type_ticket $type_ticket)
     {
-        
-       $data=$request->validate(
-            [
-                "image_ticket"=>"extensions:jpg,png,svg",
-                "nom_ticket"=>"required",
-                "prix_ticket"=>"required|numeric",
-                "place_dispo"=>"required|numeric",
-                "methodeProgrammationLancement"=>"required",
-                "Date_heure_lancement"=>"Date",
-                "methodeProgrammationFermeture"=>"required",
-                "Date_heure_fermeture"=>"Date",
+        $rules=[
+            "nom_ticket"=>"required",
+            "prix_ticket"=>"required|numeric",
+            "place_dispo"=>"required|numeric",
+            "methodeProgrammationLancement"=>"required",
+            "Date_heure_lancement"=>"Date",
+            "methodeProgrammationFermeture"=>"required",
+            "Date_heure_fermeture"=>"Date",
+        ];
+        if($request->image_ticket){
+            $rules["image_ticket"]="extensions:jpg,png,svg";
+            $rules['croppedCover']='required|string';  
+        }else{
+            $image_ticket=$type_ticket->image_ticket;
+        }
+        if($request->image_ticket){
+            $data=$request->validate($rules);
+            $croppedCover=$request->croppedCover;
+            // dd($croppedCover);
+            list($type, $croppedCover) = explode(';', $croppedCover);
+            list(, $croppedCover)      = explode(',', $croppedCover);
+            $croppedCover = base64_decode($croppedCover);
+            $manager = new ImageManager(new Driver());
 
-            ]
-        );
+            // Décodage et création de l'image
+            $image = $manager->read($croppedCover) ;
+        
+            // Redimensionnement proportionnel avec une largeur maximale de 800px sans agrandir l'image
+            $image = $image->scaleDown(width: 800);
+        
+            // Encodage de l'image en JPEG avec une qualité de 70%
+            $encoded = $image->toJpeg(95); 
+            
+            $destinationPath=public_path('image_ticket');
+            if(!file_exists($destinationPath)){
+                mkdir($destinationPath,0775,true);
+            }
+            $fileName=time(). '_cover_'.$request->nom_evenement;
+            $encoded->save($destinationPath.'/'.$fileName);
+            $imagePath='image_ticket/'. $fileName;
+            $data['image_ticket']=$imagePath;
+        }else{
+            $data['image_ticket']=$image_ticket;
+        }
         $type_ticket->update($data);
-        return redirect()->route('billetterie');
+        return redirect()->route('AllTickets',$type_ticket->evenement_id);
     }
 
     /**
@@ -170,9 +216,9 @@ class TypeTicketController extends Controller
      */
     public function destroy(type_ticket $type_ticket)
     {
-       
+        $evenement_id=$type_ticket->evenement_id;
         $type_ticket->delete();
-        return redirect()->route('type_ticket.index')->with('message','ticket supprimé');
+        return redirect()->route('AllTickets',$evenement_id)->with('message','ticket supprimé');
     }
 
     public function terminus(){
@@ -204,5 +250,10 @@ class TypeTicketController extends Controller
         }else{
             return redirect()->route('UnauthorizedUser');
         }
+
     }
+     public function StartWithoutTicket(evenement $evenement){
+        session(['previousLink'=>route('StartWithoutTicket',$evenement->id)]);
+        return view('admin.type_ticket.startWithoutTickets',compact('evenement'));
+     }
 }

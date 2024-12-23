@@ -3,7 +3,7 @@
     <div class="card border-0">
         <div class="card-body">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <a href="{{route('type_ticket.create')}}" class="btn btn-success text-end"> Ajouter un nouveau ticket</a>
+                <a href="{{route('AddTicket',$evenement->id)}}" class="btn btn-success text-end"> Ajouter un nouveau ticket</a>
             </div>
             <table class="table">
                 <thead>
@@ -18,7 +18,7 @@
                 <tbody>
                     @foreach ($typeTickets as $type_ticket )
                     <tr>
-                        <th scope="row"><img src="{{$type_ticket->image_ticket}}" class="rounded" width="50px" alt=""></th>
+                        <th scope="row"><img src="{{asset($type_ticket->image_ticket)}}" class="rounded" width="50px" alt=""></th>
                         <td>{{$type_ticket->nom_ticket}}</td>
                         <td>{{$type_ticket->prix_ticket}}</td>
                         <td>{{$type_ticket->place_dispo}}</td>

@@ -50,6 +50,25 @@
             </div>    
         </div>
         @endif
+        <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalLabel">Recadrer image</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="img-container">
+                    <img id="uploadedAvatar" src="https://avatars0.githubusercontent.com/u/3456749">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
+                    <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                </div>
+              </div>
+            </div>
+          </div>
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -78,11 +97,10 @@
         <div class="card-body">
             <form action="{{route('evenement.update', $evenement)}}" method="post" enctype="multipart/form-data" class="m-3 " onsubmit="disableSubmitButton(this)">
                 @csrf
-                @method('PUT')
-     
+                @method('PUT')     
                     
                         <div class="col-12 mb-3 d-flex justify-content-center">
-                            <label class="custum-file-upload" style="@error('cover_event') border:solid 0.5px #F0343C; @enderror" for="cover_event">
+                            <label class="custum-file-upload"  for="cover_event">
                                 <div class="icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="" viewBox="0 0 24 24"><g stroke-width="0" id="SVGRepo_bgCarrier"></g><g stroke-linejoin="round" stroke-linecap="round" id="SVGRepo_tracerCarrier"></g><g id="SVGRepo_iconCarrier"> <path fill="" d="M10 1C9.73478 1 9.48043 1.10536 9.29289 1.29289L3.29289 7.29289C3.10536 7.48043 3 7.73478 3 8V20C3 21.6569 4.34315 23 6 23H7C7.55228 23 8 22.5523 8 22C8 21.4477 7.55228 21 7 21H6C5.44772 21 5 20.5523 5 20V9H10C10.5523 9 11 8.55228 11 8V3H18C18.5523 3 19 3.44772 19 4V9C19 9.55228 19.4477 10 20 10C20.5523 10 21 9.55228 21 9V4C21 2.34315 19.6569 1 18 1H10ZM9 7H6.41421L9 4.41421V7ZM14 15.5C14 14.1193 15.1193 13 16.5 13C17.8807 13 19 14.1193 19 15.5V16V17H20C21.1046 17 22 17.8954 22 19C22 20.1046 21.1046 21 20 21H13C11.8954 21 11 20.1046 11 19C11 17.8954 11.8954 17 13 17H14V16V15.5ZM16.5 11C14.142 11 12.2076 12.8136 12.0156 15.122C10.2825 15.5606 9 17.1305 9 19C9 21.2091 10.7909 23 13 23H20C22.2091 23 24 21.2091 24 19C24 17.1305 22.7175 15.5606 20.9844 15.122C20.7924 12.8136 18.858 11 16.5 11Z" clip-rule="evenodd" fill-rule="evenodd"></path> </g></svg>
                                 </div>
@@ -94,9 +112,11 @@
                                     @enderror
                                 </div>
                                 <input type="file" id="cover_event" name="cover_event" accept=".png, .jpeg, .jpg, .JPEG, .JPG, .gif">
+                                <input type="hidden" name="cover_hidden" id="cover_hidden" value="{{asset($evenement->cover_event)}}">
                             </label>
                         </div>
-                
+                        
+                        <input type="hidden" name="croppedCover" id="croppedCover">
                      <div class="col-12 mb-3">
                         <input type="hidden" name="evenement_id" value="{{$evenement->id}}" id="evenement_id">
                          <label for="nom_evenement">Nom evenement</label>
@@ -106,7 +126,6 @@
                                {{$message}}
                             </div>  
                          @enderror
-                        
                      </div>
                      <div class="col-12 mb-3">
                          <label for="type_evenement_id">Type de l'evenement</label>
@@ -308,7 +327,17 @@
 
     <script>
         $(document).ready(function() {
-            // Lorsque le champ de fichier change
+
+                var image=  $('#cover_hidden').val();
+                
+                
+                var label = $('.custum-file-upload');
+                
+                
+                label.css({
+                        'background-image': 'url('+image+')',
+                        'background-size': 'cover'
+                    }); 
             $('#cover_event').on('change', function() {
                 var input = this;
                 var label = $(input).parent('.custum-file-upload');
@@ -353,14 +382,14 @@
                 
                 SaveProcessButton=document.getElementById('SaveProcess');
                 SaveProcessButton.addEventListener('click',function(e){
-                    console.log(link);  
+                   
                     window.location.href = link;
                 })
                 GiveUpProcessButton=document.getElementById('GiveUp');
                 evenement_id_input=document.getElementById('evenement_id')
                 evenement_id=evenement_id_input.value;
                 GiveUpProcessButton.addEventListener('click',function (e) {
-                    console.log(evenement_id);
+                   
                     
                     $.ajaxSetup({
                     headers: {
@@ -383,7 +412,7 @@
 
     </script>
     
-          <script>
+        <script>
             document.addEventListener('DOMContentLoaded', function () {
                 const toastLiveExample = document.getElementById('liveToast');
                 if (toastLiveExample) {
@@ -395,6 +424,76 @@
             function disableSubmitButton(form) {
                 form.querySelector('#submitButton').disabled = true;
             }
-        </script>
+            window.addEventListener('DOMContentLoaded', function () {
+                var avatar = document.getElementById('profile-img');
+                var image = document.getElementById('uploadedAvatar');
+                var input = document.getElementById('cover_event');
+                var cropBtn = document.getElementById('crop');
+                var $modal = $('#cropAvatarmodal');
+                var cropper;
+
+                $('[data-toggle="tooltip"]').tooltip();
+
+                input.addEventListener('change', function (e) {
+                    var files = e.target.files;
+                    var done = function (url) {
+                    // input.value = '';
+                    
+                    image.src = url;
+                    $modal.modal('show');
+                    };
+                    // var reader;
+                    // var file;
+                    // var url;
+
+                    if (files && files.length > 0) {
+                    let file = files[0];
+
+                        // done(URL.createObjectURL(file));
+                    // if (URL) {
+                    // } 
+                    
+                    // else if (FileReader) {
+                        reader = new FileReader();
+                        reader.onload = function (e) {
+                        done(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                    // }
+                    }
+      });
+      
+      
+      
+
+      $modal.on('shown.bs.modal', function () {
+        cropper = new Cropper(image, {
+          aspectRatio: 16 / 9,
+          viewMode: 3,
+        });
+      }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+      });
+
+      cropBtn.addEventListener('click', function () {
+        cropper.getCroppedCanvas().toBlob((blob) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                // Mettre l'image recadrée en Base64 dans l'input caché
+                document.getElementById('croppedCover').value = reader.result;
+
+                // Fermer le modal
+                
+                $modal.modal('hide');
+            };
+
+            reader.readAsDataURL(blob);
+        });
+      });
+      
+    });        
+    </script>
     </div>    
     @endsection

@@ -5,7 +5,7 @@
               <div class="row g-3">
                 @foreach ($intervenants as $intervenant )
                   <div class="col-2 d-flex flex-column intervenants position-relative" data-intervenant-id="{{$intervenant->id}}">
-                    <div class="d-flex justify-content-center " id="" style="width: 100%; height:100%">
+                    <div class="d-flex justify-content-center" id="" style="width: 100%; height:100%">
                         <div class="position-relative " style="width: 100px; height: 100px">
                           <img src="{{asset($intervenant->photo_intervenant)}}" alt=""  width="100px" height="100px" class="rounded-circle">
                         </div>
@@ -24,6 +24,44 @@
                           </div>
                       </div>
                   </button>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Recadrer image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="img-container">
+                      <img id="uploadedAvatar" src="https://avatars0.githubusercontent.com/u/3456749">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
+                      <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal fade" id="cropAvatarmodalEdit" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modalLabel">Recadrer image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="img-container">
+                      <img id="uploadedAvatarEdit" src="https://avatars0.githubusercontent.com/u/3456749">
+                    </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
+                      <button type="button" class="btn btn-primary" id="cropEdit">Recadrer</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -56,6 +94,7 @@
                                     veuillez ajouter une photo 
                                   </div>
                                 <input type="file" name="photo_intervenant" id="photo_intervenant" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" required>
+                                  <input type="hidden" name="photo_intervenant_cropped" id="photo_intervenant_cropped">
                               </div>
                               <div class="mb-3 col-12">
                                 <label for="nom_intervenant" class="col-form-label">Pseudo :</label>
@@ -144,49 +183,49 @@
     <script>
       
       $(document).ready(function(){
-        $('#photo_intervenant').change(function (event) {
-          if (event.target.files && event.target.files[0]) {
+        // $('#photo_intervenant').change(function (event) {
+        //   if (event.target.files && event.target.files[0]) {
             
-            var reader = new FileReader();
-            // When the file is read, do this
-            reader.onload = function(e) {
-              // Create an image element
-              var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
-                              <div>
-                                <img src="`+e.target.result+`" alt="" width="100px" height="100px" class="rounded-circle">
-                              </div>
-                            </div>
-                            <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
-                              <i class="bi-pencil pencil text-white"></i>
-                            </div>`
+        //     var reader = new FileReader();
+        //     // When the file is read, do this
+        //     reader.onload = function(e) {
+        //       // Create an image element
+        //       var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+        //                       <div>
+        //                         <img src="`+e.target.result+`" alt="" width="100px" height="100px" class="rounded-circle">
+        //                       </div>
+        //                     </div>
+        //                     <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+        //                       <i class="bi-pencil pencil text-white"></i>
+        //                     </div>`
               
-              $('#profil_container').html(profil);
-            }
-            reader.readAsDataURL(event.target.files[0]);
-          }
-        })
+        //       $('#profil_container').html(profil);
+        //     }
+        //     reader.readAsDataURL(event.target.files[0]);
+        //   }
+        // // })
 
-        $('#photo_intervenant_edit').change(function (event) {
-          if (event.target.files && event.target.files[0]) {
+        // $('#photo_intervenant_edit').change(function (event) {
+        //   if (event.target.files && event.target.files[0]) {
             
-            var reader = new FileReader();
-            // When the file is read, do this
-            reader.onload = function(e) {
-              // Create an image element
-              var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
-                              <div>
-                                <img src="`+e.target.result+`" alt="" width="100px" height="100px" class="rounded-circle">
-                              </div>
-                            </div>
-                            <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
-                              <i class="bi-pencil pencil text-white"></i>
-                            </div>`
+        //     var reader = new FileReader();
+        //     // When the file is read, do this
+        //     reader.onload = function(e) {
+        //       // Create an image element
+        //       var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+        //                       <div>
+        //                         <img src="`+e.target.result+`" alt="" width="100px" height="100px" class="rounded-circle">
+        //                       </div>
+        //                     </div>
+        //                     <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+        //                       <i class="bi-pencil pencil text-white"></i>
+        //                     </div>`
               
-              $('#profil_container_edit').html(profil);
-            }
-            reader.readAsDataURL(event.target.files[0]);
-          }
-        })
+        //       $('#profil_container').html(profil);
+        //     }
+        //     reader.readAsDataURL(event.target.files[0]);
+        //   }
+        // })
         $('.intervenants').hover(function (event) {
             var intervenant = $(this); // Utilisez `this` pour obtenir l'élément survolé
             var intervenant_id = intervenant.attr('data-intervenant-id');
@@ -224,7 +263,6 @@
                   const nom_intervenant=EditIntervenant.find('#nom_intervenant_edit')
                   const role_intervenant=EditIntervenant.find('#role_intervenant_edit')
                   const EditIntervenantForm=$(EditIntervenant.find('#EditIntervenantForm'))
-                  console.log(EditIntervenantForm);
                   var formToEdit=`
                     <div  class="mb-3 col-12 d-flex justify-content-center">
                           <label for="photo_intervenant_edit">
@@ -240,6 +278,8 @@
                               </div>
                           </label>
                           <input type="file" name="photo_intervenant" id="photo_intervenant_edit" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" >
+                          <input type="hidden" name="photo_intervenant_cropped_edit" id="photo_intervenant_cropped_edit">
+                          
                           <div class="invalid-feedback">
                             veuillez ajouter une photo 
                           </div>
@@ -341,6 +381,182 @@
               }, false)
             })
           })()
+
+        window.addEventListener('DOMContentLoaded', function () {
+        var avatar = document.getElementById('profile-img');
+        var image = document.getElementById('uploadedAvatar');
+        var image = document.getElementById('uploadedAvatarEdit');
+        var input = document.getElementById('photo_intervenant');
+        var inputEdit= document.getElementById('photo_intervenant_edit');
+        var cropBtn = document.getElementById('crop');
+        var cropBtnEdit = document.getElementById('cropEdit');
+        var createModal= $('#createIntervenant')
+        var EditModal= $('#EditIntervenant')
+        var $modal = $('#cropAvatarmodal');
+        var $modalEdit = $('#cropAvatarmodalEdit');
+        var cropper;
+
+        $('[data-toggle="tooltip"]').tooltip();
+
+        input.addEventListener('change', function (e) {
+          var files = e.target.files;
+          var done = function (url) {
+            // input.value = '';
+            console.log(input.value)
+            image.src = url;
+            createModal.modal('hide')
+            $modal.modal('show');
+          };
+          // var reader;
+          // var file;
+          // var url;
+
+          if (files && files.length > 0) {
+            let file = files[0];
+
+              // done(URL.createObjectURL(file));
+            // if (URL) {
+            // } 
+            
+            // else if (FileReader) {
+              reader = new FileReader();
+              reader.onload = function (e) {
+                done(reader.result);
+              };
+              reader.readAsDataURL(file);
+            // }
+          }
+        });
+        
+        EditModal.change('inputEdit', function (e) {
+          var files = e.target.files;
+          console.log(files);
+          
+          var done = function (url) {
+            // input.value = '';
+            console.log(input.value)
+            image.src = url;
+            EditModal.modal('hide')
+            $modalEdit.modal('show');
+          };
+          // var reader;
+          // var file;
+          // var url;
+
+          if (files && files.length > 0) {
+            let file = files[0];
+
+              // done(URL.createObjectURL(file));
+            // if (URL) {
+            // } 
+            
+            // else if (FileReader) {
+              reader = new FileReader();
+              reader.onload = function (e) {
+                done(reader.result);
+              };
+              reader.readAsDataURL(file);
+            // }
+          }
+        });
+        
+        
+
+        $modal.on('shown.bs.modal', function () {
+          cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 3,
+          });
+        }).on('hidden.bs.modal', function () {
+          cropper.destroy();
+          cropper = null;
+        });
+        $modalEdit.on('shown.bs.modal', function () {
+          cropper = new Cropper(image, {
+            aspectRatio: 1,
+            viewMode: 3,
+          });
+        }).on('hidden.bs.modal', function () {
+          cropper.destroy();
+          cropper = null;
+        });
+
+        cropBtn.addEventListener('click', function () {
+          var canvas;
+
+          $modal.modal('hide');
+
+          if (cropper) {
+            canvas = cropper.getCroppedCanvas({
+              width: 160,
+              height: 160,
+            });
+            // initialAvatarURL = avatar.src;
+            var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+                              <div>
+                                <img src="`+canvas.toDataURL()+`" alt="" width="100px" height="100px" class="rounded-circle">
+                              </div>
+                            </div>
+                            <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+                              <i class="bi-pencil pencil text-white"></i>
+                            </div>`;
+              
+              $('#profil_container').html(profil);
+             
+          }
+         
+          cropper.getCroppedCanvas().toBlob((blob) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                // Mettre l'image recadrée en Base64 dans l'input caché
+                document.getElementById('photo_intervenant_cropped').value = reader.result;
+
+            };
+
+            reader.readAsDataURL(blob);
+        });
+        createModal.modal('show')
+        });
+        
+         cropBtnEdit.addEventListener('click', function () {
+          var canvas;
+
+          $modalEdit.modal('hide');
+
+          if (cropper) {
+            canvas = cropper.getCroppedCanvas({
+              width: 160,
+              height: 160,
+            });
+            // initialAvatarURL = avatar.src;
+            var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+                              <div>
+                                <img src="`+canvas.toDataURL()+`" alt="" width="100px" height="100px" class="rounded-circle">
+                              </div>
+                            </div>
+                            <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+                              <i class="bi-pencil pencil text-white"></i>
+                            </div>`;
+              
+              $('#profil_container_edit').html(profil);
+             
+          }
+         
+          cropper.getCroppedCanvas().toBlob((blob) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                // Mettre l'image recadrée en Base64 dans l'input caché
+                document.getElementById('photo_intervenant_cropped_edit').value = reader.result;
+
+            };
+
+            reader.readAsDataURL(blob);
+        });
+        EditModal.modal('show')
+        });
+      });
     </script>
     @endsection
 

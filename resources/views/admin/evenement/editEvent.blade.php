@@ -50,6 +50,25 @@
             </div>    
         </div>
         @endif
+        <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalLabel">Recadrer image</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="img-container">
+                    <img id="uploadedAvatar" src="https://avatars0.githubusercontent.com/u/3456749">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
+                    <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                </div>
+              </div>
+            </div>
+          </div>
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
@@ -93,9 +112,10 @@
                                     @enderror
                                 </div>
                                 <input type="file" id="cover_event" name="cover_event" accept=".png, .jpeg, .jpg, .JPEG, .JPG, .gif">
+                                <input type="hidden" name="cover_hidden" id="cover_hidden" value="{{asset($evenement->cover_event)}}">
                             </label>
                         </div>
-                
+                        <input type="hidden" name="croppedCover" id="croppedCover">
                      <div class="col-12 mb-3">
                         <input type="hidden" name="evenement_id" value="{{$evenement->id}}" id="evenement_id">
                          <label for="nom_evenement">Nom evenement</label>
@@ -109,7 +129,7 @@
                      </div>
                      <div class="col-12 mb-3">
                          <label for="type_evenement_id">Type de l'evenement</label>
-                         <select name="type_evenement_id" id="type_evenement_id" class="form-control @error('type_evenement_id') is-invalid @enderror">
+                         <select name="type_evenement_id" id="type_evenement_id" class="form-select @error('type_evenement_id') is-invalid @enderror">
                             @foreach ($type_evenement as $type_evenements )
                                  <option value="{{$type_evenements->id}}" @if ($evenement->type_evenement_id==$type_evenements->id) selected @endif>{{$type_evenements->nom_type_evenement}}</option>
                             @endforeach 
@@ -306,7 +326,18 @@
 
     <script>
         $(document).ready(function() {
+                var image=  $('#cover_hidden').val();
+                
+                
+                var label = $('.custum-file-upload');
+                
+                
+                label.css({
+                        'background-image': 'url('+image+')',
+                        'background-size': 'cover'
+                    }); 
             // Lorsque le champ de fichier change
+
             $('#cover_event').on('change', function() {
                 var input = this;
                 var label = $(input).parent('.custum-file-upload');
@@ -393,6 +424,69 @@
             function disableSubmitButton(form) {
                 form.querySelector('#submitButton').disabled = true;
             }
+            window.addEventListener('DOMContentLoaded', function () {
+                var avatar = document.getElementById('profile-img');
+                var image = document.getElementById('uploadedAvatar');
+                var input = document.getElementById('cover_event');
+                var cropBtn = document.getElementById('crop');
+                var $modal = $('#cropAvatarmodal');
+                var cropper;
+
+                $('[data-toggle="tooltip"]').tooltip();
+
+                input.addEventListener('change', function (e) {
+                    var files = e.target.files;
+                    var done = function (url) {
+                
+                    
+                    image.src = url;
+                    $modal.modal('show');
+                    };
+            
+
+                    if (files && files.length > 0) {
+                    let file = files[0];
+
+                        reader = new FileReader();
+                        reader.onload = function (e) {
+                        done(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                   
+                    }
+      });
+      
+      
+      
+
+      $modal.on('shown.bs.modal', function () {
+        cropper = new Cropper(image, {
+          aspectRatio: 16 / 9,
+          viewMode: 3,
+        });
+      }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+      });
+
+      cropBtn.addEventListener('click', function () {
+        cropper.getCroppedCanvas().toBlob((blob) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                // Mettre l'image recadrée en Base64 dans l'input caché
+                document.getElementById('croppedCover').value = reader.result;
+
+                // Fermer le modal
+                
+                $modal.modal('hide');
+            };
+
+            reader.readAsDataURL(blob);
+        });
+      });
+      
+    }); 
         </script>
     </div>    
     @endsection

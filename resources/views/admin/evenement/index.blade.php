@@ -89,7 +89,7 @@
                                 @endphp
                                     <div class="col recommandedEvent ">
                                         <div class="card low-padding rounded-4 border-0 card-size recommandedEventCard">
-                                            <img src="{{asset($recommanded_events[$j]->cover_event)}}"  class="img-recommanded card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
+                                            <img src="{{asset($recommanded_events[$j]->cover_recommanded)}}"  class="img-recommanded card-img-top rounded-circle mx-auto mt-3 mb-3" style="width:150px; height:150px;" alt="...">
                                             <div class="card-body">
                                                 <h5 class="card-title fw-bold">{{$recommanded_events[$j]->nom_evenement}}</h5>
                                                 <p class="card-text d-flex align-items-center"><svg class="bi bi-calendar4-week me-1" fill="currentColor" width="1em" height="1em" ><use xlink:href="#calendar"></use></svg> {{date('d/m/Y',strtotime($recommanded_events[$j]->date_heure_debut))}}</p>
@@ -144,9 +144,8 @@
         @foreach ( $evenement as $evenements )
         <a href="{{route('evenement.show', ['evenement'=>$evenements->id])}}" class="clicked-link link-dark  link-offset-2 link-underline link-underline-opacity-0">
             <div class="col">
-                <div class="card shadow card-cover overflow-hidden text-bg-dark rounded-4 shadow-lg border-0 evenement shadow" style="height: 250px;"> 
-                    <img src="{{asset($evenements->cover_event)}}" class="card-img h-100" alt="...">
-                    <div class="card-img-overlay flex-column">
+                <div class="card shadow card-cover overflow-hidden text-bg-dark rounded-4 shadow-lg border-0 evenement shadow p-2" style="background-image: url('{{asset($evenements->cover_event)}}'); background-size: cover;"> 
+                   
                         <div class="badge tools-event pb-5 mb-5 rounded-3 card-header"> <span class="fs-3">{{date('d', strtotime($evenements->date_heure_debut))}}</span> <br> <span class="fs-6">{{date('M', strtotime($evenements->date_heure_debut))}}</span> </div>
                         <input type="hidden" id="event_id" name="evenement_id" value="{{$evenements->id}}">
                         <div class="d-flex mt-5 pt-4">
@@ -170,7 +169,7 @@
                                 {{-- </form>--}}
                             </div>
                         </div>
-                    </div>
+                   
 
                 </div>
                 
@@ -202,6 +201,15 @@
                        
                         // Appliquer la couleur dominante comme arrière-plan du conteneur
                         container.style.backgroundColor = rgbColor;
+
+                        var brightness = (0.299 * dominantColor[0]) + (0.587 * dominantColor[1]) + (0.114 * dominantColor[2]);
+
+                        // Définir la couleur du texte en fonction de la luminosité
+                        if (brightness > 186) {
+                            container.style.color = 'black'; // Fond clair, texte noir
+                        } else {
+                            container.style.color = 'white'; // Fond sombre, texte blanc
+                        }
                     };
 
                     // Si l'image est déjà chargée (cache du navigateur), déclencher l'événement onload manuellement

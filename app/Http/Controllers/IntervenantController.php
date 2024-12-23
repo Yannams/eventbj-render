@@ -6,6 +6,8 @@ use App\Models\Intervenant;
 use App\Http\Requests\StoreIntervenantRequest;
 use App\Http\Requests\UpdateIntervenantRequest;
 use Illuminate\Http\Request;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class IntervenantController extends Controller
 {
@@ -39,28 +41,32 @@ class IntervenantController extends Controller
         $intervenant->role_intervenant=$request->role_intervenant;
         $intervenant->promoteur_id=$request->promoteur_id;
         $intervenant->evenement_id=$request->evenement_id;
-        if($request->hasFile('photo_intervenant'))
+        $photo_intervenant_cropped=$request->photo_intervenant_cropped;
+        if($request->photo_intervenant_cropped)
         {
-            $image = $request->file('photo_intervenant');
-            $destinationPath = public_path('profil_intervenant'); // Le chemin de destination où vous souhaitez déplacer le fichier
-
-            // Assurez-vous que le répertoire de destination existe
-            if (!file_exists($destinationPath)) {
-                 mkdir($destinationPath, 0755, true);
+            list($type, $photo_intervenant_cropped) = explode(';', $photo_intervenant_cropped);
+            list(, $photo_intervenant_cropped)      = explode(',', $photo_intervenant_cropped);
+            $photo_intervenant_cropped = base64_decode($photo_intervenant_cropped);
+            $manager = new ImageManager(new Driver());
+    
+            // Décodage et création de l'image
+            $image = $manager->read($photo_intervenant_cropped) ;
+        
+            // Redimensionnement proportionnel avec une largeur maximale de 800px sans agrandir l'image
+            $image = $image->scaleDown(width: 800);
+        
+            // Encodage de l'image en JPEG avec une qualité de 70%
+            $encoded = $image->toJpeg(95); 
+               
+            $destinationPath=public_path('profil_intervenant');
+            if(!file_exists($destinationPath)){
+                mkdir($destinationPath,0775,true);
             }
-    
-            $fileName = time() . '_' . $image->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
-    
-            $image->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
-    
-            // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
-            $imagePath='profil_intervenant/'.$fileName;
-            $intervenant->photo_intervenant= $imagePath;
+            $fileName=time(). '_cover_'.str_replace(' ','_',$request->nom_intervenant).'.jpg';
+            $encoded->save($destinationPath.'/'.$fileName);
+            $imagePath='profil_intervenant/' . $fileName;
+            $intervenant->photo_intervenant=$imagePath; 
         } 
-        else
-        {
-            $intervenant->photo_intervenant= 'aucune image';
-        }
         $intervenant->save();
         return redirect()->route('Intervenant.index',['event'=>$intervenant->evenement_id]);
     }
@@ -97,24 +103,32 @@ class IntervenantController extends Controller
         $intervenant=Intervenant::find($request->intervenant_id);
         $intervenant->nom_intervenant=$request->nom_intervenant;
         $intervenant->Role_intervenant=$request->role_intervenant;
-        if($request->hasFile('photo_intervenant'))
+        $photo_intervenant_cropped=$request->photo_intervenant_cropped_edit;
+        if($request->photo_intervenant_cropped_edit)
         {
-            $image = $request->file('photo_intervenant');
-            $destinationPath = public_path('profil_intervenant'); // Le chemin de destination où vous souhaitez déplacer le fichier
-
-            // Assurez-vous que le répertoire de destination existe
-            if (!file_exists($destinationPath)) {
-                 mkdir($destinationPath, 0755, true);
+            list($type, $photo_intervenant_cropped) = explode(';', $photo_intervenant_cropped);
+            list(, $photo_intervenant_cropped)      = explode(',', $photo_intervenant_cropped);
+            $photo_intervenant_cropped = base64_decode($photo_intervenant_cropped);
+            $manager = new ImageManager(new Driver());
+    
+            // Décodage et création de l'image
+            $image = $manager->read($photo_intervenant_cropped) ;
+        
+            // Redimensionnement proportionnel avec une largeur maximale de 800px sans agrandir l'image
+            $image = $image->scaleDown(width: 800);
+        
+            // Encodage de l'image en JPEG avec une qualité de 70%
+            $encoded = $image->toJpeg(95); 
+               
+            $destinationPath=public_path('profil_intervenant');
+            if(!file_exists($destinationPath)){
+                mkdir($destinationPath,0775,true);
             }
-    
-            $fileName = time() . '_' . $image->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
-    
-            $image->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
-    
-            // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
-            $imagePath='profil_intervenant/'.$fileName;
-            $intervenant->photo_intervenant= $imagePath;
-        } 
+            $fileName=time(). '_cover_'.str_replace(' ','_',$request->nom_intervenant).'.jpg';
+            $encoded->save($destinationPath.'/'.$fileName);
+            $imagePath='profil_intervenant/' . $fileName;
+            $intervenant->photo_intervenant=$imagePath; 
+        }  
         $intervenant->save();
         return redirect()->route('Intervenant.index',['event'=>$intervenant->evenement_id]);
     }

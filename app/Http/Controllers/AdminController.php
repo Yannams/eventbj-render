@@ -13,6 +13,8 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class AdminController extends Controller
 {
@@ -89,6 +91,27 @@ class AdminController extends Controller
         ]);
       }
       else{
+        if($evenement->cover_recommanded==""){
+          $cover_event=$evenement->cover_event;
+
+          $manager = new ImageManager(new Driver());
+
+          // Décodage et création de l'image
+          $image = $manager->read($cover_event) ;
+          
+         // cover a size of 300x300 and position crop on the left
+          $image->cover(300, 300, 'center'); // 300 x 300 px
+            
+             
+          $destinationPath=public_path('cover_recommanded');
+          if(!file_exists($destinationPath)){
+              mkdir($destinationPath,0775,true);
+          }
+          $fileName=time(). '_cover_'.str_replace(' ','_',$evenement->nom_evenement).'_recommanded.jpg';
+          $image->save($destinationPath.'/'.$fileName);
+          $imagePath='cover_recommanded/' . $fileName;
+          $evenement->cover_recommanded=$imagePath;
+        }
         $evenement->recommanded=true;
         $evenement->save();
         return response()->json([

@@ -134,7 +134,7 @@
                                             <div class="col">
                                                 <button type="submit" id="submitButton" class="btn btn-success w-100">Se connecter</button>
                                             </div>
-                                            <div class="col text-dark">
+                                            {{-- <div class="col text-dark">
                                                 <div class="row">
                                                     <div class="col-5">
                                                         <hr>
@@ -165,7 +165,7 @@
                                                         
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
                                             <div class="col">
                                                 <span>Vous n'avez pas de compte ?</span> <a href="{{route('register')}}" class="link-success">Inscrivez-vous!</a> 
                                             </div>

@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 use Illuminate\Support\Str;
-
-
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 
 class CreateNewUser implements CreatesNewUsers
 {
@@ -24,7 +24,7 @@ class CreateNewUser implements CreatesNewUsers
     {
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'num_user' => ['required', 'string', 'max:30'],
+            'num_user' => ['required', 'string', 'max:30','unique:users,num_user'],
             'email' => [
                 'required',
                 'string',
@@ -35,24 +35,32 @@ class CreateNewUser implements CreatesNewUsers
             'profil_user'=>['nullable', 'image', 'max:1024'],
             'password' => $this->passwordRules(),
         ])->validate();
-        
-        if(isset($input['profil_user']))
+        $profil_user_cropped=$input['profil_user_cropped'];
+        if(isset($input['profil_user_cropped']))
         {
 
-            $image = $input['profil_user'];
-            $destinationPath = public_path('UsersProfiles'); // Le chemin de destination où vous souhaitez déplacer le fichier
-
-            // Assurez-vous que le répertoire de destination existe
-            if (!file_exists($destinationPath)) {
-                 mkdir($destinationPath, 0755, true);
-            }
+            list($type, $profil_user_cropped) = explode(';', $profil_user_cropped);
+            list(, $profil_user_cropped)      = explode(',', $profil_user_cropped);
+            $profil_user_cropped = base64_decode($profil_user_cropped);
+            $manager = new ImageManager(new Driver());
     
-            $uniqueFileName = uniqid() . '_' . $image->getClientOriginalName();
-
-            $image->move($destinationPath, $uniqueFileName);
+            // Décodage et création de l'image
+            $image = $manager->read($profil_user_cropped) ;
+        
+            // Redimensionnement proportionnel avec une largeur maximale de 800px sans agrandir l'image
+            $image = $image->scaleDown(width: 800);
+        
+            // Encodage de l'image en JPEG avec une qualité de 70%
+            $encoded = $image->toJpeg(95); 
+               
+            $destinationPath=public_path('image_evenement');
+            if(!file_exists($destinationPath)){
+                mkdir($destinationPath,0775,true);
+            }
+            $fileName=time(). '_cover_'.str_replace(' ','_',$input['name']).'.jpg';
+            $encoded->save($destinationPath.'/'.$fileName);
+            $profilePhotoPath='image_evenement/' . $fileName;
             
-            $profilePhotoPath = 'UsersProfiles/'.$uniqueFileName;
-
         } 
         else
         {

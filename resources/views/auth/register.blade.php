@@ -14,11 +14,32 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
-    <style>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+   <style>
       {!! Vite::content('resources/css/app.css') !!}
     </style>
 </head>
 <body>
+    <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel">Recadrer image</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="img-container">
+                <img id="uploadedAvatar" src="https://avatars0.githubusercontent.com/u/3456749">
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
+                <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
         <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6 " style="background-color: #C3E3CC">
@@ -106,6 +127,7 @@
                                     </div>
                                 </label>
                               <input type="file" name="profil_user" id="profil_user" accept=".png,.jpg,.jpeg,.PNG,.JPG,.JPEG" class="d-none" >
+                              <input type="hidden" name="profil_user_cropped" id="profil_user_cropped">
                             </div> 
                             <div class="row mb-2">
                                 <label for="name" class="col-12 col-form-label text-start">{{ __('Name') }}</label>
@@ -179,7 +201,7 @@
                             </div>
                         </div>
 
-                        <div class="row mb-2">
+                        {{-- <div class="row mb-2">
                             <div class="col-5">
                                 <hr>
                             </div>
@@ -207,7 +229,7 @@
                                 </div>
                                 
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col">
                             <span>Vous avez déja un compte ?</span><a href="{{route('login')}}" class="link-success">Connectez-vous!</a> 
@@ -220,30 +242,122 @@
                 </div>
         </div>
         <script>
-             $(document).ready(function(){
-        $('#profil_user').change(function (event) {
-          if (event.target.files && event.target.files[0]) {
+        //      $(document).ready(function(){
+        // $('#profil_user').change(function (event) {
+        //   if (event.target.files && event.target.files[0]) {
             
-            var reader = new FileReader();
-            // When the file is read, do this
-            reader.onload = function(e) {
-              // Create an image element
-              var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
-                              <div>
-                                <img src="`+e.target.result+`" alt="" width="100px" height="100px" class="rounded-circle">
-                              </div>
-                            </div>
-                            <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
-                              <i class="bi-pencil pencil text-white"></i>
-                            </div>`
+        //     var reader = new FileReader();
+        //     // When the file is read, do this
+        //     reader.onload = function(e) {
+        //       // Create an image element
+        //       var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+        //                       <div>
+        //                         <img src="`+e.target.result+`" alt="" width="100px" height="100px" class="rounded-circle">
+        //                       </div>
+        //                     </div>
+        //                     <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+        //                       <i class="bi-pencil pencil text-white"></i>
+        //                     </div>`
               
-              $('#profil_container').html(profil);
-            }
-            reader.readAsDataURL(event.target.files[0]);
-          }
-        })
+        //       $('#profil_container').html(profil);
+        //     }
+        //     reader.readAsDataURL(event.target.files[0]);
+        //   }
+        // })
 
+        // });
+        window.addEventListener('DOMContentLoaded', function () {
+      var avatar = document.getElementById('profile-img');
+      var image = document.getElementById('uploadedAvatar');
+      var input = document.getElementById('profil_user');
+      var cropBtn = document.getElementById('crop');
+  
+      var $modal = $('#cropAvatarmodal');
+      var cropper;
+
+      $('[data-toggle="tooltip"]').tooltip();
+
+      input.addEventListener('change', function (e) {
+        var files = e.target.files;
+        var done = function (url) {
+          // input.value = '';
+          console.log(input.value)
+          image.src = url;
+          $modal.modal('show');
+        };
+        // var reader;
+        // var file;
+        // var url;
+
+        if (files && files.length > 0) {
+          let file = files[0];
+
+            // done(URL.createObjectURL(file));
+          // if (URL) {
+          // } 
+          
+          // else if (FileReader) {
+            reader = new FileReader();
+            reader.onload = function (e) {
+              done(reader.result);
+            };
+            reader.readAsDataURL(file);
+          // }
+        }
+      });
+      
+      
+      
+
+      $modal.on('shown.bs.modal', function () {
+        cropper = new Cropper(image, {
+          aspectRatio: 1,
+          viewMode: 3,
         });
+      }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+      });
+
+      cropBtn.addEventListener('click', function () {
+        // var initialAvatarURL;
+        var canvas;
+
+          $modal.modal('hide');
+
+          if (cropper) {
+            canvas = cropper.getCroppedCanvas({
+              width: 160,
+              height: 160,
+            });
+            // initialAvatarURL = avatar.src;
+                   var profil = `<div style="width:100px;height:100px;background-color:gainsboro" class="rounded-circle d-flex align-items-center justify-content-center position-absolute ">
+                                  <div>
+                                    <img src="`+canvas.toDataURL()+`" alt="" width="100px" height="100px" class="rounded-circle">
+                                  </div>
+                                </div>
+                                <div style="width: 30px; height:30px; background-color:#308747; left:71px; top:70px" class="rounded-circle d-flex align-items-center justify-content-center position-absolute" >
+                                  <i class="bi-pencil pencil text-white"></i>
+                                </div>`
+                
+                  $('#profil_container').html(profil);
+             
+          }
+         
+          cropper.getCroppedCanvas().toBlob((blob) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                // Mettre l'image recadrée en Base64 dans l'input caché
+                document.getElementById('profil_user_cropped').value = reader.result;
+
+            };
+
+            reader.readAsDataURL(blob);
+        });
+      });
+      
+    });
         </script>
     
 </body>

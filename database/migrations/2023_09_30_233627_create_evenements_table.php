@@ -32,6 +32,7 @@ return new class extends Migration
             $table->unsignedBigInteger('type_lieu_id')->nullable();
             $table->foreign('type_lieu_id')->references('id')->on('type_lieus')->onDelete('cascade');
             $table->integer('Etape_creation');
+            $table->string('cover_recommanded')->nullable();
             $table->timestamps();
         });
     }

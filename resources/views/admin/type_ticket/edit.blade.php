@@ -50,6 +50,25 @@
           </div>    
       </div>
     @endif
+    <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel">Recadrer image</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="img-container">
+                <img id="uploadedAvatar" src="https://avatars0.githubusercontent.com/u/3456749">
+              </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
+                <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+            </div>
+          </div>
+        </div>
+      </div>
     <div class="card border-0">
         <div class="card-body">
             
@@ -75,8 +94,10 @@
                                 @error('image_ticket') <span class="fs-3 text-danger">{{$message}}</span><br> @enderror
                             </div>                            
                             <input type="file" id="image_ticket" name="image_ticket">
+                            <input type="hidden" name="cover_hidden" id="cover_hidden" value="{{asset($type_ticket->image_ticket)}}">
                         </label>
                     </div>
+                    <input type="hidden" name="croppedCover" id="croppedCover">
                     <div class="col-12 ">
                         <label for="nom_ticket">Nom ticket</label>
                         <input type="text" name="nom_ticket" id="nom_ticket" class="form-control" minlength="3" maxlength="100" required value="{{$type_ticket->nom_ticket}}">
@@ -206,6 +227,12 @@
     <script>
         
          $(document).ready(function() {
+                var image=  $('#cover_hidden').val();
+                var label = $('.custum-file-upload');
+                label.css({
+                        'background-image': 'url('+image+')',
+                        'background-size': 'cover'
+                    }); 
             // Lorsque le champ de fichier change
             $('#image_ticket').on('change', function() {
                 var input = this;
@@ -312,6 +339,70 @@
             function disableSubmitButton(form) {
                 form.querySelector('#submitButton').disabled = true;
             }
+            window.addEventListener('DOMContentLoaded', function () {
+                var avatar = document.getElementById('profile-img');
+                var image = document.getElementById('uploadedAvatar');
+                var input = document.getElementById('image_ticket');
+                var cropBtn = document.getElementById('crop');
+                var $modal = $('#cropAvatarmodal');
+                var cropper;
+
+                $('[data-toggle="tooltip"]').tooltip();
+
+                input.addEventListener('change', function (e) {
+                    var files = e.target.files;
+                    var done = function (url) {
+                    
+                    
+                    image.src = url;
+                    $modal.modal('show');
+                    };
+                  
+
+                    if (files && files.length > 0) {
+                    let file = files[0];
+
+                    
+                        reader = new FileReader();
+                        reader.onload = function (e) {
+                        done(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                    
+                    }
+      });
+      
+      
+      
+
+      $modal.on('shown.bs.modal', function () {
+        cropper = new Cropper(image, {
+          aspectRatio: 16 / 9,
+          viewMode: 3,
+        });
+      }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+      });
+
+      cropBtn.addEventListener('click', function () {
+        cropper.getCroppedCanvas().toBlob((blob) => {
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                // Mettre l'image recadrée en Base64 dans l'input caché
+                document.getElementById('croppedCover').value = reader.result;
+
+                // Fermer le modal
+                
+                $modal.modal('hide');
+            };
+
+            reader.readAsDataURL(blob);
+        });
+      });
+      
+    }); 
         </script>
     </div>
     @endsection

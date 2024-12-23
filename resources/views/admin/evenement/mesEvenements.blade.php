@@ -26,7 +26,7 @@
             <table class="table align-middle">
                 <thead>
                   <tr>
-                    {{session('evenement_id')}}
+                  
                     <th scope="col">#</th>
                     <th scope="col">Nom évènement</th>
                     <th scope="col">Statut </th>

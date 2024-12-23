@@ -6,7 +6,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
-        "caouecs/laravel-lang": "*",
         "dompdf/dompdf": "^2.0",
         "intervention/image-laravel": "^1.0",
         "kkiapay/kkiapay-php": "dev-master",

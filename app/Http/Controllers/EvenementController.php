@@ -20,7 +20,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ticket;
 use App\Models\Intervenant;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Imagick\Driver;
 
 class EvenementController extends Controller
 {
@@ -153,16 +156,22 @@ class EvenementController extends Controller
      */
     public function update(UpdateevenementRequest $request, evenement $evenement)
     {
-       
+        
         $evenement=evenement::find($evenement->id);
-        $ValidatedData=$request->validate([
-            'cover_event'=>'required',
+        $rules=[
             'nom_evenement'=>'required|min:1|max:100',
             'date_heure_debut'=>'required|after:today|before:date_heure_fin',
             'date_heure_fin'=>'required|after:today|after:date_heure_debut',
             'type_evenement_id'=>'required',
             'interest'=>'required',
-        ]);
+        ];
+        if($evenement->cover_event==""||$request->cover_event!="" ||$request->croppedCover!=""){
+            $rules['cover_event']='required';
+            $rules['croppedCover']='required|string';
+        }else{
+            $cover_event=$evenement->cover_event;
+        }
+        $ValidatedData=$request->validate($rules);
         $evenement->nom_evenement=$request->nom_evenement;
         // $evenement->localisation=$request->localisation;
         $evenement->date_heure_debut=$request->date_heure_debut;
@@ -170,29 +179,34 @@ class EvenementController extends Controller
         $evenement->type_evenement_id=$request->type_evenement_id;
         $evenement->isOnline=false;        
         $evenement->description=$request->description;
-        if($request->hasFile('cover_event'))
-        {
-            $image = $request->file('cover_event');
-            $destinationPath = public_path('image_evenement'); // Le chemin de destination où vous souhaitez déplacer le fichier
-
-            // Assurez-vous que le répertoire de destination existe
-            if (!file_exists($destinationPath)) {
-                 mkdir($destinationPath, 0755, true);
+        $croppedCover=$request->croppedCover;
+        if($request->croppedCover){
+            list($type, $croppedCover) = explode(';', $croppedCover);
+            list(, $croppedCover)      = explode(',', $croppedCover);
+            $croppedCover = base64_decode($croppedCover);
+            $manager = new ImageManager(new Driver());
+    
+            // Décodage et création de l'image
+            $image = $manager->read($croppedCover) ;
+        
+            // Redimensionnement proportionnel avec une largeur maximale de 800px sans agrandir l'image
+            $image = $image->scaleDown(width: 800);
+        
+            // Encodage de l'image en JPEG avec une qualité de 70%
+            $encoded = $image->toJpeg(95); 
+               
+            $destinationPath=public_path('image_evenement');
+            if(!file_exists($destinationPath)){
+                mkdir($destinationPath,0775,true);
             }
-    
-            $fileName = time() . '_' . $image->getClientOriginalName(); // Générez un nom de fichier unique si nécessaire
-    
-            $image->move($destinationPath, $fileName); // Déplacez le fichier vers le répertoire de destination
-    
-            // Maintenant, $destinationPath.'/'.$fileName contient le chemin complet du fichier déplacé
-            $imagePath='image_evenement/'.$fileName;
-            $evenement->cover_event = $imagePath;
-        } 
-        else
-        {
-            $defaultImagePath = 'image/concert.jpeg';
-            $evenement->cover_event=$defaultImagePath;
+            $fileName=time(). '_cover_'.str_replace(' ','_',$request->nom_evenement).'.jpg';
+            $encoded->save($destinationPath.'/'.$fileName);
+            $imagePath='image_evenement/' . $fileName;
+            $evenement->cover_event=$imagePath;
+        }else{
+            $evenement->cover_event=$cover_event;
         }
+       
         if(url()->previous()!=route('EditEvent',$evenement->id)){
             $evenement->Etape_creation=3;  
         } 
@@ -211,6 +225,7 @@ class EvenementController extends Controller
        }else{
             return redirect()->route('MesEvenements')->with('message','évènement modifié');
        }   
+
 
     }
 
@@ -263,45 +278,64 @@ class EvenementController extends Controller
             return response()->json([
                 "success"=>true,
                 "status"=>false,
-                "message"=>"evenement désactivé"
+                "message"=>"évènement désactivé"
             ]);
           }
         else
         {
-            $typeTicketAProgrammer=array();
-            foreach ($evenement->type_tickets as $type_ticket) {
-                if ($type_ticket->Date_heure_lancement==null && $type_ticket->methodeProgrammationLancement=="ActivationEvènement") {
-                   $type_ticket_update= type_ticket::find($type_ticket->id);
-                   $type_ticket_update->Date_heure_lancement=Carbon::now();
-                   $type_ticket_update->save();
-                } elseif ($type_ticket->Date_heure_lancement==null && $type_ticket->methodeProgrammationLancement=="ProgrammerPlustard" || $type_ticket->Date_heure_fermeture==null && $type_ticket->methodeProgrammationFermeture=="ProgrammerPlustard") {
-                    $typeTicketAProgrammer[]=$type_ticket->id;
-                    $redirectUrl=route('ModifierHoraire');
-                }
-                
-            }
-            if(!empty($typeTicketAProgrammer)){
-               
-                session(['type_ticket'=>$typeTicketAProgrammer]);
-                
+            if($evenement->Etape_creation <4){
+                $redirectUrl=route('lastEventRedirection',$evenement_id);
                 return response()->json([
                     "redirect"=>true,
                     "redirecturl"=>$redirectUrl,
-                    "Type_ticket"=>$typeTicketAProgrammer
                 ]);
-            }  
-            $evenement->isOnline=true;
-            $evenement->etat='publié';
-            $evenement->save();
-            return response()->json([
-                "success"=>true,
-                "status"=>true,
-                "message"=>"evenement mis en ligne"
-            ]);
-            
-        
+
+            }elseif($evenement->Etape_creation==4){
+                if($request->form=="form"){
+                    $evenement->isOnline=true;
+                    $evenement->etat='publié';
+                    $evenement->save();
+                    return redirect()->route('MesEvenements')->with('message','évènement mis en ligne');
+                }
+                $redirectUrl=route('StartWithoutTicket',$evenement->id);
+                return response()->json([
+                    "redirect"=>true,
+                    "redirecturl"=>$redirectUrl,
+                ]);
+            } elseif($evenement->Etape_creation == 5){
+                $typeTicketAProgrammer=array();
+                foreach ($evenement->type_tickets as $type_ticket) {
+                    if ($type_ticket->Date_heure_lancement==null && $type_ticket->methodeProgrammationLancement=="ActivationEvènement") {
+                    $type_ticket_update= type_ticket::find($type_ticket->id);
+                    $type_ticket_update->Date_heure_lancement=Carbon::now();
+                    $type_ticket_update->save();
+                    } 
+                    if ($type_ticket->Date_heure_lancement==null && $type_ticket->methodeProgrammationLancement=="ProgrammerPlustard" || $type_ticket->Date_heure_fermeture==null && $type_ticket->methodeProgrammationFermeture=="ProgrammerPlustard") {
+                        $typeTicketAProgrammer[]=$type_ticket->id;
+                        $redirectUrl=route('ModifierHoraire');
+                    }
+                    
+                }
+                if(!empty($typeTicketAProgrammer)){
+                
+                    session(['type_ticket'=>$typeTicketAProgrammer]);
+                    
+                    return response()->json([
+                        "redirect"=>true,
+                        "redirecturl"=>$redirectUrl,
+                        "Type_ticket"=>$typeTicketAProgrammer
+                    ]);
+                }  
+                $evenement->isOnline=true;
+                $evenement->etat='publié';
+                $evenement->save();
+                return response()->json([
+                    "success"=>true,
+                    "status"=>true,
+                    "message"=>"évènement mis en ligne"
+                ]);
+            }
         }
-       
     }
     public function ModifierHoraire(){
         $typeTicketAprogrammer=array();
@@ -397,7 +431,7 @@ class EvenementController extends Controller
             }else{
                 $lastEvent=Auth::user()->profil_promoteur->evenements()->latest()->first();
                 if($lastEvent){
-                    if($lastEvent->Etape_creation!=5){
+                    if($lastEvent->Etape_creation <5){
                         return redirect()->route('lastEventRedirection',$lastEvent->id);
                     }else{
                         return view('admin.evenement.create_event');
