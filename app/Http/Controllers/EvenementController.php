@@ -33,10 +33,13 @@ class EvenementController extends Controller
     
     public function index()
     {  
-        $recommanded_events=evenement::where('recommanded',true)->get();
+        $recommanded_events=evenement::where('recommanded',true)
+                            ->where('isOnline', true)
+                            ->where('date_heure_fin','>=',now())
+                            ->get();
         if(auth()->check()){
           
-            if(Auth::user()->centre_interets->count()>0){
+            if(Auth::user()->centre_interets->count()>0){       
                 $user_id=auth()->user()->id;
                 $user=User::find($user_id);
                 $Interests=$user->centre_interets()->get();
@@ -111,6 +114,7 @@ class EvenementController extends Controller
         $type_tickets= type_ticket::where('evenement_id',$evenement->id)->where('format','Ticket')->where('Date_heure_lancement','<=',now())->where('Date_heure_fermeture','>=',now())->get();
         $same_creator=evenement::where('isOnline', true)
                 ->where('profil_promoteur_id',$promoteur_id)
+                ->where('date_heure_fin','>=',now())
                 ->get();
         $user_id=auth()->id();
         $click=$evenement->users()->wherePivot('user_id',$user_id)->wherePivot('evenement_id',$evenement->id)->get();     

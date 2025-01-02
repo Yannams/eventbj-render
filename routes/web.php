@@ -74,6 +74,9 @@ Route::get('/localisationEdit/{evenement}',[EvenementController::class,'localisa
 Route::get('/eventRedirecting/{type_ticket}/{token}',[EvenementController::class,'eventRedirecting'])->name('eventRedirecting')->middleware(['auth']);
 Route::get('/evenement/{evenement}/typeTicket',[TypeTicketController::class,'AllTickets'])->name('AllTickets')->middleware(['auth','role:Promoteur']);
 Route::get('/StartWithoutTicket/{evenement}',[TypeTicketController::class,'StartWithoutTicket'])->name('StartWithoutTicket');
+Route::post('/ticket/getAmount',[TicketController::class,'GetAmount'])->name('GetAmount');
+Route::get('/ticket/UserInfo',[TicketController::class,'UserInfo'])->name('UserInfo');
+Route::post('/ticket/getUserInfo',[TicketController::class,'GetUserInfo'])->name('GetUserInfo');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy'],'middleware'=>['auth','role:User|Promoteur']]);

@@ -17,6 +17,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use PhpParser\Node\Stmt\Foreach_;
+// use Fedapay\Fedapay;
+// use Fedapay\Customer;
 
 class TicketController extends Controller
 {
@@ -51,16 +53,19 @@ class TicketController extends Controller
             $type_ticket=type_ticket::find($request->id_type_ticket);
             $cover_ticket=$type_ticket->image_ticket;
             $attach=array();
+            
+       
             for($i=0; $i<$nombreTicket; $i++){
                 $user=auth()->user()->id;
                 $userdata=User::find($user);
-                $ticket = new Ticket();
+
+                $ticket = new Ticket;
                 $ticket->transaction_id=$request->transaction_id;
                 $ticket->type_ticket_id=$request->id_type_ticket;
                 $ticket->statut="activé";
                 $ticket->user_id=$user;
                 $ticket->save();           
-        
+               
                 if($type_ticket->evenement->type_lieu->nom_type =="physique"){
                     $codeQRContent = json_encode([
                         "id_ticket"=>$ticket->id, 
@@ -188,6 +193,8 @@ class TicketController extends Controller
         if(isset($_GET['transaction_id']))  {    
             $type_ticket=type_ticket::find($type_ticket_id);
             $transaction_id=$_GET['transaction_id'];
+            $nbreTicket=$_GET['nbr'];
+            session(['nombreTicket'=>$nbreTicket]);
             return view('admin.ticket.sendTiket',compact('transaction_id','type_ticket'));
         }
     }
@@ -276,5 +283,63 @@ class TicketController extends Controller
           $dompdf->render();
 
           return $dompdf->stream('document.pdf', ['Attachment' => 1]); 
+    }
+    
+    public function GetAmount(Request $request){
+        $Amount=$request->montant;
+        $user=Auth::user();
+        $userInfo=[
+            "firstname" => explode(" ", $user->name)[1],
+            "lastname" => explode(" ", $user->name)[0],
+            "email" => $user->email,
+            "phone_number" => [
+                "number" => $user->num_user,
+                "country" => 'bj' // 'bj' Benin code
+                ]
+            ];
+        session(['Amount'=>$Amount,'userInfo'=>$userInfo]);
+        return redirect()->route('UserInfo');
+    }
+
+    public function UserInfo(){
+        $userInfo=session('userInfo');
+        return view('admin.ticket.userInfo',compact('userInfo'));
+    }
+
+    public function GetUserInfo(Request $request){
+        $validateData=$request->validate([
+            "firstname"=>"required",
+            "lastname"=>"required",
+            "email"=>"required",
+            "number"=>"required",
+        ]);
+    
+        /* Remplacez YOUR_SECRETE_API_KEY par votre clé API secrète */
+        \FedaPay\FedaPay::setApiKey("sk_sandbox_HrsJbuyRPcQImLZ521a9uj1d");
+        /* Indiquez si vous souhaitez exécuter votre requête en mode test ou en live */
+        \FedaPay\FedaPay::setEnvironment('sandbox'); //or setEnvironment('live');
+        /* Créer un client */
+        $customer= \FedaPay\Customer::create(array(
+            "firstname" => $request->firstname,
+            "lastname" => $request->lastname,
+            "email" => $request->email,
+                "phone_number" => [
+                    "number" => $request->number,
+                    "country" => 'bj' // 'bj' Benin code
+                ]
+            ));
+
+        \FedaPay\Fedapay::setApiKey('sk_sandbox_HrsJbuyRPcQImLZ521a9uj1d');
+        \FedaPay\Fedapay::setEnvironment('sandbox');
+        $transaction = \FedaPay\Transaction::create([
+        'description' => 'Payment for order #1234',
+        'amount' => 1000,
+        'currency' => ['iso' => 'XOF'],
+        'callback_url' => route('ticket.index'),
+        'mode' => 'mtn_open',
+        'customer' => ['id' => $customer->id]
+        ]);
+        $token = $transaction->generateToken();
+        return redirect($token->url);
     }
 }

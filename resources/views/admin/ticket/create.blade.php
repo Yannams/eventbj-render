@@ -28,90 +28,21 @@
                     
                     
                 </div>
-                <form class="formulaire2" method="post" onsubmit="disableSubmitButton(this);">
-                   
-                    <input type="hidden" name="montant" value="">
-                    <button type="submit" id="submitButton" class="btn btn-success col-12">Obtenir</button>
-                </form>
+                <input type="hidden" name="montant" id="montant" value="">
+                <button type="submit" id="submitButton" 
+                  
+                    data-transaction-amount="2000"
+                    data-transaction-description="Achat ticket {{$type_ticket->nom_ticket}} de {{$type_ticket->evenement->nom_evenement}}" 
+                    data-customer-email="{{auth()->user()->email}}"
+                    data-customer-lastname="{{explode(" ",auth()->user()->name)[0]}}"
+                    data-customer-firstname="{{explode(" ",auth()->user()->name)[1]}}"
+                    data-customer-phone_number-number="{{auth()->user()->num_user}}"
+                    data-customer-phone_number-country='bj'
+                    data-environment="sandbox"
+                    data-type-ticket-id="{{$type_ticket->id}}"
+                    class="btn btn-success col-12">Obtenir</button>
+               
                 
-                <script>
-                   var formulaire2 = document.querySelector(".formulaire2");
-
-                    formulaire2.addEventListener("submit", function(e) {
-                        e.preventDefault();
-
-                        var nombreTicket = $('#nombre_ticket').val();
-                       
-                        
-                        if (nombreTicket > 0) {
-                            
-                            var dataToSend = {
-                                nombreTicket: nombreTicket
-                            };
-
-
-                            $.ajax({
-                                url: "/NombreTicket" ,
-                                type: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                                },
-                                dataType: 'json',
-                                data: dataToSend,
-                                beforeSend:function(){
-                                    $('#submitButton').html(`
-                                        <div class="spinner-border" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                    `);
-                                },
-                                success: function(data) {
-                                    console.log('Réponse réussie:', data);
-
-                                    // Appeler initializeApp après un succès de la requête
-                                    initializeApp("{{ route('verifiedTransation', ['type_ticket' => $type_ticket->id]) }}",data.name,data.email,data.numero);
-                                },
-                                complete:function(){
-                                    $('#submitButton').html('Obtenir');
-                                },
-                                error: function(error) {
-                                    console.log('Erreur:', error);
-                                }
-                            });
-                        } else {
-                            console.log(nombreTicket);
-                            $('.invalidNbreTicket').html('Le nombre de tickets doit être supérieur à 0');
-                        }
-                    });
-
-                
-
-                    function initializeApp(callbackUrl,name,email,numero) {
-                        
-                        
-                        openKkiapayWidget({
-                            amount: formulaire2.querySelector("[name='montant']").value,
-                            position: "center",
-                            callback: callbackUrl,
-                            data: "",
-                            theme: "#308747",
-                            name:name,
-                            email:email,
-                            phone:numero,
-                            sandbox: true,
-                            key: "33a40fc0652511efbf02478c5adba4b8"
-                        });
-                    }
-                </script>
-                
-                {{-- @vite('resources/js/app.js')
-                <script>
-                    window.ticketStoreRoute = "{{ route('ticket.store') }}";
-                </script>
-                <script>
-                    initializeApp("{{ route('ticket.store') }}");
-                </script> --}}
-              
 
                 <script>
                     function increaseValue() {
@@ -124,9 +55,12 @@
                                 var total = nbre_ticket * prix_ticket;
                                 var frais = (total * 1.9) / 100;
                                 var NaP = total + frais;
-                                var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2 id="netApayer"">' + NaP + '</span></div>';
+                                var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2" id="total">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2 id="netApayer"">' + NaP + '</span></div>';
                                 resumeDiv.innerHTML = resume;
                                 document.querySelector('input[name="montant"]').setAttribute('value', total);
+                                // console.log($('#submitButton'));
+                                
+                                $('#submitButton').attr('data-transaction-amount', total);
                             }
 
                     
@@ -143,7 +77,7 @@
                                 var total = nbre_ticket * prix_ticket;
                                 var frais = (total * 1.9) / 100;
                                 var NaP = total + frais;
-                                var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2" id="netApayer">' + NaP + '</span></div>';
+                                var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2" id="total">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2" id="netApayer">' + NaP + '</span></div>';
                                 resumeDiv.innerHTML = resume;
                                 document.querySelector('input[name="montant"]').setAttribute('value', total);
                             }
@@ -151,14 +85,59 @@
                                 resumeDiv.innerHTML = "";
                                 document.querySelector('input[name="montant"]').removeAttribute('value');
                             }
+                            
                     }
                     function disableSubmitButton(form) {
                         form.querySelector('#submitButton').disabled = true;
                     }
+                   
                 </script>
-
-        <script src="https://cdn.kkiapay.me/k.js"></script>
-  
+                 <script type="text/javascript">
+                    let btn = document.getElementById('submitButton');
+                    const amount = btn.getAttribute('data-transaction-amount');
+                    const description = btn.getAttribute('data-transaction-description');
+                    const customerEmail = btn.getAttribute('data-customer-email');
+                    const customerFirstname = btn.getAttribute('data-customer-firstname');
+                    const customerLastname = btn.getAttribute('data-customer-lastname');
+                    const customerPhone = btn.getAttribute('data-customer-phone_number');
+                    const currency = btn.getAttribute('data-currency');
+                    const type_ticket_id= btn.getAttribute('data-type-ticket-id');
+                  
+                    
+                    let widget =  FedaPay.init({
+                        public_key: 'pk_sandbox_xbkhgDVudRXjQwp9t1u8o4rN',
+                        transaction: {
+                            amount: amount,
+                            description:description
+                        },
+                        customer: {
+                            firstname: customerFirstname,
+                            lastname: customerLastname,
+                            email: customerEmail,
+                            phone_number: {
+                                number: customerPhone,
+                                country: 'bj' // Code pays, ou récupéré dynamiquement
+                            }
+                        },
+                        onComplete:function (reason, transaction ){
+                            console.log(reason.reason);
+                            
+                            if (reason.reason=='CHECKOUT COMPLETE') {
+                                window.location.href = '/verifiedTransaction/'+type_ticket_id+'?transaction_id='+reason.transaction.id+'&nbr='+nbr;
+                            }else if (reason=='DIALOG_DISMISSED') {
+                                
+                            }
+                          
+                        }
+                        
+                    });
+                  
+                    btn.addEventListener('click', () => {
+                        nbr=$('#nombre_ticket').val()
+                        console.log(nbr);
+                        widget.open();
+                    });
+                  </script>
             </div>
            
         </div>
