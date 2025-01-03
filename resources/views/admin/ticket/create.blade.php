@@ -124,8 +124,6 @@
                             
                             if (reason.reason=='CHECKOUT COMPLETE') {
                                 window.location.href = '/verifiedTransaction/'+type_ticket_id+'?transaction_id='+reason.transaction.id+'&nbr='+nbr;
-                            }else if (reason=='DIALOG_DISMISSED') {
-                                
                             }
                           
                         }
