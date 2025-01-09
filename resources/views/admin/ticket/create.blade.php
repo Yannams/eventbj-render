@@ -5,10 +5,10 @@
                 <h1>Billeterie</h1>
                 <div class="d-flex"> 
                     <h2 class="p-2 w-75" id="nom_ticket">Ticket {{$type_ticket->nom_ticket}}</h2>
-                    <div class="p-2 fw-bold fs-3" id="prix_ticket">{{$type_ticket->prix_ticket}} XOF | Frais: {{($type_ticket->prix_ticket*1.9)/100}} XOF</div>
+                    <div class="p-2 fw-bold fs-3" id="prix_ticket">{{$type_ticket->prix_ticket}} XOF | Frais: {{($type_ticket->prix_ticket*1.8)/100}} XOF</div>
                 </div>
                 <div class="row">
-                    <div class="col-2">
+                    <div class="col-md-2 col-6">
                          <div class="input-group">
                             <button class="btn btn-outline-secondary" type="button"><svg class="bi bi-dash-lg" fill="#000000" onclick="decreaseValue()" width="30" height="30"><use xlink:href="#dash"></use></svg></button>
                             <input type="number" class="form-control" name="nombre_ticket" id="nombre_ticket" class="form-control" min="0" value="0" disabled>
@@ -19,18 +19,15 @@
                         </div>
                     </div>
                 </div>
-                <h3 class="col">Resume de la commande </h3>
+                <h3 class="col">Résumé de la commande </h3>
                 <hr>
                 <div id="resume" class="col">
                     <div class="row">
                        
                     </div>
-                    
-                    
                 </div>
                 <input type="hidden" name="montant" id="montant" value="">
                 <button type="submit" id="submitButton" 
-                  
                     data-transaction-amount="2000"
                     data-transaction-description="Achat ticket {{$type_ticket->nom_ticket}} de {{$type_ticket->evenement->nom_evenement}}" 
                     data-customer-email="{{auth()->user()->email}}"
@@ -53,7 +50,7 @@
                                 var prix_ticket = parseInt(document.getElementById('prix_ticket').innerText);
                                 var resumeDiv = document.getElementById('resume');
                                 var total = nbre_ticket * prix_ticket;
-                                var frais = (total * 1.9) / 100;
+                                var frais = (total * 1.8) / 100;
                                 var NaP = total + frais;
                                 var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2" id="total">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2 id="netApayer"">' + NaP + '</span></div>';
                                 resumeDiv.innerHTML = resume;

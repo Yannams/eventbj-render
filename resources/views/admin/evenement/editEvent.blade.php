@@ -118,7 +118,7 @@
                         <input type="hidden" name="croppedCover" id="croppedCover">
                      <div class="col-12 mb-3">
                         <input type="hidden" name="evenement_id" value="{{$evenement->id}}" id="evenement_id">
-                         <label for="nom_evenement">Nom evenement</label>
+                         <label for="nom_evenement">Nom évènement</label>
                          <input type="text" name="nom_evenement" id="nom_evenement" class="form-control @error('nom_evenement') is-invalid @enderror" value="{{old('nom_evenement') ?: $evenement->nom_evenement}}" >
                          @error('nom_evenement')
                             <div class="invalid-feedback">
@@ -128,7 +128,7 @@
                         
                      </div>
                      <div class="col-12 mb-3">
-                         <label for="type_evenement_id">Type de l'evenement</label>
+                         <label for="type_evenement_id">Type de l'évènement</label>
                          <select name="type_evenement_id" id="type_evenement_id" class="form-select @error('type_evenement_id') is-invalid @enderror">
                             @foreach ($type_evenement as $type_evenements )
                                  <option value="{{$type_evenements->id}}" @if ($evenement->type_evenement_id==$type_evenements->id) selected @endif>{{$type_evenements->nom_type_evenement}}</option>
@@ -143,7 +143,7 @@
                          
                      </div>
                      <div class="col-12 mb-3">
-                        <label for="interest">Categorie de l'evenement</label><br>
+                        <label for="interest">Categorie de l'évènement</label><br>
                         <div class="p-3 border border-1 rounded-2 InterestContainer">
                             @foreach ($interests as $interest)
                                 <input type="checkbox" class="btn-check interest " @if(in_array($interest->id,$EventInterestArray)) checked @elseif(old('interest')) @if (in_array($interest->id,old('interest'))) checked @endif @endif id="Interest-{{$interest->id}}" value="{{$interest->id}}" name="interest[]" autocomplete="off">

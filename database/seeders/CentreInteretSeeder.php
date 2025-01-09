@@ -29,7 +29,7 @@ class CentreInteretSeeder extends Seeder
         Centre_interet::create(['nom_ci'=>'Nourriture']);
         Centre_interet::create(['nom_ci'=>'Gaming']);
         Centre_interet::create(['nom_ci'=>'Education']);
-        Centre_interet::create(['nom_ci'=>'Cinema']);
+        Centre_interet::create(['nom_ci'=>'Cinéma']);
         Centre_interet::create(['nom_ci'=>'Photographie']);
         Centre_interet::create(['nom_ci'=>'Jeux']);
         Centre_interet::create(['nom_ci'=>'Animaux']);

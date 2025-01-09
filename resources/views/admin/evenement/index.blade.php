@@ -140,7 +140,7 @@
             @endif  
         </ul>
     </div>
-    <div class="row row-cols-1 row-cols-lg-3 align-items-stretch g-4 py-4">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 align-items-stretch g-4 py-4">
         @foreach ( $evenement as $evenements )
         <a href="{{route('evenement.show', ['evenement'=>$evenements->id])}}" class="clicked-link link-dark  link-offset-2 link-underline link-underline-opacity-0">
             <div class="col">

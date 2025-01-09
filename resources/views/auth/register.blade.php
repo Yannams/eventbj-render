@@ -43,7 +43,7 @@
         <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-6 " style="background-color: #C3E3CC">
-                        <div id="carouselExampleCaptions" class="carousel slide">
+                        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-indicators">
                                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
@@ -57,8 +57,8 @@
                                     <img src="{{asset('image/undraw_festivities_tvvj.svg')}}" class="d-block w-100" alt="...">
                                 </div>
                                 <div class="text-white text-center mb-5 d-none d-md-block">
-                                <h5>First slide label</h5>
-                                <p>Some representative placeholder content for the first slide.</p>
+                                <h5>Des évènements qui vous réunissent</h5>
+                                <p>Trouvez des évènements à vivre avec vos amis, autour de vos passions communes </p>
                                 </div>
                             </div>
                             <div class="carousel-item">
@@ -66,8 +66,8 @@
                                     <img src="{{asset('image/undraw_having_fun_re_vj4h.svg')}}" class="d-block w-100" alt="...">
                                 </div>
                                 <div class="text-white text-center mb-5 d-none d-md-block">
-                                <h5>Second slide label</h5>
-                                <p>Some representative placeholder content for the second slide.</p>
+                                <h5>Rencontrez de nouvelles personnes !!</h5>
+                                <p>Profitez des évènements pour rencontrer des personnes partageant vos passions !!</p>
                                 </div>
                             </div>
                             <div class="carousel-item">
@@ -75,8 +75,8 @@
                                     <img src="{{asset('image/undraw_special_event_-4-aj8.svg')}}" class="d-block w-100" alt="...">
                                 </div>
                                 <div class="text-white text-center mb-5 d-none d-md-block">
-                                <h5>Third slide label</h5>
-                                <p>Some representative placeholder content for the third slide.</p>
+                                <h5>Partagez des moments uniques!!</h5>
+                                <p>Que ce soit des chills, du networking ou des conférence, Partagez des moments inoubliables !!</p>
                                 </div>
                             </div>
                             <div class="carousel-item">
@@ -84,8 +84,8 @@
                                     <img src="{{asset('image/undraw_events_re_98ue.svg')}}" class="d-block w-100" alt="...">
                                 </div>
                                 <div class="text-white text-center mb-5 d-none d-md-block">
-                                <h5>Third slide label</h5>
-                                <p>Some representative placeholder content for the third slide.</p>
+                                <h5>Votre passion ? Organisez des évènement ?</h5>
+                                <p>Choisissez une date et lancez-vous. Avec EventBJ, organiser des évènements n'a jamais été aussi simple au Bénin.</p>
                                 </div>
                             </div>
                             <div class="carousel-item">
@@ -93,8 +93,8 @@
                                     <img src="{{asset('image/undraw_investor_update_re_qnuu.svg')}}" class="d-block w-100" alt="...">
                                 </div>
                                 <div class="text-white text-center mb-5 d-none d-md-block">
-                                <h5>Third slide label</h5>
-                                <p>Some representative placeholder content for the third slide.</p>
+                                <h5>Soyez des experts dans votre passion d'organiser</h5>
+                                <p>Suivez vos performances grâce à des statistiques détaillées et améliorez-vous chaque jour.</p>
                                 </div>
                             </div>
                             </div>
@@ -130,7 +130,7 @@
                               <input type="hidden" name="profil_user_cropped" id="profil_user_cropped">
                             </div> 
                             <div class="row mb-2">
-                                <label for="name" class="col-12 col-form-label text-start">{{ __('Name') }}</label>
+                                <label for="name" class="col-12 col-form-label text-start">{{ __('Nom') }}</label>
 
                                 <div class="col-12">
                                     <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
@@ -144,7 +144,7 @@
                             </div>
 
                             <div class="row mb-2">
-                                <label for="email" class="col-12 col-form-label text-start">{{ __('Email Address') }}</label>
+                                <label for="email" class="col-12 col-form-label text-start">{{ __('Email') }}</label>
 
                                 <div class="col-12">
                                     <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
@@ -171,7 +171,7 @@
                             </div>
 
                             <div class="row mb-2">
-                                <label for="password" class="col-12 col-form-label text-start">{{ __('Password') }}</label>
+                                <label for="password" class="col-12 col-form-label text-start">{{ __('Mot de passe') }}</label>
 
                                 <div class="col-12">
                                     <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
@@ -185,7 +185,7 @@
                             </div>
 
                             <div class="row mb-3">
-                                <label for="password-confirm" class="col-12 col-form-label text-md-">{{ __('Confirm Password') }}</label>
+                                <label for="password-confirm" class="col-12 col-form-label text-md-">{{ __('Confirmer le mot de passe') }}</label>
 
                                 <div class="col-12">
                                     <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
@@ -195,7 +195,7 @@
                             <div class="row mb-2">
                                 <div class="col-12">
                                     <button type="submit" class="btn btn-success w-100">
-                                        {{ __('Register') }}
+                                        {{ __('S\'inscrire') }}
                                     </button>
                                 </div>
                             </div>

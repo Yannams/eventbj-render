@@ -2,8 +2,9 @@
     @section('content')
         @foreach ( auth()->user()->evenements as $evenement )
             <div class="fs-2 fw-bold">{{$evenement->nom_evenement}}</div>
-            <div class="card border-0 shadow ms-5 my-3">
+            <div class="card border-0 shadow ms-md-5 my-3">
                 <div class="card-body">
+                   <div class="table-responsive">
                     <table class="table">
                         <thead>
                           <tr>
@@ -33,7 +34,8 @@
                             @endforeach
                                
                         </tbody>
-                      </table>
+                    </table>
+                   </div>
                 </div>
             </div>
         @endforeach

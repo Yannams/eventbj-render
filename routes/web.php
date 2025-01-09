@@ -50,6 +50,7 @@ Route::get('/ModifierHoraire',[EvenementController::class,'ModifierHoraire'])->n
 Route::post('/UpdaterHoraire',[EvenementController::class,'UpdateHoraire'])->name('UpdateHoraire')->middleware('auth','role:Promoteur');
 Route::get('/scanTicket',[TicketController::class,'scanTicket'])->name('scanTicket')->middleware('auth','role:Promoteur');
 Route::get('/afficherProfil',[ProfileController::class,'afficherProfil'])->name('afficherProfil');
+Route::get('/afficherProfil/promoteur',[ProfileController::class,'afficherProfilPromoteur'])->name('afficherProfilPromoteur');
 Route::post('/verifierTicket', [TicketController::class,'verifierTicket'])->name('verifierTicket')->middleware('auth','role:Promoteur');
 Route::get('/validTicket',[TicketController::class,'validTicket'])->name('validTicket')->middleware('auth','role:Promoteur');
 Route::get('/verifiedTicket',[TicketController::class,'verifiedTicket'])->name('verifiedTicket')->middleware('auth','role:Promoteur');
@@ -77,6 +78,8 @@ Route::get('/StartWithoutTicket/{evenement}',[TypeTicketController::class,'Start
 Route::post('/ticket/getAmount',[TicketController::class,'GetAmount'])->name('GetAmount');
 Route::get('/ticket/UserInfo',[TicketController::class,'UserInfo'])->name('UserInfo');
 Route::post('/ticket/getUserInfo',[TicketController::class,'GetUserInfo'])->name('GetUserInfo');
+Route::get('/Annulation/{evenement}',[EvenementController::class,'annulation'])->name('annulation')->middleware('auth','role:Promoteur');
+
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy'],'middleware'=>['auth','role:User|Promoteur']]);

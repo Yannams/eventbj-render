@@ -72,6 +72,7 @@
    @include('layout.stepform')
     <div class="card border-0">
         <div class="card-body">
+            <div class="card-title fs-3 fw-bold d-flex d-md-none ">Création de ticket</div>
             <form action="{{route('type_ticket.store')}}" method="post" enctype="multipart/form-data"  onsubmit="disableSubmitButton(this)">
 
                 @csrf

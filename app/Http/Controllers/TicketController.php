@@ -12,6 +12,7 @@ use App\Models\User;
 use Dompdf\Dompdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Intervention\Image\ImageManager;
@@ -67,6 +68,11 @@ class TicketController extends Controller
                 $ticket->save();           
                
                 if($type_ticket->evenement->type_lieu->nom_type =="physique"){
+                    $evenement=$type_ticket->evenement;
+                    $evenement_id=$evenement->id;
+                    $promoteur_id=$evenement->profil_promoteur->id;
+                    $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
+                    
                     $codeQRContent = json_encode([
                         "id_ticket"=>$ticket->id, 
                         "transaction_id"=>$ticket->transaction_id, 
@@ -77,6 +83,7 @@ class TicketController extends Controller
                         "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
                         "date_heure_debut"=>$ticket->type_ticket->evenement->date_heure_debut,
                         "date_heure_fin"=>$ticket->type_ticket->evenement->date_heure_fin,
+                        "signature"=>file_get_contents(storage_path("app/keys/$keyRepoName/private_key.pem"))
                     ]);
                     
                     $folderPath = public_path('code_QR');

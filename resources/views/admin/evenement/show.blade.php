@@ -72,7 +72,7 @@
                                     <tbody>
                                     @foreach ( $chronogramme as $chronogrammes )
                                     <tr>
-                                        <th scope="row"></th>
+                                        <th scope="row">{{date('d M Y', strtotime($chronogrammes->date_activite))}}</th>
                                         <td>{{$chronogrammes->heure_debut}}</td>
                                         <td>{{$chronogrammes->heure_fin}}</td>
                                         <td>{{$chronogrammes->nom_activite}}</td>
@@ -109,15 +109,15 @@
                     <div class="card border-0 shadow">
                         <div id="intervenant" class="collapse" >
                             <div class="card-body">
-                                <div class="row">
+                                <div class="row row-cols-3 row-cols-md-5">
                                     @foreach ($intervenants as $intervenant )
-                                        <div class="col-2">
-                                            <img src="{{asset($intervenant->photo_intervenant)}}" alt="" width="100px" height="100px" class="rounded-circle">
-                                            <div class="d-flex flex-column">
-                                                <div class="text-center fs-5 fw-bold">{{$intervenant->nom_intervenant}}</div>
-                                                <div class="text-center fs-6 fst-italic text-secondary">{{$intervenant->Role_intervenant}}</div>
-
+                                        <div class="col">
+                                            <div class="row">
+                                                <img src="{{asset($intervenant->photo_intervenant)}}" alt="" class="rounded-circle ">
+                                                <div class="fs-5 text-center  fw-bold">{{$intervenant->nom_intervenant}}</div>
+                                                <div class="fs-6 text-center  fst-italic text-secondary">{{$intervenant->Role_intervenant}}</div>
                                             </div>
+                                            
                                         </div>                                    
                                     @endforeach
                                 </div>

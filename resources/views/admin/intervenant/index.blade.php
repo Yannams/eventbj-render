@@ -2,29 +2,52 @@
     @section('content')
         <div class="card border-0 mt-4">
             <div class="card-body">
-              <div class="row g-3">
-                @foreach ($intervenants as $intervenant )
-                  <div class="col-2 d-flex flex-column intervenants position-relative" data-intervenant-id="{{$intervenant->id}}">
-                    <div class="d-flex justify-content-center" id="" style="width: 100%; height:100%">
-                        <div class="position-relative " style="width: 100px; height: 100px">
-                          <img src="{{asset($intervenant->photo_intervenant)}}" alt=""  width="100px" height="100px" class="rounded-circle">
-                        </div>
-                    </div>
-                    <div class="w-100 d-flex  flex-column mt-4">
-                      <div class="text-center fs-5 fw-bold">{{$intervenant->nom_intervenant}}</div>
-                      <div class="text-center fs-6 fst-italic text-secondary">{{$intervenant->Role_intervenant}}</div>
-                    </div>
+              <div class="d-flex justify-content-between mb-2">
+                  <div>
+                    <h1>Intervenants</h1>
                   </div>
-                @endforeach
-                <div class="col-2">
-                  <button type="button" class="border-0 bg-white"  data-bs-toggle="modal" data-bs-target="#createIntervenant">
-                      <div style="width:100px;height:100px;border:dashed #FBAA0A ; color:#FBAA0A" class="rounded-circle d-flex align-items-center justify-content-center">
-                          <div>
-                              <i class="bi-plus plus fs-1 fw-bold"></i>
-                          </div>
-                      </div>
-                  </button>
-                </div>
+                  <button class="btn btn-success"  data-bs-toggle="modal" data-bs-target="#createIntervenant">Ajouter</button>
+              </div>
+              <div class="table-responsive">
+                <table class="table align-middle">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Nom</th>
+                      <th scope="col">role</th>
+                      <th scope="col">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($intervenants as $intervenant )
+                      <tr>
+                        <th scope="row">
+                          <img src="{{asset($intervenant->photo_intervenant)}}" alt=""  width="100px" height="100px" class="rounded-circle">
+                        </th>
+                        <td class="fw-bold">{{$intervenant->nom_intervenant}}</td>
+                        <td>{{$intervenant->Role_intervenant}}</td>
+                        <td>
+                          <button type="button" class="btn btn-success " data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="bi bi-three-dots-vertical"></i>
+                          </button>
+                          <ul class="dropdown-menu">
+                              <li>
+                                <button class=" dropdown-item editButton" id="editButton"  data-bs-toggle="modal" data-bs-target="#EditIntervenant" data-bs-whatever="{{$intervenant->id}}" >
+                                  <i class="bi-pencil-square pencil-square "></i> Modifier
+                                </button>
+                              </li>
+                              <li>
+                                <button class=" dropdown-item" data-bs-whatever="{{$intervenant->id}}" id="DeleteButton" data-bs-toggle="modal" data-bs-target="#DeleteIntervenant">
+                                  <i class="bi-trash trash "></i> supprimer
+                                </button>
+                              </li>
+                          </ul>
+                        </td>
+                      </tr>
+                    @endforeach
+                   
+                  </tbody>
+                </table>
               </div>
             </div>
             <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -248,8 +271,9 @@
        
         const EditIntervenant = $('#EditIntervenant');
         if (EditIntervenant.length) {
-          EditIntervenant.on('show.bs.modal', function(event) {
-            var intervenant_id =$('#editButton').attr('data-bs-whatever');
+          EditIntervenant.on('show.bs.modal', event=> {
+            const button = event.relatedTarget
+            var intervenant_id =button.getAttribute('data-bs-whatever');
             var url='{{ route('Intervenant.edit',":Intervenant_Id") }}'
             url = url.replace(':Intervenant_Id', intervenant_id);
             $.ajax({
@@ -257,6 +281,16 @@
                 url: url,
                 data:{intervenant_id: intervenant_id},
                 dataType:'JSON',
+                beforeSend:function (params) {
+                  formToEdit=`
+                    <div class="spinner-border " role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                  `
+                  $('#IntervenantInfo').removeClass('text-center');
+                  $('#IntervenantInfo').addClass('text-center');
+                  $('#IntervenantInfo').html(formToEdit);
+                },
                
                 success: function(data) {
                   const profil_container = EditIntervenant.find('#profil_container_edit');
@@ -317,8 +351,9 @@
 
         const DeleteIntervenant = $('#DeleteIntervenant');
         if (DeleteIntervenant.length) {
-          DeleteIntervenant.on('show.bs.modal', function(event) {
-            var intervenant_id =$('#editButton').attr('data-bs-whatever');
+          DeleteIntervenant.on('show.bs.modal', event => {
+            const button = event.relatedTarget
+            var intervenant_id =button.getAttribute('data-bs-whatever');
             var url='{{ route('Intervenant.destroy',":Intervenant_Id") }}'
             url = url.replace(':Intervenant_Id', intervenant_id);
             const DeleteIntervenantForm=$(DeleteIntervenant.find('#DeleteIntervenant'));
@@ -385,7 +420,7 @@
         window.addEventListener('DOMContentLoaded', function () {
         var avatar = document.getElementById('profile-img');
         var image = document.getElementById('uploadedAvatar');
-        var image = document.getElementById('uploadedAvatarEdit');
+        var imageEdit = document.getElementById('uploadedAvatarEdit');
         var input = document.getElementById('photo_intervenant');
         var inputEdit= document.getElementById('photo_intervenant_edit');
         var cropBtn = document.getElementById('crop');
@@ -401,6 +436,8 @@
         input.addEventListener('change', function (e) {
           var files = e.target.files;
           var done = function (url) {
+           
+            
             // input.value = '';
             console.log(input.value)
             image.src = url;
@@ -435,7 +472,7 @@
           var done = function (url) {
             // input.value = '';
             console.log(input.value)
-            image.src = url;
+            imageEdit.src = url;
             EditModal.modal('hide')
             $modalEdit.modal('show');
           };

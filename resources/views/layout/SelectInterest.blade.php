@@ -2,8 +2,8 @@
     @section('content')
     <form action="{{route('Centre_interet.store')}}" class="text-center" method="POST" onsubmit="disableSubmitButton(this)">
         @csrf
-        <h1 class=" fw-bold mb-1">Dites-nous vos passions! <h1>
-        <h3 class=" fw-semibold mb-5">Cela nous permettra de vous proposer des évènement à votre goût !</h3>
+        <h1 class=" fw-bold mb-1">Dites-nous ce qui vous passionne ! <h1>
+        <h3 class=" fw-semibold mb-5">Cela nous permettra de vous proposer des évènements à votre goût !</h3>
         <div class="d-flex align-items-center" style="">
             <div class="container text-center">
                 @foreach ($centre_interets as $centre_interet )

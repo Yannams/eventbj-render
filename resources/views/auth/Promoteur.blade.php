@@ -57,7 +57,7 @@
                     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-2">
                         <div class="col p-3">
                             <input type="radio" class="btn-check col" name="type_organisateur" id="personnel" autocomplete="off" checked value="individuel" >
-                            <label class="btn btn-outline-success" for="personnel"> 
+                            <label class="btn btn-outline-success h-100" for="personnel"> 
                                 <div><svg class="bi bi-person me-1" fill="currentColor"  width="50" height="50"><use xlink:href="#person"></use></svg> </div>
                                 <h5> Pour moi-même </h5>
                                 <p>Ce compte est pour moi et j'y ajouterai les évènements que j'organise moi même</p>
@@ -65,7 +65,7 @@
                         </div>
                         <div class="col p-3">
                             <input type="radio" class="btn-check col" name="type_organisateur" id="Entreprise" autocomplete="off" value="Entreprise">
-                            <label class="btn btn-outline-success w-100" for="Entreprise" >
+                            <label class="btn btn-outline-success w-100 h-100" for="Entreprise" >
                                <div><svg class="bi bi-building me-1" fill="currentColor"  width="50" height="50"><use xlink:href="#building"></use></svg> </div>
                                <h5> Entreprise </h5>
                                <p>Ce compte est pour une entreprise qui organise des évènements</p>

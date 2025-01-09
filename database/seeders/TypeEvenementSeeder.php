@@ -27,7 +27,7 @@ class TypeEvenementSeeder extends Seeder
                 "description"=> "évènement avec des invité pour parler sur différents pannels",
             ],
             [
-                "nom_type_evenement"=> "Evenement sportif ou competition",
+                "nom_type_evenement"=> "Evènement sportif ou compétition",
                 "description"=> "évènement qui est une compétion, un tournoi ou un jeu ",
             ],
             [

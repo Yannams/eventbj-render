@@ -161,7 +161,7 @@
           </li>
           <li class="nav-item">
               <a href="#" class="nav-link link-success d-flex align-items-center">
-                  <svg class="bi bi-globe2 me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#globe"></use></svg> Découvrir
+                 <i class="bi bi-heart me-1"></i> Favoris
               </a>
           </li>
           <li class="nav-item">
@@ -221,24 +221,35 @@
       </ul>
     
       <ul class="nav nav-pills mt-1 p-2 bg-white d-lg-none row row-cols-5 fixed-bottom">
-          <li class="nav-item flex-column">
-              <a href="{{ route('evenement.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('evenement.index'))active green @endif d-flex align-items-center" aria-current="page">
-                  <svg class="bi bi-house me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#home"></use></svg> Home
+          <li class="nav-item">
+              <a href="{{ route('evenement.index') }}" class="nav-link link-success @if (request()->url()== route('evenement.index'))active green @endif d-flex align-items-center justify-content-center" aria-current="page">
+                <span class="d-flex flex-column">
+                  <span class="text-center"><svg class="bi bi-house me-1" fill="currentColor"  width="32" height="32"><use xlink:href="#home"></use></svg></span>
+                  <span class="text-center">Home</span>
+                </span>
               </a>
           </li>
           <li class="nav-item">
-              <a href="#" class="nav-link flex-column link-success d-flex align-items-center">
-                  <svg class="bi bi-globe2 me-1" fill="currentColor"  width="16" height="16"><use xlink:href="#globe"></use></svg> Découvrir
+              <a href="#" class="nav-link link-success d-flex align-items-center justify-content-center">
+                <span class="d-flex flex-column">
+                  <span class="text-center"><svg class="bi bi-heart " fill="currentColor"  width="32" height="32"><use xlink:href="#heart"></use></svg></span>
+                  <span class="text-center"> Favoris</span>
+                </span>
               </a>
           </li>
-          <li class="nav-item ">
+          
+            <li class="nav-item text-center  d-flex justify-content-center  ">
               <a href=" {{route('Create_event')}}" class="nav-link flex-column link-success d-flex align-items-center">
                 <span class="rounded-circle shadow" style=" display: flex; align-items: center; justify-content: center; width: 50px; height: 50px; border-radius: 50%; background-color: #308747; margin-top: -30px"><svg class="bi bi-plus" fill="#C3E3CC"  width="40" height="40"><use xlink:href="#plus"></use></svg></span>
               </a>
           </li>
+         
           <li class="nav-item">
-              <a href="{{ route('ticket.index') }}" class="nav-link flex-column link-success @if (request()->url()== route('ticket.index'))active green @endif d-flex align-items-center">
-                  <svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="16" height="16"><use xlink:href="#ticket"></use></svg> Tickets
+              <a href="{{ route('ticket.index') }}" class="nav-link link-success @if (request()->url()== route('ticket.index'))active green @endif d-flex align-items-center justify-content-center">
+                  <span class="d-flex flex-column">
+                    <span class="text-center"><svg class="bi bi-ticket-perforated me-1 rotation" fill="currentColor"  width="32" height="32"><use xlink:href="#ticket"></use></svg> </span>
+                    <span class="text-center">Tickets</span>
+                  </span>
               </a>
           </li>
           <li class="nav-item">

@@ -72,9 +72,11 @@
     </div>
     <div class="card border-0">
         <div class="card-body">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <div class="card-title fs-3 fw-bold d-flex d-md-none ">Vos tickets</div>
+            <div class="d-grid gap-2 d-flex justify-content-md-end">
                 <a href="{{route('type_ticket.create')}}" class="btn btn-success text-end"> Ajouter un nouveau ticket</a>
               </div>
+              <div class="table-responsive">
                 <table class="table">
                     <thead>
                       <tr>
@@ -104,7 +106,9 @@
                         @endforeach
                            
                     </tbody>
-                  </table>
+                </table>
+              </div>
+               
                   <div class="row mt-5">
                     <div class="col">
                         <a href="" class="btn btn-outline-success w-100">Précédent</a>

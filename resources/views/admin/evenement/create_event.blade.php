@@ -25,6 +25,7 @@
               
                 <div class="card border-0">
                     <div class="card-body">
+                        <div class="card-title fs-3 fw-bold d-flex d-md-none ">Fréquence</div>
                         <div class="row row-cols-1 row-cols-md-1 row-cols-lg-1 g-3">
                             <div class="col">
 
@@ -35,14 +36,14 @@
                                             <input type="radio" class="hidden-radio" name="Frequence" id="unique" autocomplete="off" value="unique" >
                                             <label class=" @error('Frequence') button-check-error @else button-check @enderror w-100 h-100" for="unique">
                                                 <h5>Une seule fois</h5>
-                                                <p>Evenement qui se produit une seule fois </p>
+                                                <p>Evènement qui se produit une seule fois </p>
                                             </label>
                                         </div>      
                                         <div class="col">
                                             <input type="radio" class="hidden-radio" name="Frequence" id="multiple" autocomplete="off" value="multiple" >
                                             <label class="@error('Frequence') button-check-error @else button-check @enderror  w-100 h-100" for="multiple">
                                                 <h5>Plusieurs fois</h5>
-                                                <p>Evenement qui se produit plusieurs fois avec plusieurs éditions</p>
+                                                <p>Evènement qui se produit plusieurs fois avec plusieurs éditions</p>
                                             </label>
                                         </div>        
                                 </div>

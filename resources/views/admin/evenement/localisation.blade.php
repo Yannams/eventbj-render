@@ -74,6 +74,7 @@
       </div>
         @include('layout.stepform')
         <div class="card border-0">
+            <div class="card-title fs-3 fw-bold d-flex d-md-none ">Localisation</div>
             <div class="card-body">
                 <form action="{{route('localisationStore')}}" method="POST" onsubmit="disableSubmitButton(this)">
                     @csrf
@@ -90,19 +91,19 @@
                     @if ($evenement->type_lieu->nom_type=='physique')
 
                         <div class="mb-2">
-                                Pour creer la localisation google maps.
+                                Pour créer la localisation google maps.
                                 <ul class="list-unstyled ms-3">
                                     <li><i class="bi bi-1-circle me-2 text-success"></i> Allez sur <a href="https://www.google.com/maps" target="_blank" class="link-success">google maps</a>    </li>
                                     <li><i class="bi bi-2-circle me-2 text-warning"></i> Recherchez le lieu en question</li>
-                                    <li><i class="bi bi-3-circle me-2 text-danger"></i> cliquer sur partager </li>
-                                    <li><i class="bi bi-4-circle me-2 text-success"></i> cliquer sur inserer une carte</li>
-                                    <li><i class="bi bi-5-circle me-2 text-warning"></i> cliquer sur copier le contenu html</li>
+                                    <li><i class="bi bi-3-circle me-2 text-danger"></i> Cliquez sur partager </li>
+                                    <li><i class="bi bi-4-circle me-2 text-success"></i> Cliquez sur insérer une carte</li>
+                                    <li><i class="bi bi-5-circle me-2 text-warning"></i> Cliquez sur copier le contenu html</li>
                                     <li><i class="bi bi-6-circle me-2 text-danger"></i> Collez dans la zone de texte en bas</li>
                                 </ul>
                         
                         </div>
                         <div class="col-12 mb-3">
-                            <label for="localisation_maps">Localisation map</label>
+                            <label for="localisation_maps">Localisation maps</label>
                             <input type="text" name="localisation_maps" id="localisation_maps" class="form-control @error('localisation_maps') is-invalid @enderror" value="{{$evenement->localisation_maps}}">
                             @error('localisation_maps')
                                 <div class="invalid-feedback">

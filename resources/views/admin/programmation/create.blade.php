@@ -12,7 +12,7 @@
     @endphp
     <div class="row row-cols-1" id="activitiesContainer">
         @while ($currentDate->lte($dateFin))
-            <div class="col ActivityContainer ">
+            <div class="col ActivityContainer">
                 <div class="badge badge-tool shadow col-4" style="background-color:#ee151e">
                     <span class="fs-3">{{ $currentDate->format('d') }}</span><br>
                     <span>{{ $currentDate->translatedFormat('F') }}</span>
@@ -25,36 +25,41 @@
                         @php
                             $lastActivityEndTime = $chronogramme->heure_fin;
                         @endphp
-                        <div class="card shadow mb-3 border-0 col-8 mt-3 ms-5" style="max-width: 540px;">
-                            <div class="card-body row ActivityPlace">
-                                <div class="row">
-                                    <div class="col-8">
-                                        <span class="text-secondary fst-italic">De</span>
-                                        <span class="text-success fw-bold">{{date('H:i', strtotime( $chronogramme->heure_debut ))}}</span>
-                                        <span class="text-secondary fst-italic">à</span>
-                                        <span class="text-danger fw-bold">{{date('H:i', strtotime( $chronogramme->heure_fin)) }}</span>
-                                        <span class="text-warning fw-bold">{{ $chronogramme->nom_activite }}</span>
-                                    </div>
-                                    <div class="col-4">
-                                       <button class="btn btn-success editActivity" data-chronogramme-id="{{$chronogramme->id}}" data-heure-debut="{{$chronogramme->heure_debut}}" data-heure-fin="{{$chronogramme->heure_fin}}" data-nom-activite="{{$chronogramme->nom_activite}}" data-date-activity="{{$chronogramme->date_activite}}">Modifier</button>
+                        <div class="col-12 col-md-6">
+                            <div class="card shadow mb-3 border-0  mt-3 ms-md-5 w-100 ">
+                                <div class="card-body row ActivityPlace">
+                                    <div class="row">
+                                        <div class="col-8">
+                                            <span class="text-secondary fst-italic">De</span>
+                                            <span class="text-success fw-bold">{{date('H:i', strtotime( $chronogramme->heure_debut ))}}</span>
+                                            <span class="text-secondary fst-italic">à</span>
+                                            <span class="text-danger fw-bold">{{date('H:i', strtotime( $chronogramme->heure_fin)) }}</span>
+                                            <span class="text-warning fw-bold">{{ $chronogramme->nom_activite }}</span>
+                                        </div>
+                                        <div class="col-4">
+                                           <button class="btn btn-success editActivity" data-chronogramme-id="{{$chronogramme->id}}" data-heure-debut="{{$chronogramme->heure_debut}}" data-heure-fin="{{$chronogramme->heure_fin}}" data-nom-activite="{{$chronogramme->nom_activite}}" data-date-activity="{{$chronogramme->date_activite}}">Modifier</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        
                     @endif
                 @endforeach
-                <div class="card shadow mb-3 border-0 col-8 mt-3 ms-5" style="max-width: 540px;">
-                    <div class="card-body row ActivityPlace">
-                        <div class="col-10 fs-4 fw-bold">Ajouter une activité</div>
-                        <div class="col-2">
-                            <button class="btn btn-outline-danger addActivity" data-date-activity="{{$currentDate->toDateString()}}" data-evenement-id="{{ $evenement->id }}" data-last-end-time="{{ $lastActivityEndTime }}">
-                                <svg class="bi bi-plus" fill="currentColor" width="30" height="30">
-                                    <use xlink:href="#plus"></use>
-                                </svg>
-                            </button>
+                <div class="col-12 col-md-6">      
+                    <div class="card shadow mb-3 border-0 mt-3 ms-md-5  w-100">
+                        <div class="card-body row ActivityPlace ">
+                            <div class="col-8 col-md-10 fs-4 fw-bold">Ajouter une activité</div>
+                            <div class="col-4 col-md-2">
+                                <button class="btn btn-outline-danger addActivity" data-date-activity="{{$currentDate->toDateString()}}" data-evenement-id="{{ $evenement->id }}" data-last-end-time="{{ $lastActivityEndTime }}">
+                                    <svg class="bi bi-plus" fill="currentColor" width="30" height="30">
+                                        <use xlink:href="#plus"></use>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </div> 
             </div>
             @php
                 $currentDate->addDay();
@@ -82,16 +87,25 @@
                         <input type="hidden" name="date_activite" value="${date_activite}">
                         <input type="hidden" name="evenement_id" value="${evenement_id}">
                         <div class="row"> 
-                            <div class="col-10">
-                                <div class="input-group">
-                                    <input type="time" name="heure_debut" class="form-control w-25 heure_debutInput" value="${lastEndTime ? lastEndTime : ''}" required>
-                                    <input type="time" name="heure_fin" class="form-control w-25 heure_finInput" value="${newEndTime ? newEndTime : ''}" required>
-                                    <input type="text" name="nom_activite" class="form-control w-50 activityInput" required>
+                            <div class="">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <label for="heure_debut"> Heure début</label>
+                                        <input type="time" name="heure_debut" class="form-control  heure_debutInput" value="${lastEndTime ? lastEndTime : ''}" required>
+                                    </div>
+                                    <div class="col-6">
+                                        <label for="heure_fin"> Heure fin</label>
+                                        <input type="time" name="heure_fin" class="form-control  heure_finInput" value="${newEndTime ? newEndTime : ''}" required>
+                                    </div>
+                                    <div class="col-12 mt-2">
+                                        <label for="nom_activite"> nom activité</label>
+                                        <input type="text" name="nom_activite" class="form-control  activityInput" required>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <button class="btn btn-success AddActivityBtn" id="AddActivityBtn">
-                                    <i class="bi-check check"></i>
+                            <div class="mt-4">
+                                <button class="btn btn-success AddActivityBtn w-100" id="AddActivityBtn">
+                                    <i class="bi-check check"></i> Valider
                                 </button> 
                             </div>
                         </div>
@@ -100,11 +114,11 @@
                 activityPlace.html(formHtml);
 
                 var newCardHtml = `
-                    <div class="col ActivityContainer">
-                        <div class="card shadow mb-3 border-0 col-8 mt-3 ms-5" style="max-width: 540px;">
+                    <div class="col-12 col-md-6 ActivityContainer">
+                        <div class="card shadow mb-3 border-0 col-8 mt-3 ms-md-5 col-8 w-100" >
                             <div class="card-body row ActivityPlace">
-                                <div class="col-10 fs-4 fw-bold">Ajouter une activité</div>
-                                <div class="col-2">
+                                <div class="col-8 col-md-10 fs-4 fw-bold">Ajouter une activité</div>
+                                <div class="col-4 col-md-2">
                                     <button class="btn btn-outline-danger addActivity" data-date-activity="${date_activite}" data-evenement-id="${evenement_id}" data-last-end-time="${newEndTime}">
                                         <svg class="bi bi-plus" fill="currentColor" width="30" height="30">
                                             <use xlink:href="#plus"></use>
@@ -132,17 +146,26 @@
                     
                         <input type="hidden" class="chronogrammeToModify" name="chronogramme_id" value="${chronogrammeId}">
                         <input type="hidden" class="DateActivityToModify" name="date_activite" value="${dateActivite}">
-                        <div class="row row-cols-2">
-                            <div class="col-10">
-                                <div class="input-group">
-                                    <input type="time" name="heure_debut" class="form-control  heure_debutInputModified w-25" value="${heureDebut}" required>
-                                    <input type="time" name="heure_fin" class="form-control  heure_finInputModified w-25" value="${heureFin}" required>
-                                    <input type="text" name="nom_activite" class="form-control  activityInputModified w-50" value="${nomActivite}" required>
+                        <div class="row">
+                            <div class="">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="heure_debut"> Heure début</label>
+                                        <input type="time" name="heure_debut" class="form-control  heure_debutInputModified " value="${heureDebut}" required>
+                                     </div>
+                                    <div class="col-6">
+                                        <label for="heure_fin"> Heure fin</label>
+                                        <input type="time" name="heure_fin" class="form-control  heure_finInputModified " value="${heureFin}" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="nom_activite"> nom activité</label>
+                                        <input type="text" name="nom_activite" class="form-control  activityInputModified " value="${nomActivite}" required>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-2">
-                                <button class="btn btn-success editActivityBtn">
-                                    <i class="bi-check check"></i>
+                            <div class="mt-4">
+                                <button class="btn btn-success editActivityBtn w-100">
+                                    <i class="bi-check check"></i>Valider
                                 </button> 
                             </div>  
                         </div>

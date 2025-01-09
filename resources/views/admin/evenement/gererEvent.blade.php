@@ -5,13 +5,13 @@
             @csrf
             <input type="hidden" name="evenement_id" value="{{$evenement->id}}">
 
-        <div class="row g-4">
-            <div class="col-8">
+        <div class="row  g-4 mb-5">
+            <div class="col-12 col-md-8">
                 <div class="card border-0">
                     <img src="{{asset($evenement->cover_event)}}" alt="cover-img" class="card-img" height="400px">
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <div class="card h-100 border-0">
                     <div class="card-body">
                         <div class="card-title fs-2 fw-bold">{{$evenement->nom_evenement}}</div>
@@ -20,7 +20,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <div class="card border-0 h-100">
                     <div class="card-body">
                         <div class="card-title fw-semibold">Statistique de vente des tickets</div>
@@ -30,7 +30,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-8">
+            <div class="col-12 col-md-8">
                <div class="row g-3">
                     <div class="col-12">
                         <div class="card border-0">
@@ -51,7 +51,7 @@
                         </div>
                     </div>
                     
-                    <div class="col-6">
+                    <div class="col-12 col-md-6">
                         <div class="card border-0 h-100">
                             <div class="card-body">
                                 @php
@@ -84,7 +84,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="col-12 col-md-6">
                         <div class="card border-0 h-100">
                             <div class="card-body">
                                 <div class="d-flex align-items-center">
@@ -104,7 +104,7 @@
                     </div>
                </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <div class="card border-0 h-100">
                     <div class="card-body">
                         <div class="card-title fw-semibold">Taux d'intérêt</div>
@@ -123,7 +123,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <div class="card border-0 h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">
@@ -141,7 +141,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <div class="card border-0 h-100">
                     <div class="card-body">
                         <div class="d-flex align-items-center">

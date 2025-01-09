@@ -13,5 +13,9 @@ class ProfileController extends Controller
         return view('auth.gererProfil');
     }
     
+    public function afficherProfilPromoteur ()
+    { 
+        return view('auth.gererProfilPromoteur');
+    }
    
 }

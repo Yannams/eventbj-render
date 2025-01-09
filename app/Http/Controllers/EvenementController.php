@@ -20,10 +20,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ticket;
 use App\Models\Intervenant;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
+use phpseclib3\Crypt\RSA;
+use App\Mail\InfoUser;
+
 
 class EvenementController extends Controller
 {
@@ -215,6 +220,21 @@ class EvenementController extends Controller
             $evenement->Etape_creation=3;  
         } 
         $evenement->save();
+        $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
+        $destinationPath=storage_path("app/keys/$keyRepoName");
+       
+            if(!file_exists($destinationPath)){
+                mkdir($destinationPath,0775,true);
+            }
+       
+            $rsa = RSA::createKey(2048); // Taille de clé recommandée : 2048 ou 4096 bits
+            $privateKey = $rsa->toString('PKCS8'); // Clé privée au format PKCS8
+            $publicKey = $rsa->getPublicKey()->toString('PKCS8'); // Clé publique
+
+            // Sauvegarder les clés dans des fichiers
+        file_put_contents("$destinationPath/private_key.pem", $privateKey);
+        file_put_contents("$destinationPath/public_key.pem", $publicKey);
+
         $interests=$request->interest;
         $EventInterest=$evenement->centre_interets()->pluck('centre_interet_id');
         $EventInterestArray=$EventInterest->toArray();
@@ -236,13 +256,81 @@ class EvenementController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(evenement $evenement)
+    public function destroy(evenement $evenement, Request $request)
     {
+       $validatedData=$request->validate([
+            'raison'=>'required'
+       ]);
+        if ($evenement->type_tickets()->whereHas('tickets')->exists()) {
+            $subscribers = $evenement->type_tickets()
+                ->with('tickets.user')
+                ->get()
+                ->flatMap(function ($type_ticket) {
+                    return $type_ticket->tickets->map(function ($ticket) {
+                        return $ticket->user->email;
+                    });
+                })
+                ->unique()
+                ->values()
+                ->toArray();
+           
+            $mailData=[
+              'subject' => 'Annulation de ' . $evenement->nom_evenement,
+                'body' => "
+                    Bonjour,
+
+                    Nous venons par ce mail vous informer de l'annulation de l'événement \"{$evenement->nom_evenement}\", 
+                    initié par le promoteur \"{$evenement->profil_promoteur->nom}\".
+
+                    Nous tenons à vous rappeler qu'EventBJ agit uniquement en tant qu'intermédiaire entre vous et le promoteur. 
+                    Par conséquent, seul le promoteur peut nous autoriser à vous rembourser en mettant à notre disposition les fonds nécessaires.
+
+                    En cas de non-remboursement, seul le promoteur est tenu responsable.
+
+                    Cordialement,
+                    L'équipe EventBJ
+                ",
+            ];
+            $attach=[];
+
+            foreach ($subscribers as $subscriber) {
+                Mail::to($subscriber)
+                ->send(new InfoUser($mailData,$attach));
+            }
+
+            $mailPromoteur = [
+                'subject' => 'Annulation de ' . $evenement->nom_evenement,
+                'body' => "
+                    Bonjour {$evenement->profil_promoteur->nom},
+                    
+                    Nous avons notifié l'annulation de l'événement \"{$evenement->nom_evenement}\".
+                    
+                    Nous vous rappelons que l'obligation de rembourser aux participants l'intégralité du prix payé en cas 
+                    d'annulation de l'événement est une obligation personnelle du représentant légal de l'organisateur.
+                    
+                    Par ailleurs, nous pourrons procéder aux remboursements après la mise à disposition des fonds nécessaires 
+                    par vos soins. 
+            
+                    Cordialement,  
+                    L'équipe EventBJ
+                "
+            ];
+            Mail::to($evenement->profil_promoteur->user->email)
+                ->send(new InfoUser($mailPromoteur,$attach));
+            
+        }
+       
         
         $evenement=evenement::find($evenement->id);
         $evenement->etat='Annulé';
+        $evenement->isOnline=false;
+        $evenement->raison=$validatedData['raison'];
         $evenement->save();
         return redirect()->route('MesEvenements')->with('message', 'Evenement annulé !');
+    }
+
+    public function annulation(evenement $evenement){
+        return view('admin.evenement.annulerEvent',compact('evenement'));
     }
     public function MyEvents(){
         $user_id=Auth::user()->id;

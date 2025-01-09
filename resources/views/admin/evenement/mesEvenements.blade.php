@@ -23,89 +23,88 @@
                     </div>    
                 </div>
              @endif
-            <table class="table align-middle">
-                <thead>
-                  <tr>
-                  
-                    <th scope="col">#</th>
-                    <th scope="col">Nom évènement</th>
-                    <th scope="col">Statut </th>
-                    <th scope="col">Date et heure début</th>
-                    <th scope="col">Options</th>
-                  </tr>
-                </thead>
-                <tbody>
-                @foreach ($evenement as $evenements )
-                <tr class="">
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                    <tr>
                     
-                    <th scope="row"><img src="{{asset($evenements->cover_event)}}" alt="cover" width="100" class="rounded"></th>
-                    <td>{{$evenements->nom_evenement}}</td>
-                    <td class="OnlineStatus">@if ( $evenements->administrative_status ==false)
-                      Votre évènement a été désactivé par EventBJ. <br> Veuillez contacter le support de <a href="mailto:eventbj86@gmail.fr">EventBJ</a> pour régler le problème
-                    @elseif ($evenements->isOnline ==false && $evenements->administrative_status ==true)
-                        non-publié
-                    @elseif ($evenements->isOnline ==true && $evenements->administrative_status ==true)
-                        en ligne
-                    @endif</td>
-                    <td>{{date('d/m/Y à h:i', strtotime($evenements->date_heure_debut))}}</td>
-                    <td>
-                    <div class="row row-cols-2 row-cols-md-2 row-cols-lg-2">
-                        <div class="col">
-                            {{-- <form action="{{route('OnlineEvents')}}" method="post">
-                                @csrf
-                                <input type="hidden" name="evenement_id" value="{{$evenements->id}}"> --}}
-                                <button type="submit" class="btn btn-success sendEvent" @if($evenements->administrative_status ==false) disabled @endif data-evenement-id="{{$evenements->id}}">@if ($evenements->isOnline == 0) Mettre en ligne @else Désactiver l'évènement @endif </button>
-                            {{-- </form> --}}
-                        </div>
-                        <div class="col">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-success " data-bs-toggle="dropdown" aria-expanded="false">
-                                    <i class="bi bi-three-dots-vertical"></i>
-                                </button>
-                                <ul class="dropdown-menu">
-                                    <li>
-                                        <a href="{{route('gererEvent',$evenements->id)}}" class=" dropdown-item">gérer</a>
-                                    </li>
-                                    <li><a href="{{route('EditEvent',$evenements->id)}}" class="dropdown-item">Modifier l'évènement</a></li>
-                                    <li> 
-                                        <form action="{{ route('evenement.destroy', $evenements) }}" method="POST" style="display: inline;" id="supprimer-etudiant-{{ $evenements->id }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="dropdown-item">Annuler </button>
-                                        </form>
-                                    </li>
-                                    
-                                    <li>
-                                        <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item"> voir</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{route('AllTickets',$evenements->id)}}" class="dropdown-item"> voir tous les tickets </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{route('chronogramme.create',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un chronogramme</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{route('Intervenant.index',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un intervenant</a>
-                                    </li>
-                                    <li>
-                                        <a href="{{route('AddTicket',$evenements->id)}}" class="dropdown-item"> Ajouter un nouveau ticket </a>
-                                    </li>
-                                    <li>
-                                        <a href="{{route('localisationEdit',$evenements->id)}}" class="dropdown-item"> Modifier la localisation </a>
-                                    </li>
-                                </ul>
+                        <th scope="col">#</th>
+                        <th scope="col">Nom évènement</th>
+                        <th scope="col">Statut </th>
+                        <th scope="col">Date et heure début</th>
+                        <th scope="col">Options</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ($evenement as $evenements )
+                    <tr class="">
+                        
+                        <th scope="row"><img src="{{asset($evenements->cover_event)}}" alt="cover" width="100" class="rounded"></th>
+                        <td>{{$evenements->nom_evenement}}</td>
+                        <td class="OnlineStatus">@if ( $evenements->administrative_status ==false)
+                        Votre évènement a été désactivé par EventBJ. <br> Veuillez contacter le support de <a href="mailto:eventbj86@gmail.fr">EventBJ</a> pour régler le problème
+                        @elseif ($evenements->isOnline ==false && $evenements->administrative_status ==true)
+                            non-publié
+                        @elseif ($evenements->isOnline ==true && $evenements->administrative_status ==true)
+                            en ligne
+                        @endif</td>
+                        <td>{{date('d/m/Y à h:i', strtotime($evenements->date_heure_debut))}}</td>
+                        <td>
+                        <div class="d-flex align-items-center">
+                            <div class="p-2 flex-sm-grow-1 flex-md-grow-0">
+                                {{-- <form action="{{route('OnlineEvents')}}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="evenement_id" value="{{$evenements->id}}"> --}}
+                                    <button type="submit" class="btn btn-success sendEvent" @if($evenements->administrative_status ==false) disabled @endif data-evenement-id="{{$evenements->id}}">@if ($evenements->isOnline == 0) Mettre en ligne @else Désactiver l'évènement @endif </button>
+                                {{-- </form> --}}
+                            </div>
+                            <div class="p-2 flex-md-shrink-1 flex-sm-shrink-0">
+                              
+                                    <button type="button" class="btn btn-success " data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="bi bi-three-dots-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="{{route('gererEvent',$evenements->id)}}" class=" dropdown-item">gérer</a>
+                                        </li>
+                                        <li><a href="{{route('EditEvent',$evenements->id)}}" class="dropdown-item">Modifier l'évènement</a></li>
+                                        <li> 
+                                        <a href="{{route('annulation',$evenements->id)}}" class="dropdown-item">Annuler</a>
+                                        </li>
+                                        
+                                        <li>
+                                            <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item"> voir</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{route('AllTickets',$evenements->id)}}" class="dropdown-item"> voir tous les tickets </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{route('chronogramme.create',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un chronogramme</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{route('Intervenant.index',['event'=>$evenements->id])}}" class="dropdown-item"> Ajouter un intervenant</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{route('AddTicket',$evenements->id)}}" class="dropdown-item"> Ajouter un nouveau ticket </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{route('localisationEdit',$evenements->id)}}" class="dropdown-item"> Modifier la localisation </a>
+                                        </li>
+                                    </ul>
+                                
                             </div>
                         </div>
-                    </div>
-                     
-                      
-                    </td>
+                        
+                        
+                        </td>
 
-                  </tr> 
-                @endforeach
-                 
-                </tbody>
-              </table>
+                    </tr> 
+                    @endforeach
+                    
+                    </tbody>
+                </table>
+            </div>
+                
         </div>
         <script>
             var SendEventbtn=document.querySelectorAll('.sendEvent');
