@@ -50,7 +50,9 @@ class TicketController extends Controller
     public function store( StoreticketRequest $request)
     {
         if(auth()->check()){
-            $nombreTicket=session('nombreTicket');
+            
+            
+            $nombreTicket=$request->nbr;
             $type_ticket=type_ticket::find($request->id_type_ticket);
             $cover_ticket=$type_ticket->image_ticket;
             $attach=array();
@@ -196,14 +198,59 @@ class TicketController extends Controller
 
     }
 
-    public function verifiedTransaction($type_ticket_id){ 
-        if(isset($_GET['transaction_id']))  {    
-            $type_ticket=type_ticket::find($type_ticket_id);
-            $transaction_id=$_GET['transaction_id'];
-            $nbreTicket=$_GET['nbr'];
-            session(['nombreTicket'=>$nbreTicket]);
-            return view('admin.ticket.sendTiket',compact('transaction_id','type_ticket'));
+    public function verifiedTransaction( Request $request){ 
+        $type_ticket=type_ticket::find($request->type_ticket_id);
+        if($type_ticket->place_dispo > 0 || $type_ticket->place_dispo <$request->nbr){
+            if ($type_ticket->format=='Ticket') {
+                if ($request->transaction_id) {
+                    $transaction_id=$request->transaction_id;
+                    \FedaPay\Fedapay::setApiKey('sk_sandbox_HrsJbuyRPcQImLZ521a9uj1d');
+                    \FedaPay\Fedapay::setEnvironment('sandbox');
+                    $transaction = \FedaPay\Transaction::retrieve($transaction_id);
+                    if ($transaction) {
+                        if ($transaction->status=='approved') {
+                            $nbreTicket=$request->nbr;
+                            return response()->json([
+                                'message'=>'la transaction est réussie',
+                                'transaction_id'=>$transaction_id,
+                                'nbreTicket'=>$nbreTicket,
+                                'type_ticket_id'=>$type_ticket->id
+                            ]);
+                        }else{
+                            return redirect()->route('ticket.create')->with('error','la transaction n\'a pas été éffectué');
+                        }
+                    }else {
+                        return redirect()->route('ticket.create')->with('error','la transaction n\'existe pas');
+                    }
+
+                }
+            }else {
+            
+                $nbreTicket=$request->nbr;
+                $transaction_id=uniqid();
+                return response()->json([
+                    'message'=>'la transaction est réussie',
+                    'transaction_id'=>$transaction_id,
+                    'nbreTicket'=>$nbreTicket,
+                    'type_ticket_id'=>$type_ticket->id
+                ]);
+            }
+        }else{
+            return response()->json([
+                'error'=>'le ticket est sold out',
+            ]);
         }
+    }
+
+    public function SendTicket(Request $request ){
+        $validatedData=$request->validate([
+            'nbr'=>'required',
+            'type_ticket_id'=>'required',
+        ]);
+        $transaction_id=$request->transaction_id;
+        $nbr=$request->nbr;
+        $type_ticket_id=$request->type_ticket_id;
+        return view('admin.ticket.sendTiket',compact('transaction_id','type_ticket_id','nbr'));
     }
 
     public function TicketSelected(StoreticketRequest $request){
@@ -348,5 +395,20 @@ class TicketController extends Controller
         ]);
         $token = $transaction->generateToken();
         return redirect($token->url);
+    }
+
+    public function AllParticipant(evenement $evenement){
+        $evenement_id=$evenement->id;
+        $participants=User::whereHas('tickets',function($query) use ($evenement_id){
+            $query->whereHas('type_ticket',function($query) use ($evenement_id){
+                $query->where('evenement_id', $evenement_id);
+            });
+        })->get();
+      
+        return view('admin.ticket.AllParticipant',compact('participants','evenement_id'));
+    }
+
+    public function CreateInvitation(type_ticket $type_ticket){
+        return view('admin.ticket.invitation',compact('type_ticket'));
     }
 }

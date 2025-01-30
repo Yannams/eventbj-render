@@ -124,7 +124,7 @@
                
                 <li class="nav-item">
                   <a href="{{route('MesEvenements')}}" class="nav-link link-success @if(request()->url()==route('MesEvenements')) active @endif d-flex align-items-center" aria-current="page">
-                    <svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#calendar"></use></svg>Mes Evenements
+                    <svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#calendar"></use></svg>Mes Evènements
                   </a>
                 </li>
                
@@ -136,7 +136,7 @@
 
                 <li class="nav-item">
                   <a href="{{route('eventToVerify')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex align-items-center" >
-                    <svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qr-code-scan"></use></svg> verifier des tickets
+                    <svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qr-code-scan"></use></svg> vérifier des tickets
                  </a>
                </li>
                 <li class="nav-item">
@@ -190,7 +190,7 @@
                 </li>                
               </ul>
               {{-- <img src="{{asset(auth()->user()->profil_user)}}" alt="profil" width="50" height="50" class="rounded-5 ms-4" > --}}
-              <a href="{{route('eventToVerify')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex flex-column align-items-center" >
+              <a href="{{route('eventToVerify')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-lg-none d-flex flex-column align-items-center" >
                 <span class="d-flex flex-column">
                   <span class="text-center"><svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="32" height="32"><use xlink:href="#qr-code-scan"></use></svg></span>
                   <span class="text-wrap text-center mt-2 fs-6">Vérifier</span>

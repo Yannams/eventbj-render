@@ -48,7 +48,7 @@
                         @elseif ($evenements->isOnline ==true && $evenements->administrative_status ==true)
                             en ligne
                         @endif</td>
-                        <td>{{date('d/m/Y à h:i', strtotime($evenements->date_heure_debut))}}</td>
+                        <td>{{date('d/m/Y à H:i', strtotime($evenements->date_heure_debut))}}</td>
                         <td>
                         <div class="d-flex align-items-center">
                             <div class="p-2 flex-sm-grow-1 flex-md-grow-0">
@@ -65,16 +65,24 @@
                                     </button>
                                     <ul class="dropdown-menu">
                                         <li>
-                                            <a href="{{route('gererEvent',$evenements->id)}}" class=" dropdown-item">gérer</a>
+                                            <a href="{{route('gererEvent',$evenements->id)}}" class=" dropdown-item">Voir les performances</a>
                                         </li>
-                                        <li><a href="{{route('EditEvent',$evenements->id)}}" class="dropdown-item">Modifier l'évènement</a></li>
-                                        <li> 
-                                        <a href="{{route('annulation',$evenements->id)}}" class="dropdown-item">Annuler</a>
-                                        </li>
-                                        
                                         <li>
-                                            <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item"> voir</a>
+                                            <a href="{{route('PromoteurShow', $evenements)}}" class="dropdown-item">Prévisualiser l'évènement</a>
                                         </li>
+                                        <li>
+                                            <a href="{{route('EditEvent',$evenements->id)}}" class="dropdown-item">Modifier l'évènement</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{route('reportEvent',$evenements->id)}}" class="dropdown-item">Reporter l'évènement</a>
+                                        </li>
+                                        <li>
+                                            <a href="{{route('localisationEdit',$evenements->id)}}" class="dropdown-item"> Modifier la localisation </a>
+                                        </li>
+                                        <li> 
+                                            <a href="{{route('annulation',$evenements->id)}}" class="dropdown-item">Annuler l'évènement</a>
+                                        </li>
+                                       
                                         <li>
                                             <a href="{{route('AllTickets',$evenements->id)}}" class="dropdown-item"> voir tous les tickets </a>
                                         </li>
@@ -87,9 +95,11 @@
                                         <li>
                                             <a href="{{route('AddTicket',$evenements->id)}}" class="dropdown-item"> Ajouter un nouveau ticket </a>
                                         </li>
+                                       
                                         <li>
-                                            <a href="{{route('localisationEdit',$evenements->id)}}" class="dropdown-item"> Modifier la localisation </a>
+                                            <a href="{{route('AllParticipant',$evenements->id)}}" class="dropdown-item"> Liste des participants</a>
                                         </li>
+                                        
                                     </ul>
                                 
                             </div>

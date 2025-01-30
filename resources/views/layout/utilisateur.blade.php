@@ -128,30 +128,44 @@
       <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314"/>
     </symbol>
   </svg>
-
+  <div class="modal fade modal-fullscreen-sm-down" id="searchBar" tabindex="-1" aria-labelledby="searchBarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <input type="search" name="search-input" id="search-input" class="form-control border-0" placeholder="Rechercher des évènement">
+        </div>
+        <div class="modal-body">
+            <table class="table align-middle">
+              <tbody id="Research-result">
+              
+              </tbody>
+            </table>
+          </div>
+        </div>
+       
+      </div>
+    </div>
+  </div>
    <div class="container-fluid "style="background-color: #ffffff">
     <header class="navbar navbar-expand-lg bd-navbar bg-light fixed-top">
         <a href="{{route('evenement.index')}}" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none order-first postion-absolute top-0 start-0">
           <img src="{{ asset('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png') }}" alt="eventbj" height="70" width="70">
         </a>
         <div class="me-4 mb-sm-0 d-inline d-lg-none ">
-          <svg class="bi bi-search" fill="currentColor"  width="30" height="30"><use xlink:href="#search"></use></svg>
+          <button class="border-0 bg-white" data-bs-toggle="modal" data-bs-target="#searchBar">
+            <svg class="bi bi-search" fill="currentColor"  width="30" height="30"><use xlink:href="#search"></use></svg>
+          </button>
           <svg class="bi bi-heart ms-2" fill="currentColor"  width="30" height="30"><use xlink:href="#heart"></use></svg>
         </div>    
         <div class="w-50 d-none d-lg-inline">
-          <button class="btn w-100" id="Search" >
+          <button class="btn w-100" id="Search" data-bs-toggle="modal" data-bs-target="#searchBar" >
                 <div class="card rounded-pill">
                   <div class="card-body">
                     <span><svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#search"></use></svg></span> Rechercher un évènement
                   </div>
               </div>
           </button>
-          <div class="card d-none" id="searchBar" style="position:fixed; z-index:1500; width:700px;top:0;" >
-            <div class="card-body">
-              <input type="search" class="rounded-pill form-control" id="search-input" name="keyWord" placeholder="Rechercher un évènement">
-               <div id="Research-result"></div>
-            </div>
-          </div>
+        
         </div>
       <ul class="nav nav-underline mt-1 d-lg-flex d-none">
           <li class="nav-item">
@@ -281,25 +295,15 @@
         var SearchBarSpace=document.getElementById('searchBar');
         var ResultSpace =document.getElementById('Research-result')
         
-        function showSearchBar() {
-          searchBtn.classList.add('d-none');
-          SearchBarSpace.classList.remove('d-none');
-          
-        }
-        function hideSearchBar() {
-          searchBtn.classList.remove('d-none');
-          SearchBarSpace.classList.add('d-none');
-        }
-        searchBtn.addEventListener("click",showSearchBar);
-        SearchBarSpace.addEventListener("focusout",hideSearchBar);
 
-        SearchBarSpace.addEventListener("input",function ResearchEvent() {
-          WordInput=document.getElementById("search-input");
-          Word=WordInput.value;
+        WordInput=document.getElementById("search-input");
+        
+        SearchBarSpace.addEventListener('shown.bs.modal',()=> {
           
-          if (Word=='') {
-              ResultSpace.innerHTML="";
-            }else{
+          WordInput.focus()
+          WordInput.addEventListener('input',()=>{
+           
+            Word=WordInput.value 
               $.ajaxSetup(
                   {
                       headers:{
@@ -316,27 +320,61 @@
                       },
 
                       dataType:'JSON',
+                      
+                      beforeSend:function (){
+                        $('#Research-result').removeClass('text-center');
+                        $('#Research-result').addClass('text-center');
+                          $('#Research-result').html(`
+                            <div class="spinner-border text-secondary" role="status">
+                              <span class="visually-hidden">Loading...</span>
+                            </div>
+                          `);
+                      },
                 
                     success: function(data){
-                    if (data.success==true) {
-                      ResultSpace.innerHTML=""
-                      for (let i = 0; i < data['evenement'].length; i++) {
-                        const element = data['evenement'][i]['nom_evenement'];
-                        const id = data['evenement'][i]['id'];
-                        ResultSpace.innerHTML+="<div class=\"clickable-result d-flex align-items-center justify-content-center mt-3\"><div class=\"my-2\"><a href=\""+id+"\" class=\"text-dark link-underline link-underline-opacity-0\">"+element+"</a></div></div><hr>"
-                        
+                      $('#Research-result').removeClass('text-center');
+                      if (data.success==true) {
+                      
+                        ResultSpace.innerHTML=""
+                        for (let i = 0; i < data['evenement'].length; i++) {
+                          const evenement = data['evenement'][i]['nom_evenement'];
+                          const id = data['evenement'][i]['id'];
+                          const jour=new Date(data['evenement'][i]['date_heure_debut']).getDate();
+                          const months =['Jan','Fév','Mar','Avr','Mai','Jui','Jul','Aoû','Sep','Oct','Nov','Dec'];
+                          const monthIndex=new Date(data['evenement'][i]['date_heure_debut']).getMonth();
+                          const month=months[monthIndex]
+                          ResultSpace.innerHTML+=`
+                           
+                                <tr class="clickable-row" data-href="evenement/${id}">
+                                  <th scope="row">                                  
+                                    <div class="badge badge-tool text-dark shadow col-4">
+                                      <span class="fs-3">${jour}</span><br>
+                                      <span>${month}</span>
+                                    </div>
+                                  </th>
+                                  <td>${evenement}</td>
+                                </tr>
+                             
+                          `
+                          
+                        }
+                      } else{
+                        const element=data["message"];
+                        ResultSpace.innerHTML+="<div class=\"clickable-result d-flex align-items-center justify-content-center mt-3\"><div class=\"my-2\"><a href=\""+id+"\" class=\"text-dark link-underline link-underline-opacity-0\">"+element+"</a></div></div><hr>";
                       }
-                    } else{
-                      const element=data["message"];
-                      ResultSpace.innerHTML+="<div class=\"clickable-result d-flex align-items-center justify-content-center mt-3\"><div class=\"my-2\"><a href=\""+id+"\" class=\"text-dark link-underline link-underline-opacity-0\">"+element+"</a></div></div><hr>";
-                    }
+                      const rows = document.querySelectorAll('.clickable-row');
+                    
                       
-                      
-                    }
-                  }
-              )
-            }
-        })  
+                      rows.forEach(row => {
+                          row.addEventListener('click', () => {
+                              const href = row.getAttribute('data-href');
+                              window.location.href = href; // Redirection vers l'URL correspondante
+                          });
+                      });
+                    },
+                  })
+                })
+              });
      </script>
      <script>
         const triggerTabList = document.querySelectorAll('#myTab button')

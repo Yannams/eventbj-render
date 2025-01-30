@@ -140,14 +140,14 @@
                                         },
                                         success: function(response) {
                                             // Traitement de la réponse du serveur
-                                            console.log(response);
+                                            // console.log(response);
                                         },
                                         headers: {
                                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                                         },
                                         error: function(error) {
                                             // Gestion des erreurs
-                                            console.log(error);
+                                            // console.log(error);
                                         }
                                     });
 
@@ -183,11 +183,11 @@
                                         },
                                         success: function(response) {
                                             // Traitement de la réponse du serveur
-                                            console.log(response);
+                                          
                                         },
                                         error: function(error) {
                                             // Gestion des erreurs
-                                            console.log(error);
+                                          
                                         }
                                     });
 

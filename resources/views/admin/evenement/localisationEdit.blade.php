@@ -132,7 +132,7 @@
                 element.addEventListener('click', function(e) {
                     e.preventDefault();
                     link = this.href;
-                    console.log(link);
+                  
                     
                     function openModal() {
                         var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));

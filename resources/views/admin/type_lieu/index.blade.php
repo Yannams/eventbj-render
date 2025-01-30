@@ -9,7 +9,7 @@
                             <div class="card-body">{{$type_lieus->description}}</div>
                         </div>
                 @endforeach
-                <button type="submit" class="btn btn-primary">Suivant</button>
+                <button type="submit" class="btn btn-success">Suivant</button>
             </form>
         </div>
     @endsection

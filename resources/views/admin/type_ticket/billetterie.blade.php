@@ -5,6 +5,9 @@
             <div class="card border-0 shadow ms-md-5 my-3">
                 <div class="card-body">
                    <div class="table-responsive">
+                    <div class="d-flex justify-content-end mb-5">
+                        <a href="{{route('AddTicket',$evenement->id)}}" class="btn btn-success">Ajouter</a>
+                    </div>
                     <table class="table">
                         <thead>
                           <tr>

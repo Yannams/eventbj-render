@@ -87,8 +87,7 @@
                     element.addEventListener('click', function(e) {
                         e.preventDefault();
                         link = this.href;
-                        console.log(link);
-                        
+                      
                         function openModal() {
                             var myModal = new bootstrap.Modal(document.getElementById('staticBackdrop'));
                             myModal.show();
@@ -102,15 +101,14 @@
                 
                 SaveProcessButton=document.getElementById('SaveProcess');
                 SaveProcessButton.addEventListener('click',function(e){
-                    console.log(link);  
+                 
                     window.location.href = link;
                 })
                 GiveUpProcessButton=document.getElementById('GiveUp'); 
                 evenement_id_input=document.getElementById('evenement_id')
                 evenement_id=evenement_id_input.value;
                 GiveUpProcessButton.addEventListener('click',function (e) {
-                    console.log(evenement_id);
-                    console.log(link);
+                
                     
                     $.ajaxSetup({
                     headers: {

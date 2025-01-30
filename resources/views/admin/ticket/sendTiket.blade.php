@@ -10,8 +10,9 @@
 
                 <form id="monFormulaire" action="{{route('ticket.store')}}" method="post">
                     @csrf
-                   <input type="hidden" name="id_type_ticket" value="{{$type_ticket->id}}"> 
+                   <input type="hidden" name="id_type_ticket" value="{{$type_ticket_id}}"> 
                     <input type="hidden" name="transaction_id" value="{{$transaction_id}}">
+                    <input type="hidden" name="nbr" value="{{$nbr}}">
                     <!-- Pas de bouton de soumission ici -->
                 </form>
             

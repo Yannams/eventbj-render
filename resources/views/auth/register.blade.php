@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-    <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="cropAvatarmodal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -35,7 +35,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
-                <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                <button type="button" class="btn btn-success" id="crop">Recadrer</button>
             </div>
           </div>
         </div>
@@ -281,7 +281,7 @@
         var files = e.target.files;
         var done = function (url) {
           // input.value = '';
-          console.log(input.value)
+          
           image.src = url;
           $modal.modal('show');
         };

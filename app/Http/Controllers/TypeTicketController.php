@@ -6,6 +6,7 @@ use App\Models\type_ticket;
 use App\Http\Requests\Storetype_ticketRequest;
 use App\Http\Requests\Updatetype_ticketRequest;
 use App\Models\evenement;
+use App\Models\User;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
 
@@ -64,11 +65,17 @@ class TypeTicketController extends Controller
                 'croppedCover'=>'required|string',
                 'nom_ticket'=>'required',
                 'format'=>'required',
-                'prix_ticket'=>'required',
-                'place_dispo'=>'required',
                 "methodeProgrammationLancement"=>"required",
                 "methodeProgrammationFermeture"=>"required",
             ] ;
+            if ($request->format=='Ticket') {
+                $rules['prix_ticket']='required';
+                $rules['place_dispo']='required';
+            }elseif ($request->format=='Ticket gratuit') {
+                $rules['place_dispo']='required';
+            }elseif ($request->format =='Invitation') {
+                $rules['place_dispo']='required';
+            }
             if($request->methodeProgrammationLancement=='ProgrammerBilleterie' && ($request->methodeProgrammationFermeture=='FinEvenement'|| $request->methodeProgrammationFermeture=='ProgrammerFermeture')){
                 $rules['Date_heure_lancement']="required|after_or_equal:today|before:Date_heure_fermeture|before_or_equal:$evenement->date_heure_fin";
                 $rules['Date_heure_fermeture']="required|after_or_equal:Date_heure_lancement|before_or_equal:$evenement->date_heure_fin";
@@ -115,7 +122,12 @@ class TypeTicketController extends Controller
             $type_ticket->quantite=$request->place_dispo;
             $type_ticket->evenement_id=$request->evenement_id;
             $type_ticket->methodeProgrammationLancement=$request->methodeProgrammationLancement;
-            $type_ticket->Date_heure_lancement=$request->Date_heure_lancement;
+            if($request->methodeProgrammationLancement == 'ActivationEvènement'){
+                $type_ticket->Date_heure_lancement=now();
+            }else{
+                $type_ticket->Date_heure_lancement=$request->Date_heure_lancement;
+            }
+
             $type_ticket->methodeProgrammationFermeture=$request->methodeProgrammationFermeture;
             $type_ticket->Date_heure_fermeture=$request->Date_heure_fermeture;
             if($evenement->type_lieu->nom_type=='En ligne'){
@@ -124,7 +136,9 @@ class TypeTicketController extends Controller
             $type_ticket->save();
            
             if (url()->previous()!= route('AddTicket', $evenement->id)||session('previousLink')==route('StartWithoutTicket',$evenement->id)) {
-                $evenement->Etape_creation=5;
+                if($evenement->Etape_creation < 5){
+                    $evenement->Etape_creation=5;
+                }
                 session()->forget(['previousLink']);
             }
            
@@ -154,8 +168,21 @@ class TypeTicketController extends Controller
      */
     public function edit(type_ticket $type_ticket)
     {
+
         $type_ticket=type_ticket::find($type_ticket->id);
-        return view('admin.type_ticket.edit',compact('type_ticket'));
+        $evenement_id=evenement::find($type_ticket->evenement->id);
+        $participants=User::whereHas('tickets',function($query) use ($evenement_id){
+            $query->whereHas('type_ticket',function($query) use ($evenement_id){
+                $query->where('evenement_id', $evenement_id);
+            });
+        })->get();
+        if($participants->isEmpty()){
+            return view('admin.type_ticket.edit',compact('type_ticket'))->with('message','catégorie modifié');
+        }else{
+            return redirect()->route('AllTickets',$evenement_id)->with('error','impossible de modifier cette catégorie de ticket. Des utilisateurs l\'ont déjà acheté   ');
+
+        }
+        
     }
 
     /**
@@ -163,23 +190,39 @@ class TypeTicketController extends Controller
      */
     public function update(Updatetype_ticketRequest $request, type_ticket $type_ticket)
     {
+        $evenement=evenement::find($type_ticket->evenement_id);
         $rules=[
-            "nom_ticket"=>"required",
-            "prix_ticket"=>"required|numeric",
-            "place_dispo"=>"required|numeric",
+            'nom_ticket'=>'required',
+            'format'=>'required',
             "methodeProgrammationLancement"=>"required",
-            "Date_heure_lancement"=>"Date",
             "methodeProgrammationFermeture"=>"required",
-            "Date_heure_fermeture"=>"Date",
-        ];
+        ] ;
+        if ($request->format=='Ticket') {
+            $rules['prix_ticket']='required';
+            $rules['place_dispo']='required';
+        }elseif ($request->format=='Ticket gratuit') {
+            $rules['place_dispo']='required';
+        }elseif ($request->format =='Invitation') {
+            $rules['place_dispo']='required';
+        }
+        if($request->methodeProgrammationLancement=='ProgrammerBilleterie' && ($request->methodeProgrammationFermeture=='FinEvenement'|| $request->methodeProgrammationFermeture=='ProgrammerFermeture')){
+            $rules['Date_heure_lancement']="required|after_or_equal:today|before:Date_heure_fermeture|before_or_equal:$evenement->date_heure_fin";
+            $rules['Date_heure_fermeture']="required|after_or_equal:Date_heure_lancement|before_or_equal:$evenement->date_heure_fin";
+        }elseif (($request->methodeProgrammationLancement=='ProgrammerPlustard'||$request->methodeProgrammationLancement=='ActivationEvènement')&& ($request->methodeProgrammationFermeture=='ProgrammerFermeture'||$request->methodeProgrammationFermeture=='FinEvenement')) {
+            $rules['Date_heure_fermeture']="required|before_or_equal:$evenement->date_heure_fin";
+        }elseif ($request->methodeProgrammationLancement=='ProgrammerBilleterie' && $request->methodeProgrammationFermeture=='ProgrammerPlustard') {
+            $rules['Date_heure_lancement']="required|after_or_equal:today|before_or_equal:$evenement->date_heure_fin";
+        }         
         if($request->image_ticket){
             $rules["image_ticket"]="extensions:jpg,png,svg";
             $rules['croppedCover']='required|string';  
         }else{
             $image_ticket=$type_ticket->image_ticket;
         }
+       
+        $data=$request->validate($rules);
         if($request->image_ticket){
-            $data=$request->validate($rules);
+           
             $croppedCover=$request->croppedCover;
             // dd($croppedCover);
             list($type, $croppedCover) = explode(';', $croppedCover);
@@ -207,6 +250,15 @@ class TypeTicketController extends Controller
         }else{
             $data['image_ticket']=$image_ticket;
         }
+        if($data['format']=='Ticket'){
+            $data['texte']=null;
+        }elseif ($data['format']=='Ticket gratuit') {
+            $data['texte']=null;
+            $data['prix_ticket']=null;
+        }elseif ($data['format']=='Invitation') {
+            $data['prix_ticket']=null;
+            $data['texte']=$request->texte;
+        }
         $type_ticket->update($data);
         return redirect()->route('AllTickets',$type_ticket->evenement_id);
     }
@@ -217,12 +269,21 @@ class TypeTicketController extends Controller
     public function destroy(type_ticket $type_ticket)
     {
         $evenement_id=$type_ticket->evenement_id;
-        $type_ticket->delete();
-        return redirect()->route('AllTickets',$evenement_id)->with('message','ticket supprimé');
+        $evenement=evenement::find($evenement_id);
+        $participants=User::whereHas('tickets',function($query) use ($evenement_id){
+            $query->whereHas('type_ticket',function($query) use ($evenement_id){
+                $query->where('evenement_id', $evenement_id);
+            });
+        })->get();
+       if ($participants->isEmpty()) {
+            $type_ticket->delete();
+            return redirect()->route('AllTickets',$evenement_id)->with('message','catégorie de ticket supprimé');
+       }else{
+            return redirect()->route('AllTickets',$evenement_id)->with('error','impossible de supprimer cette catégorie de ticket. Des utilisateurs l\'ont déjà acheté   ');
+       }
     }
 
     public function terminus(){
-        session()->forget(['evenement_id', 'TypeLieu', 'evenement_nom','type_ticket']);
         return redirect()->route('MesEvenements');
     }
 

@@ -221,7 +221,6 @@
                       dataType:'JSON',
                 
                     success: function(data){
-                        console.log(data);
                         TicketSold(data);
                         WeeklySales(data)
                         click(data);

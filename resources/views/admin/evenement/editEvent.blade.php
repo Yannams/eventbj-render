@@ -50,7 +50,7 @@
             </div>    
         </div>
         @endif
-        <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal fade" id="cropAvatarmodal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -64,7 +64,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
-                    <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                    <button type="button" class="btn btn-success" id="crop">Recadrer</button>
                 </div>
               </div>
             </div>
@@ -157,26 +157,7 @@
                        @enderror
                     </div>
 
-                     <div class="col-12 mb-3">
-                        <label for="date_heure_debut">Date et heure de début</label>
-                        <input type="datetime-local" name="date_heure_debut" id="date_heure_debut" class="form-control @error('date_heure_debut') is-invalid @enderror" value="{{ old('date_heure_debut') ?: $evenement->date_heure_debut}}" >
-                        @error('date_heure_debut')
-                            <div class="invalid-feedback">
-                                {{$message}}
-                            </div>
-                        @enderror    
-                           
-                    </div>
-                
-                    <div class="col-12 mb-3">
-                        <label for="date_heure_fin">Date et heure de fin</label>
-                        <input type="datetime-local" name="date_heure_fin" id="date_heure_fin" class="form-control @error('date_heure_fin') is-invalid @enderror" value="{{old('date_heure_fin') ?: $evenement->date_heure_fin}}" >
-                        @error('date_heure_fin')
-                            <div class="invalid-feedback">
-                                {{$message}}
-                            </div>
-                        @enderror 
-                    </div>
+                  
 
                      {{-- <div class="col-12 mb-3">
                          <label for="localisation">Localisation</label>
@@ -284,7 +265,7 @@
                 interestLabel.addEventListener('click', (e)=>{
                    
                     if (interestLabel.classList.contains('btn-outline-danger')){
-                        console.log('ok');
+                      
     
                         interestsLabels.forEach(interestLabel2=>{
                             interestLabel2.classList.replace('btn-outline-danger','btn-outline-success');
@@ -382,14 +363,13 @@
                 
                 SaveProcessButton=document.getElementById('SaveProcess');
                 SaveProcessButton.addEventListener('click',function(e){
-                    console.log(link);  
                     window.location.href = link;
                 })
                 GiveUpProcessButton=document.getElementById('GiveUp');
                 evenement_id_input=document.getElementById('evenement_id')
                 evenement_id=evenement_id_input.value;
                 GiveUpProcessButton.addEventListener('click',function (e) {
-                    console.log(evenement_id);
+                  
                     
                     $.ajaxSetup({
                     headers: {

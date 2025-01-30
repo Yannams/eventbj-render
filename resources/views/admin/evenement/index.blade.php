@@ -182,7 +182,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Récupérer les images
             var imges = document.querySelectorAll('.img-recommanded');
-            console.log(imges);
+           
             var containers = document.querySelectorAll('.recommandedEventCard');
             
 
@@ -192,7 +192,7 @@
                     var container = containers[i];
 
                     img.onload = function() {
-                        console.log(img);
+                     
                         // Utiliser ColorThief pour extraire la couleur dominante
                         var colorThief = new ColorThief();
                         var dominantColor = colorThief.getColor(img);

@@ -51,7 +51,7 @@
       </div>
     @endif
 
-    <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="cropAvatarmodal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -65,7 +65,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
-                <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                <button type="button" class="btn btn-success" id="crop">Recadrer</button>
             </div>
           </div>
         </div>
@@ -103,8 +103,9 @@
                     <div class="col-6">
                         <label for="format">Format</label>
                         <select name="format" id="format" class="form-select  @error('format') is-invalid @enderror">
-                            <option value="Ticket" @if (old('format')=='Ticket') selected @endif>Ticket</option>
-                            <option value="Invitation" @if (old('format')=='Invitation') selected @endif>Invitation</option>
+                            <option value="Ticket" @if (old('format')=='Ticket') selected @endif>Ticket payant</option>
+                            <option value="Ticket gratuit" @if (old('format')=='Ticket gratuit') selected @endif>Ticket gratuit</option>
+                            {{-- <option value="Invitation" @if (old('format')=='Invitation') selected @endif>Invitation</option> --}}
                         </select>
                         @error('format')
                             <div class="invalid-feedback">
@@ -376,6 +377,18 @@
                                 @enderror 
                             </div>
                         `
+                   }else if (format.value=='Ticket gratuit') {
+                        formatContainer.innerHTML=`
+                             <div class="col-12">
+                                <label for="place_dispo">Quantité de ticket</label>
+                                <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{old('place_dispo')}}">
+                                @error('place_dispo')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
+                            </div>
+                        `
                    }
                    
                 
@@ -418,6 +431,61 @@
                             @enderror 
                         `);
                     }
+
+                    if (format.value=="Invitation") {
+                    formatContainer.innerHTML=`
+                     <div class="col-12">
+                            <label for="texte">Texte</label>
+                            <Textarea id="texte" class="form-control" name="texte">{{old('texte')}}</Textarea>
+                           @error('texte')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
+                        </div>
+                        <div class="col-12">
+                            <label for="place_dispo">Quantité d'invitation</label>
+                            <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{old('place_dispo')}}">
+                           @error('place_dispo')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
+                        </div>`
+                   }else if(format.value=="Ticket"){
+                        formatContainer.innerHTML=`
+                            <div class="col-sm-6">
+                                <label for="prix_ticket">Prix ticket</label>
+                                <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" value="{{old('prix_ticket')}}">
+                                @error('prix_ticket')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="place_dispo">Quantité de ticket</label>
+                                <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{old('place_dispo')}}">
+                                @error('place_dispo')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
+                            </div>
+                        `
+                   }else if (format.value=='Ticket gratuit') {
+                        formatContainer.innerHTML=`
+                             <div class="col-12">
+                                <label for="place_dispo">Quantité de ticket</label>
+                                <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{old('place_dispo')}}">
+                                @error('place_dispo')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
+                            </div>
+                        `
+                   }
                 })
 
                 window.addEventListener('DOMContentLoaded', function () {

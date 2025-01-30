@@ -50,7 +50,7 @@
             </div>    
         </div>
         @endif
-        <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal fade" id="cropAvatarmodal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -64,7 +64,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
-                    <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                    <button type="button" class="btn btn-success" id="crop">Recadrer</button>
                 </div>
               </div>
             </div>
@@ -286,7 +286,7 @@
                 interestLabel.addEventListener('click', (e)=>{
                    
                     if (interestLabel.classList.contains('btn-outline-danger')){
-                        console.log('ok');
+                     
     
                         interestsLabels.forEach(interestLabel2=>{
                             interestLabel2.classList.replace('btn-outline-danger','btn-outline-success');
@@ -392,7 +392,7 @@
                 GiveUpProcessButton.addEventListener('click',function (e) {
                    
                     
-                    $.ajaxSetup({
+                $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
@@ -403,7 +403,7 @@
                     url: '/GiveUpEventProcess',
                     data: {
                         evenement_id: evenement_id,
-                    },
+                    },  
                     dataType: 'JSON',
                     success: function(data) {
                         window.location.href=link

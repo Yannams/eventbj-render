@@ -72,10 +72,20 @@
                             </label>
                         </div>
                     </div>
+                    @error('type_organisateur')
+                        <div class="text-danger">
+                            {{$message}}
+                        </div>
+                    @enderror
 
                     <div>
                         <label for="nom">Nom</label>
-                        <input type="text" name="nom" id="nom" class="form-control">
+                        <input type="text" name="nom" id="nom" class="form-control @error('nom') is-invalid @enderror">
+                        @error('nom')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror
                     </div>
                     <button type="submit" id="submitButton" class="btn btn-success col">Suivant</button> 
                 </div>

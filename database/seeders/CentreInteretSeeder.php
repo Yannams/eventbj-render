@@ -22,7 +22,6 @@ class CentreInteretSeeder extends Seeder
         Centre_interet::create(['nom_ci'=>'Sciences']);
         Centre_interet::create(['nom_ci'=>'Technologie']);
         Centre_interet::create(['nom_ci'=>'Mode']);
-        Centre_interet::create(['nom_ci'=>'Politique']);
         Centre_interet::create(['nom_ci'=>'Spiritualité et réligion']);
         Centre_interet::create(['nom_ci'=>'Culture']);
         Centre_interet::create(['nom_ci'=>'Histoire']);
@@ -37,6 +36,5 @@ class CentreInteretSeeder extends Seeder
         Centre_interet::create(['nom_ci'=>'Danse']);
         Centre_interet::create(['nom_ci'=>'Lecture']);
         Centre_interet::create(['nom_ci'=>'Humour']);
-        Centre_interet::create(['nom_ci'=>'Autres']);
     }
 }

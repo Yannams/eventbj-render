@@ -33,7 +33,8 @@ Route::get('/evenement/type_lieu',[TypeLieuController::class,'select_type_lieu']
 Route::get('/mes_evenements', [EvenementController::class,'MyEvents'])->name('MesEvenements')->middleware('auth','role:User|Promoteur');
 Route::post('/onLine', [EvenementController::class,'OnlineEvents'])->name('OnlineEvents')->middleware('auth','role:Promoteur');
 Route::get('/filtredevenement/{type}', [EvenementController::class, 'filteredByTypeEvents'] )->name('type_event'); 
-Route::get('/verifiedTransaction/{type_ticket}', [TicketController::class,'verifiedTransaction'] )->name('verifiedTransation');
+Route::post('/verifiedTransaction', [TicketController::class,'verifiedTransaction'] )->name('verifiedTransation')->middleware('auth');
+Route::post('/sendTicket',[TicketController::class,'SendTicket'])->name('SendTicket')->middleware('auth');
 Route::get('/Create_event',[EvenementController::class,'Create_event'])->name('Create_event')->middleware('auth','role:User|Promoteur');
 Route::get('/Editor/chronogramme/{evenement}', [ChronogrammeController::class,'edit_chronogramme'])->name('edit_chronogramme')->middleware('auth','role:Promoteur');
 //Route::post('/evenement/edit/heure/{evenement}', [EvenementController::class,'updateHours'])->name('updateHours');
@@ -79,7 +80,10 @@ Route::post('/ticket/getAmount',[TicketController::class,'GetAmount'])->name('Ge
 Route::get('/ticket/UserInfo',[TicketController::class,'UserInfo'])->name('UserInfo');
 Route::post('/ticket/getUserInfo',[TicketController::class,'GetUserInfo'])->name('GetUserInfo');
 Route::get('/Annulation/{evenement}',[EvenementController::class,'annulation'])->name('annulation')->middleware('auth','role:Promoteur');
-
+Route::get('/participant/{evenement}',[TicketController::class,'AllParticipant'])->name('AllParticipant')->middleware('auth','role:Promoteur');
+Route::get('/reportEvent/{evenement}',[EvenementController::class,'reportEvent'])->name('reportEvent')->middleware('auth','role:Promoteur');
+Route::post('/ExecuteReport',[EvenementController::class,'ExecuteReport'])->name('ExecuteReport')->middleware('auth','role:Promoteur');
+Route::get('/CreateInvitation/{type_ticket}',[TicketController::class,'CreateInvitation'])->name('CreateInvitation')->middleware('auth','role:Promoteur');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy'],'middleware'=>['auth','role:User|Promoteur']]);
@@ -90,7 +94,6 @@ Route::resource('ticket', TicketController::class)->middleware('auth');
 Route::resource('Promoteur',ProfilPromoteurController::class);
 Route::resource('Intervenant',IntervenantController::class)->middleware(['auth','role:Promoteur']);
 Route::resource('Centre_interet',CentreInteretController::class)->middleware(['auth']);
-
 
 Route::get('/AllEvents',[AdminController::class,'AllEvents'])->name('AllEvents')->middleware('auth','role:Admin');
 Route::post('/Administrative_activation',[AdminController::class,'Administrative_activation'])->name('Administrative_action')->middleware('auth','role:Admin');

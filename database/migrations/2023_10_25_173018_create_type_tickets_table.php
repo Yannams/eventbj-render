@@ -29,6 +29,7 @@ return new class extends Migration
             $table->timestamp('Date_heure_fermeture')->nullable();
             $table->unsignedBigInteger('evenement_id')->nullable();
             $table->foreign('evenement_id')->references('id')->on('evenements')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -12,7 +12,7 @@ class evenement extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nom_evenement','localisation', 'date_heure_debut','date_heure_fin','description','cover_event'];
+    protected $fillable = ['nom_evenement','localisation','localisation_maps', 'date_heure_debut','date_heure_fin','description','cover_event','isOnline','administrative_status','Fréquence','etat','raison','	recommanded','Etape_creation','cover_recommanded'];
 
     public function type_lieu():BelongsTo
     {

@@ -130,7 +130,7 @@
     var RecommandEventbtn=document.querySelectorAll('.recommand');
     var liveToast=document.querySelector('.toast-container')
     var Recommand_status=document.querySelectorAll('.Recommand_status')
-    console.log(Recommand_status);
+   
     RecommandEventbtn.forEach(function ( RecommandEvent, index) {
         RecommandEvent.addEventListener('click', function RecommandEventAction(event) {
             event.preventDefault();

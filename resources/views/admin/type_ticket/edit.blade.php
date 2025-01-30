@@ -50,7 +50,7 @@
           </div>    
       </div>
     @endif
-    <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal fade" id="cropAvatarmodal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
@@ -64,7 +64,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
-                <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                <button type="button" class="btn btn-success" id="crop">Recadrer</button>
             </div>
           </div>
         </div>
@@ -110,8 +110,9 @@
                     <div class="col-12">
                         <label for="format">Format</label>
                         <select name="format" id="format" class="form-select" required>
-                            <option value="Ticket" {{$type_ticket->format=="Ticket" ? 'selected' : ''}}>Ticket</option>
-                            <option value="Invitation"  {{$type_ticket->format=="Invitation" ? 'selected' :''}} >Invitation</option>
+                            <option value="Ticket" {{$type_ticket->format=="Ticket" ? 'selected' : ''}}>Ticket payant</option>
+                            <option value="Ticket gratuit" {{$type_ticket->format=="Ticket gratuit" ? 'selected' :''}}>Ticket gratuit</option>
+                            {{-- <option value="Invitation"  {{$type_ticket->format=="Invitation" ? 'selected' :''}} >Invitation</option> --}}
                         </select>            
                         @error('format')
                             <div class="invalid-feedback">
@@ -282,24 +283,114 @@
             })()
     </script>
     <script>
+        var format=document.querySelector('#format')
+        var formatContainer= document.querySelector('.format_input_container');
         if ($('#methodeProgrammationLancement').val()=='ProgrammerBilleterie') {
-            $('#programmerLancement').html("<label for=\"Date_heure_lancement\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_lancement\" id=\"Date_heure_lancement\" class=\"form-control\" value=\"{{$type_ticket->Date_heure_lancement}}\">")
+            $('#programmerLancement').html(`
+                <label for=\"Date_heure_lancement\">Programmer:</label> 
+                <input type=\"datetime-local\" name=\"Date_heure_lancement\" id=\"Date_heure_lancement\" class=\"form-control @error('Date_heure_lancement') is-invalid @enderror\" value=\"{{$type_ticket->Date_heure_lancement}}\">
+                 @error('Date_heure_lancement')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror 
+            `)
         }else{
             $('#programmerLancement').html("")
         }
 
         if($('#methodeProgrammationFermeture').val()==="ProgrammerFermeture"){ 
-            $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\" value=\"{{$type_ticket->Date_heure_fermeture}}\">" );
+            $('#programmerFermeture').html(`
+                <label for=\"Date_heure_fermeture\">Programmer:</label>
+                <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control @error('Date_heure_fermeture') is-invalid @enderror\" value=\"{{$type_ticket->Date_heure_fermeture}}\">
+                @error('Date_heure_fermeture')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror 
+            `);
         }else if($('#methodeProgrammationFermeture').val()==="FinEvenement"){
-            $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\" value=\"{{$type_ticket->evenement->date_heure_fin}}\">");
+            $('#programmerFermeture').html(`
+                <label for=\"Date_heure_fermeture\">Programmer:</label> 
+                <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control  @error('Date_heure_fermeture') is-invalid @enderror\" readonly value=\"{{$type_ticket->evenement->date_heure_fin}}\">
+                @error('Date_heure_fermeture')
+                    <div class="invalid-feedback">
+                        {{$message}}
+                    </div>
+                @enderror 
+            `);
         }else{
             $('#programmerFermeture').html("");
         }
+
+        if (format.value=="Invitation") {
+            formatContainer.innerHTML=`
+                <div class="col-12">
+                    <label for="texte">Texte</label>
+                    <Textarea id="texte" class="form-control" name="texte">{{$type_ticket->texte}}</Textarea>
+                    @error('texte')
+                        <div class="invalid-feedback">
+                            {{$message}}
+                        </div>
+                    @enderror 
+                </div>
+                <div class="col-12">
+                    <label for="place_dispo">Quantité d'invitation</label>
+                    <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}">
+                    @error('place_dispo')
+                        <div class="invalid-feedback">
+                            {{$message}}
+                        </div>
+                    @enderror 
+                </div>`
+            }else if(format.value=="Ticket"){
+                formatContainer.innerHTML=`
+                    <div class="col-sm-6">
+                        <label for="prix_ticket">Prix ticket</label>
+                        <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" value="{{$type_ticket->prix_ticket}}">
+                        @error('prix_ticket')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror 
+                    </div>
+                    <div class="col-sm-6">
+                        <label for="place_dispo">Quantité de ticket</label>
+                        <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}">
+                        @error('place_dispo')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror 
+                    </div>
+                `
+            }else if (format.value=='Ticket gratuit') {
+                formatContainer.innerHTML=`
+                        <div class="col-12">
+                        <label for="place_dispo">Quantité de ticket</label>
+                        <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}">
+                        @error('place_dispo')
+                            <div class="invalid-feedback">
+                                {{$message}}
+                            </div>
+                        @enderror 
+                    </div>
+                `
+            }
+        
         $('#methodeProgrammationLancement').change(function programmerLancement() {
                     DateVal=$(this).val()
-                    console.log(DateVal);
+                   
                     if(DateVal==="ProgrammerBilleterie"){
-                       $('#programmerLancement').html("<label for=\"Date_heure_lancement\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_lancement\" id=\"Date_heure_lancement\" class=\"form-control\">")
+                        $('#programmerLancement').html(`
+                            <label for=\"Date_heure_lancement\">Programmer:</label> 
+                            <input type=\"datetime-local\" name=\"Date_heure_lancement\" id=\"Date_heure_lancement\" class=\"form-control @error('Date_heure_lancement') is-invalid @enderror\" value=\"\">
+                            @error('Date_heure_lancement')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
+                        `)
                     }else{
                         $('#programmerLancement').html("")
                     }
@@ -307,16 +398,95 @@
 
                 $('#methodeProgrammationFermeture').change(function programmerFermeture() {
                     DateVal=$(this).val()
-                    console.log(DateVal);
+                
                     if(DateVal==="ProgrammerFermeture"){ 
-                        $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\">");
+                        $('#programmerFermeture').html(`
+                            <label for=\"Date_heure_fermeture\">Programmer:</label>
+                            <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control @error('Date_heure_fermeture') is-invalid @enderror\" value=\"\">
+                            @error('Date_heure_fermeture')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
+                        `);
                     }else if(DateVal==="FinEvenement"){
-                        $('#programmerFermeture').html("<label for=\"Date_heure_fermeture\">Programmer:</label> <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control\" value=\"{{$type_ticket->evenement->date_heure_fin}}\">");
+                        $('#programmerFermeture').html(`
+                            <label for=\"Date_heure_fermeture\">Programmer:</label> 
+                            <input type=\"datetime-local\" name=\"Date_heure_fermeture\" id=\"Date_heure_fermeture\" class=\"form-control  @error('Date_heure_fermeture') is-invalid @enderror\" readonly value=\"\" >
+                            @error('Date_heure_fermeture')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
+                        `);
                     }else{
                         $('#programmerFermeture').html("");
                     }
                 })
-    </script>
+
+                
+                
+                format.addEventListener('change',function (e) {
+                   if (format.value=="Invitation") {
+                    formatContainer.innerHTML=`
+                     <div class="col-12">
+                            <label for="texte">Texte</label>
+                            <Textarea id="texte" class="form-control" name="texte">{{$type_ticket->texte}}</Textarea>
+                           @error('texte')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
+                        </div>
+                        <div class="col-12">
+                            <label for="place_dispo">Quantité d'invitation</label>
+                            <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}">
+                           @error('place_dispo')
+                                <div class="invalid-feedback">
+                                    {{$message}}
+                                </div>
+                            @enderror 
+                        </div>`
+                   }else if(format.value=="Ticket"){
+                        formatContainer.innerHTML=`
+                            <div class="col-sm-6">
+                                <label for="prix_ticket">Prix ticket</label>
+                                <input type="number" name="prix_ticket" id="prix_ticket" class="form-control"  min="0" value="{{$type_ticket->prix_ticket}}">
+                                @error('prix_ticket')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="place_dispo">Quantité de ticket</label>
+                                <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}">
+                                @error('place_dispo')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
+                            </div>
+                        `
+                   }else if (format.value=='Ticket gratuit') {
+                        formatContainer.innerHTML=`
+                             <div class="col-12">
+                                <label for="place_dispo">Quantité de ticket</label>
+                                <input type="number" name="place_dispo" id="place_dispo" class="form-control" value="{{$type_ticket->place_dispo}}">
+                                @error('place_dispo')
+                                    <div class="invalid-feedback">
+                                        {{$message}}
+                                    </div>
+                                @enderror 
+                            </div>
+                        `
+                   }
+                   
+                
+                    
+                })
+
+            </script>
             <script>
                 document.addEventListener('DOMContentLoaded', function () {
                     const toastLiveExample = document.getElementById('liveToast');

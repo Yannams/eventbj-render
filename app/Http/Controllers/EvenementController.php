@@ -28,7 +28,10 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Imagick\Driver;
 use phpseclib3\Crypt\RSA;
 use App\Mail\InfoUser;
-
+use Exception;
+use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Log;
+use PDOException;
 
 class EvenementController extends Controller
 {
@@ -38,36 +41,39 @@ class EvenementController extends Controller
     
     public function index()
     {  
-        $recommanded_events=evenement::where('recommanded',true)
-                            ->where('isOnline', true)
-                            ->where('date_heure_fin','>=',now())
-                            ->get();
-        if(auth()->check()){
-          
-            if(Auth::user()->centre_interets->count()>0){       
-                $user_id=auth()->user()->id;
-                $user=User::find($user_id);
-                $Interests=$user->centre_interets()->get();
-                $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
-                $evenement=evenement::where('isOnline',true)->where('date_heure_fin','>=',now())->whereHas('centre_interets',function($query){
-                    $user=User::find(auth()->user()->id);
-                    $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
-                    $InterestArray=$InterestsIds->toArray();
-                    $query->whereIn('centre_interet_id',$InterestArray);
-                })->get();
-            }else {
-                return redirect()->route('Centre_interet.index');
-            }
-        }else{
-            $Interests=Centre_interet::all();
-            $evenement = evenement::where('isOnline', true)
-                    ->where('date_heure_fin','>=',now())
-                    ->get();
-        }
-      
         
-        $type_evenement=type_evenement::all();
-        return view('admin.evenement.index', compact('evenement', 'type_evenement', 'recommanded_events','Interests'));   
+            $recommanded_events=evenement::where('recommanded',true)
+                                ->where('isOnline', true)
+                                ->where('date_heure_fin','>=',now())
+                                ->get();
+            if(auth()->check()){
+            
+                if(Auth::user()->centre_interets->count()>0){       
+                    $user_id=auth()->user()->id;
+                    $user=User::findOrFail($user_id);
+                    $Interests=$user->centre_interets()->get();
+                    $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
+                    $evenement=evenement::where('isOnline',true)->where('date_heure_fin','>=',now())->whereHas('centre_interets',function($query){
+                        $user=User::findOrFail(auth()->user()->id);
+                        $InterestsIds=$user->centre_interets()->pluck('centre_interet_id');
+                        $InterestArray=$InterestsIds->toArray();
+                        $query->whereIn('centre_interet_id',$InterestArray);
+                    })->get();
+                }else {
+                    return redirect()->route('Centre_interet.index');
+                }
+            }else{
+                $Interests=Centre_interet::all();
+                $evenement = evenement::where('isOnline', true)
+                        ->where('date_heure_fin','>=',now())
+                        ->get();
+            }
+        
+            
+            $type_evenement=type_evenement::all();
+            return view('admin.evenement.index', compact('evenement', 'type_evenement', 'recommanded_events','Interests'));   
+       
+            
     }
 
     /**
@@ -97,7 +103,9 @@ class EvenementController extends Controller
         $evenement->Fréquence=$request->Frequence;
         $evenement->profil_promoteur_id=$userId;
         $evenement->type_lieu_id=2;
-        $evenement->Etape_creation=2;
+        if($evenement->Etape_creation < 2){
+            $evenement->Etape_creation=2;
+        }
         $evenement->save();
       
         $evenement_id=$evenement->id;
@@ -110,13 +118,14 @@ class EvenementController extends Controller
      * Display the specified resource.
      */
     public function show(evenement $evenement){
+    
         $evenement=evenement::find($evenement->id);
         $date= new DateTime($evenement->date_heure_debut);
         $promoteur_id=$evenement->profil_promoteur_id;
         $user_id=$evenement->Profil_promoteur->user->id;
         $organisateur=Profil_promoteur::find($promoteur_id);
         $chronogramme=chronogramme::where('evenement_id',$evenement->id)->get();
-        $type_tickets= type_ticket::where('evenement_id',$evenement->id)->where('format','Ticket')->where('Date_heure_lancement','<=',now())->where('Date_heure_fermeture','>=',now())->get();
+        $type_tickets= type_ticket::where('evenement_id',$evenement->id)->whereIn('format',['Ticket','Ticket gratuit'])->where('Date_heure_lancement','<=',now())->where('Date_heure_fermeture','>=',now())->get();
         $same_creator=evenement::where('isOnline', true)
                 ->where('profil_promoteur_id',$promoteur_id)
                 ->where('date_heure_fin','>=',now())
@@ -169,11 +178,13 @@ class EvenementController extends Controller
         $evenement=evenement::find($evenement->id);
         $rules=[
             'nom_evenement'=>'required|min:1|max:100',
-            'date_heure_debut'=>'required|after:today|before:date_heure_fin',
-            'date_heure_fin'=>'required|after:today|after:date_heure_debut',
             'type_evenement_id'=>'required',
             'interest'=>'required',
         ];
+        if(url()->previous()==route('evenement.edit',$evenement->id)){
+            $rules['date_heure_debut']='required|after:today|before:date_heure_fin';
+            $rules['date_heure_fin']='required|after:today|after:date_heure_debut';
+        }
         if($evenement->cover_event==""||$request->cover_event!="" ||$request->croppedCover!=""){
             $rules['cover_event']='required';
             $rules['croppedCover']='required|string';
@@ -183,8 +194,10 @@ class EvenementController extends Controller
         $ValidatedData=$request->validate($rules);
         $evenement->nom_evenement=$request->nom_evenement;
         // $evenement->localisation=$request->localisation;
-        $evenement->date_heure_debut=$request->date_heure_debut;
-        $evenement->date_heure_fin=$request-> date_heure_fin;
+        if(url()->previous()==route('evenement.edit',$evenement->id)){
+            $evenement->date_heure_debut=$request->date_heure_debut;
+            $evenement->date_heure_fin=$request-> date_heure_fin;
+        }
         $evenement->type_evenement_id=$request->type_evenement_id;
         $evenement->isOnline=false;        
         $evenement->description=$request->description;
@@ -217,7 +230,9 @@ class EvenementController extends Controller
         }
        
         if(url()->previous()!=route('EditEvent',$evenement->id)){
-            $evenement->Etape_creation=3;  
+            if($evenement->Etape_creation < 3){
+                $evenement->Etape_creation=3;  
+            }
         } 
         $evenement->save();
         $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
@@ -468,7 +483,7 @@ class EvenementController extends Controller
     }
     public function filteredByInterests($interest){
         $interest=Centre_interet::find($interest);
-        $evenement=$interest->evenements;
+        $evenement=$interest->evenements->where('isOnline',true)->where('date_heure_fin','>=',now());
         $recommanded_events=evenement::where('recommanded',true)->get();
         if(auth()->check()){
             $user_id=auth()->user()->id;
@@ -964,12 +979,42 @@ class EvenementController extends Controller
             $rules['localisation_maps']='required|google_maps_iframe';
         }
         $ValidatedData=$request->validate($rules);
+        $previousLocalisation=$evenement->localisation;
         $evenement->localisation=$request->localisation;
         $evenement->localisation_maps=$request->localisation_maps;
         if(url()->previous()!=route('localisationEdit', $evenement_id)){
-            $evenement->Etape_creation=4;
+            if($evenement->Etape_creation < 4){
+                $evenement->Etape_creation=4;
+            }
         }
         $evenement->save();
+        $participants=User::whereHas('tickets',function($query) use ($evenement_id){
+            $query->whereHas('type_ticket',function($query) use ($evenement_id){
+                $query->where('evenement_id', $evenement_id);
+            });
+        })->get();
+        if(!empty($participants)){
+            $mailData=[
+                'subject' => 'Changement de lieu pour ' . $evenement->nom_evenement,
+                  'body' => "
+                      Bonjour,
+    
+                      Nous venons par ce mail vous informer du changement lieu de l'événement \"{$evenement->nom_evenement}\", 
+                      initié par le promoteur \"{$evenement->profil_promoteur->nom}\" initialement prévu à $previousLocalisation.
+                      Le lieu a été déplacé pour celui ci {$evenement->localisation}.
+    
+                      Cordialement,
+                      L'équipe EventBJ
+                  ",
+              ];
+              $attach=[];
+    
+              foreach ($participants as $subscriber) {
+                  Mail::to($subscriber->email)
+                  ->send(new InfoUser($mailData,$attach));
+              }
+        }
+        
         if(url()->previous()!=route('localisationEdit', $evenement_id)){
             session(["localisation"=>$evenement->localisation]);
             return redirect()->route('type_ticket.create');
@@ -1011,6 +1056,57 @@ class EvenementController extends Controller
         //$token=$_GET['token'];
         if($token== $ExpectedToken){
            return view('admin.evenement.OnlineEvent',compact('type_ticket'));
+        }
+    }
+
+    public function ReportEvent(evenement $evenement){
+        return view('admin.evenement.ReportEvent',compact('evenement'));
+    }
+
+    public function ExecuteReport(Request $request){
+        $validatedData=$request->validate([
+            'evenement_id'=>'required',
+            'date_heure_debut'=>'required|after:today|before:date_heure_fin',
+            'date_heure_fin'=>'required|after:today|after:date_heure_debut',
+        ]);
+        $evenement_id=$request->evenement_id;
+        $evenement=evenement::find($evenement_id);
+        if($evenement->profil_promoteur_id==auth()->user()->Profil_promoteur->id){
+            $previousStartDay= $evenement->date_heure_debut;
+            $previousEndDay= $evenement->date_heure_fin;
+            $evenement->date_heure_debut=$request->date_heure_debut;
+            $evenement->date_heure_fin=$request->date_heure_fin;
+            $evenement->save();
+            $participants=User::whereHas('tickets',function($query) use ($evenement_id){
+                $query->whereHas('type_ticket',function($query) use ($evenement_id){
+                    $query->where('evenement_id', $evenement_id);
+                });
+            })->get();
+            $mailData=[
+                'subject' => 'Report de ' . $evenement->nom_evenement,
+                  'body' => "
+                      Bonjour,
+  
+                      Nous venons par ce mail vous informer du report de l'événement \"{$evenement->nom_evenement}\", 
+                      initié par le promoteur \"{$evenement->profil_promoteur->nom}\" initialement prévu pour débuter 
+                      le {$previousStartDay} et terminer le {$previousEndDay}.
+  
+                      Il aura lieu le ".date('d/m/Y à H:i',strtotime($evenement->date_heure_debut))."
+                      et prendra fin le ".date('d/m/Y à H:i',strtotime($evenement->date_heure_debut))."
+
+                      Cordialement,
+                      L'équipe EventBJ
+                  ",
+              ];
+              $attach=[];
+  
+              foreach ($participants as $subscriber) {
+                  Mail::to($subscriber->email)
+                  ->send(new InfoUser($mailData,$attach));
+              }
+            return redirect()->route('MesEvenements')->with('message','évènement reporté');
+        }else{
+            return redirect()->route('UnauthorizedUser');   
         }
     }
 }

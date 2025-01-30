@@ -50,7 +50,7 @@
                 </table>
               </div>
             </div>
-            <div class="modal fade" id="cropAvatarmodal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal fade" id="cropAvatarmodal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -64,12 +64,12 @@
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
-                      <button type="button" class="btn btn-primary" id="crop">Recadrer</button>
+                      <button type="button" class="btn btn-success" id="crop">Recadrer</button>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="modal fade" id="cropAvatarmodalEdit" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+            <div class="modal fade" id="cropAvatarmodalEdit" data-bs-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
               <div class="modal-dialog" role="document">
                 <div class="modal-content">
                   <div class="modal-header">
@@ -83,7 +83,7 @@
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Annuler</button>
-                      <button type="button" class="btn btn-primary" id="cropEdit">Recadrer</button>
+                      <button type="button" class="btn btn-success" id="cropEdit">Recadrer</button>
                   </div>
                 </div>
               </div>
@@ -439,7 +439,7 @@
            
             
             // input.value = '';
-            console.log(input.value)
+           
             image.src = url;
             createModal.modal('hide')
             $modal.modal('show');
@@ -467,11 +467,11 @@
         
         EditModal.change('inputEdit', function (e) {
           var files = e.target.files;
-          console.log(files);
+         
           
           var done = function (url) {
             // input.value = '';
-            console.log(input.value)
+          
             imageEdit.src = url;
             EditModal.modal('hide')
             $modalEdit.modal('show');
