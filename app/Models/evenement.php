@@ -49,4 +49,9 @@ class evenement extends Model
         return $this->belongsToMany(Centre_interet::class)->withPivot('created_at','updated_at');;
     }
 
+    public function controleurs():BelongsToMany
+    {
+        return $this->belongsToMany(Controleur::class)->withPivot('name','telephone','email');
+    }
+
 }

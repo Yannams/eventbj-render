@@ -16,6 +16,8 @@ class RBACRedirectionController extends Controller
                 return redirect()->route('MesEvenements');
             }elseif (auth()->user()->hasRole('Admin')) {
                 return redirect()->route('AllEvents');
+            }elseif(auth()->user()->hasRole('Controleur')){
+                return redirect()->route('controleurAcess');
             }
         }
       

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProfil_PromoteurRequest;
 use App\Http\Requests\UpdateProfil_PromoteurRequest;
+use App\Models\Controleur;
 use App\Models\Profil_promoteur;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ProfilPromoteurController extends Controller
@@ -33,21 +35,36 @@ class ProfilPromoteurController extends Controller
     {
         $validatedData=$request->validate(
                 [
-                    'nom'=>'required',
+                    'pseudo'=>'required|unique:profil_promoteurs,pseudo|regex:/^[a-zA-Z0-9._]+$/',
                     'type_organisateur'=>'required'
+                ],[
+                    'pseudo.regex'=>'Les pseudos ne peuvent contenir que des lettres, des chiffres, des traits de soulignement et des points.' 
                 ]
             );
         
             $promoteur=new Profil_promoteur;
-            $promoteur->nom=$request->nom;
+            $promoteur->pseudo=$request->pseudo;
             $promoteur->type_organisateur=$request->type_organisateur;
             $promoteur->user_id=Auth::user()->id;
             $promoteur->save();
             Auth::user()->removeRole('User');
             Auth::user()->assignRole('promoteur');
+            for($i=0;$i<3;$i++){
+                $j=$i+1;
+                $user=User::create([
+                    'username'=>"controleur$j@$promoteur->pseudo",
+                    'password'=>uniqid(),
+                ]);
+                $user->assignRole('Controleur');
+                Controleur::create([
+                    'ControleurId'=>"controleur$j@$promoteur->pseudo",
+                    'user_id'=>$user->id,
+                    'profil_promoteur_id'=>$promoteur->id
+                ]);
+            }
+           
             $route=session('route');
             session()->forget('route');
-          
             return redirect()->route($route);
        
     }

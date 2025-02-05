@@ -26,6 +26,7 @@ class User extends Authenticatable
     protected $fillable = [
         'profil_user',
         'name',
+        'username',
         'email',
         'num_user', 
         'isPromoteur',
@@ -67,6 +68,11 @@ class User extends Authenticatable
     public function Profil_promoteur():HasOne
     {
         return $this->hasOne(Profil_promoteur::class);
+    }
+
+    public function Controleur():HasOne
+    {
+        return $this->hasOne(Controleur::class);
     }
 
     public function intervenants():HasMany

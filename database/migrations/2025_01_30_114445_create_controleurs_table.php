@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('profil_promoteurs', function (Blueprint $table) {
+        Schema::create('controleurs', function (Blueprint $table) {
             $table->id();
-            $table->string('pseudo');
-            $table->string('type_organisateur');
+            $table->string('ControleurId')->unique();
+            $table->string('statut')->default('désactivé');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+             $table->unsignedBigInteger('profil_promoteur_id')->nullable();
+            $table->foreign('profil_promoteur_id')->references('id')->on('profil_promoteurs')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('profil_promoteurs');
+        Schema::dropIfExists('controleurs');
     }
 };

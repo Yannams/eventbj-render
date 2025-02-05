@@ -95,9 +95,9 @@
                                         <div class="row row-cols-1 g-4">
                                             <div class="col">
                                                 <div class="row g-2">
-                                                    <label for="email" class="text-dark">Email:</label>
-                                                    <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autocomplete="email" autofocus>
-                                                    @error('email')
+                                                    <label for="login" class="text-dark">Identifiant:</label>
+                                                    <input type="text" name="login" id="login" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                                    @error('login')
                                                         <span class="invalid-feedback" role="alert">
                                                             <strong>{{ $message }}</strong>
                                                         </span>

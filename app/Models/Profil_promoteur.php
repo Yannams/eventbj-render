@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Profil_promoteur extends Model
 {
@@ -17,8 +18,13 @@ class Profil_promoteur extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function evenements()
+    public function evenements(): HasMany
     {
         return $this->hasMany(evenement::class);
+    }
+
+    public function controleurs(): HasMany
+    {
+        return $this->hasMany(Controleur::class);
     }
 }

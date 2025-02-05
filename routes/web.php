@@ -15,6 +15,7 @@ use App\Http\Controllers\IntervenantController;
 use App\Http\Controllers\UsersoftdeleteController;
 use App\Http\Controllers\CentreInteretController;
 use App\Http\Controllers\ChronogrammeController as ControllersChronogrammeController;
+use App\Http\Controllers\ControleurController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,8 @@ Route::get('/participant/{evenement}',[TicketController::class,'AllParticipant']
 Route::get('/reportEvent/{evenement}',[EvenementController::class,'reportEvent'])->name('reportEvent')->middleware('auth','role:Promoteur');
 Route::post('/ExecuteReport',[EvenementController::class,'ExecuteReport'])->name('ExecuteReport')->middleware('auth','role:Promoteur');
 Route::get('/CreateInvitation/{type_ticket}',[TicketController::class,'CreateInvitation'])->name('CreateInvitation')->middleware('auth','role:Promoteur');
+Route::get('/choiceProcess',[ControleurController::class,'choiceProcess'])->name('choiceProcess')->middleware('auth','role:Promoteur');
+Route::get('/controleurAccess',[ControleurController::class,'controleurAccess'])->name('controleurAcess')->middleware('auth','role:Controleur');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy'],'middleware'=>['auth','role:User|Promoteur']]);
@@ -94,6 +97,7 @@ Route::resource('ticket', TicketController::class)->middleware('auth');
 Route::resource('Promoteur',ProfilPromoteurController::class);
 Route::resource('Intervenant',IntervenantController::class)->middleware(['auth','role:Promoteur']);
 Route::resource('Centre_interet',CentreInteretController::class)->middleware(['auth']);
+Route::resource('controleur',ControleurController::class)->middleware('auth');
 
 Route::get('/AllEvents',[AdminController::class,'AllEvents'])->name('AllEvents')->middleware('auth','role:Admin');
 Route::post('/Administrative_activation',[AdminController::class,'Administrative_activation'])->name('Administrative_action')->middleware('auth','role:Admin');

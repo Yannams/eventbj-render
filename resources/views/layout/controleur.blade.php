@@ -122,36 +122,12 @@
                
               <ul class="nav nav-underline mt-1 d-lg-flex d-none">
                
-                <li class="nav-item">
-                  <a href="{{route('MesEvenements')}}" class="nav-link link-success @if(request()->url()==route('MesEvenements')) active @endif d-flex align-items-center" aria-current="page">
-                    <svg class="bi bi-calendar-week me-1" fill="currentColor" width="16" height="16"><use xlink:href="#calendar"></use></svg>Mes Evènements
-                  </a>
-                </li>
                
-                <li class="nav-item">
-                  <a href="{{route('billetterie')}}" class="nav-link @if(request()->url()==route('billetterie')) active @endif link-success d-flex align-items-center">
-                    <svg class="bi bi-qr-code me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qrcode"></use></svg>Billetterie
-                  </a>
-                </li>
-
-                <li class="nav-item">
-                  <a href="{{route('choiceProcess')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-flex align-items-center" >
-                    <svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="16" height="16"><use xlink:href="#qr-code-scan"></use></svg> vérifier des tickets
-                 </a>
-               </li>
-                <li class="nav-item">
-                  <a href=" {{ route('Create_event')}} " class="nav-link  @if(request()->url()==route('Create_event')) active @endif link-success d-flex align-items-center">
-                    <svg class="bi bi-plus-circle me-1" fill="currentColor" width="16" height="16"><use xlink:href="#creer"></use></svg> Créer un évènement
-                  </a>
-                </li>
                 <li class="nav-item">
                   <div class="btn-group dropstart">
                     <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      @auth
-                        <img src="{{asset(auth()->user()->profil_user)}}" alt="profil" width="50" height="50" class="rounded-5">
-                      @else
                         <i class="bi bi-person-circle text-dark fs-3 me-1"></i>
-                      @endauth 
+                     
                     </a>
                   
                     <ul class="dropdown-menu ">
@@ -164,11 +140,7 @@
                                 @csrf
                             </form>
                         </li>
-                        <li>
-                          <a href="{{route('ConfirmUserBeforeDelete',auth()->user()->id)}}" class="justify-content-center d-flex align-items-center dropdown-item">
-                            <i class="bi bi-trash me-1"></i>Supprimer le compte  
-                          </a>
-                        </li>
+                       
                       @else
                         <li>
                             <a href="{{ route('login') }}" class="dropdown-item">
@@ -184,59 +156,24 @@
                         </li>
                           
                       @endif
-                        <li><a class="dropdown-item" href="{{route('evenement.index')}}">Permuter vers participant</a></li>
+                       
                     </ul>
                   </div>
                 </li>                
               </ul>
               {{-- <img src="{{asset(auth()->user()->profil_user)}}" alt="profil" width="50" height="50" class="rounded-5 ms-4" > --}}
-              <a href="{{route('choiceProcess')}}" class="nav-link link-success @if(request()->url()==route('scanTicket')) active @endif d-lg-none d-flex flex-column align-items-center" >
-                <span class="d-flex flex-column">
-                  <span class="text-center"><svg class="bi bi-qr-code-scan me-1" fill="currentColor" width="32" height="32"><use xlink:href="#qr-code-scan"></use></svg></span>
-                  <span class="text-wrap text-center mt-2 fs-6">Vérifier</span>
-                </span>
-              </a>
-              <ul class="nav nav-pills mt-1 p-2 bg-white d-lg-none row row-cols-4 fixed-bottom">
-               
-               <li class="nav-item">
-                 <a href="{{route('MesEvenements')}}" class="nav-link link-success @if(request()->url()==route('MesEvenements')) active @endif flex-column  d-flex align-items-center" aria-current="page">
-                    <span class="d-flex flex-column">
-                      <span class="text-center "><svg class="bi bi-calendar-week me-1" fill="currentColor" width="32" height="32"><use xlink:href="#calendar"></use></svg></span>
-                      <span class="text-wrap text-center mt-2 fs-6">Evènement</span>
-                    </span> 
-                 </a>
-               </li>
-              
-               <li class="nav-item">
-                 <a href="{{route('billetterie')}}" class="nav-link @if(request()->url()==route('billetterie')) active @endif link-success flex-column d-flex align-items-center">
-                  <span class="d-flex flex-column">
-                    <span class="text-center "><svg class="bi bi-qr-code me-1" fill="currentColor" width="32" height="32"><use xlink:href="#qrcode"></use></svg></span>
-                    <span class="text-wrap text-center mt-2 fs-6"> Billetterie</span>
-                  </span>
-                 </a>
-               </li>
-               <li class="nav-item">
-                 <a href=" {{ route('Create_event')}} " class="nav-link  @if(request()->url()==route('Create_event')) active @endif link-success flex-column d-flex align-items-center">
-                  <span class="d-flex flex-column">
-                    <span class="text-center"><svg class="bi bi-plus-circle me-1" fill="currentColor" width="32" height="32"><use xlink:href="#creer"></use></svg></span>
-                    <span class="text-wrap text-center mt-2 fs-6"> Créer</span>
-                  </span>
-                 </a>
-               </li>
-               <li class="nav-item">
+             
                 <a class="@if (request()->url()== route('afficherProfilPromoteur')) active-profil @endif " href="{{route('afficherProfilPromoteur')}}">
-                  @auth
-                    <img src="{{asset('image/WhatsApp Image 2023-09-30 à 20.31.37_06f59849.jpg')}}" alt="profil" width="{{request()->url()== route('afficherProfil')?32:50}}" height="{{request()->url()== route('afficherProfil')?32:50}}" class=" rounded-5">
-                  @else
-                    <svg xmlns="http://www.w3.org/2000/svg" width="{{request()->url()== route('afficherProfil')?32:50}}" height="{{request()->url()== route('afficherProfil')?32:50}}"  fill="currentColor" class="bi bi-person-circle text-dark" viewBox="0 0 16 16">
-                      <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
-                      <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
-                    </svg>
-                  @endauth
+                   
+                      <svg xmlns="http://www.w3.org/2000/svg" width="{{request()->url()== route('afficherProfil')?32:50}}" height="{{request()->url()== route('afficherProfil')?32:50}}"  fill="currentColor" class="bi bi-person-circle text-dark" viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                        <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                      </svg>
                   
-                </a>  
-              </li>                
-             </ul>
+                    
+                  </a>  
+            
+           
        </header> 
        <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
         <symbol id="plus" viewBox="0 0 16 16">
