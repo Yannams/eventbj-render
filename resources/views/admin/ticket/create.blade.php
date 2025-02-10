@@ -81,7 +81,7 @@
                 @if ($type_ticket->place_dispo > 0)
                     @if ($type_ticket->format=="Ticket")
                         <button type="submit" id="submitButton" 
-                            data-transaction-amount="2000"
+                            data-transaction-amount="{{$type_ticket->prix_ticket}}"
                             data-transaction-description="Achat ticket {{$type_ticket->nom_ticket}} de {{$type_ticket->evenement->nom_evenement}}" 
                             data-customer-email="{{auth()->user()->email}}"
                             data-customer-lastname="{{explode(" ",auth()->user()->name)[0]}}"

@@ -18,8 +18,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use PhpParser\Node\Stmt\Foreach_;
-// use Fedapay\Fedapay;
-// use Fedapay\Customer;
+use FedaPay\FedaPay;
+use FedaPay\Transaction;
 
 class TicketController extends Controller
 {
@@ -61,31 +61,26 @@ class TicketController extends Controller
             for($i=0; $i<$nombreTicket; $i++){
                 $user=auth()->user()->id;
                 $userdata=User::find($user);
+                $evenement=$type_ticket->evenement;
+                $evenement_id=$evenement->id;
+                $promoteur_id=$evenement->profil_promoteur->id;
+                $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
 
                 $ticket = new Ticket;
                 $ticket->transaction_id=$request->transaction_id;
                 $ticket->type_ticket_id=$request->id_type_ticket;
                 $ticket->statut="activé";
                 $ticket->user_id=$user;
+                $ticket->signature=file_get_contents(storage_path("app/keys/$keyRepoName/private_key.pem"));
                 $ticket->save();           
                
                 if($type_ticket->evenement->type_lieu->nom_type =="physique"){
-                    $evenement=$type_ticket->evenement;
-                    $evenement_id=$evenement->id;
-                    $promoteur_id=$evenement->profil_promoteur->id;
-                    $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
-                    
                     $codeQRContent = json_encode([
                         "id_ticket"=>$ticket->id, 
-                        "transaction_id"=>$ticket->transaction_id, 
                         "user"=> $user, 
                         "nom_user"=> $userdata->name, 
                         "statut"=> $ticket->statut,
-                        "id_evenement"=>$ticket->type_ticket->evenement->id,
                         "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
-                        "date_heure_debut"=>$ticket->type_ticket->evenement->date_heure_debut,
-                        "date_heure_fin"=>$ticket->type_ticket->evenement->date_heure_fin,
-                        "signature"=>file_get_contents(storage_path("app/keys/$keyRepoName/private_key.pem"))
                     ]);
                     
                     $folderPath = public_path('code_QR');
@@ -204,9 +199,9 @@ class TicketController extends Controller
             if ($type_ticket->format=='Ticket') {
                 if ($request->transaction_id) {
                     $transaction_id=$request->transaction_id;
-                    \FedaPay\Fedapay::setApiKey('sk_sandbox_HrsJbuyRPcQImLZ521a9uj1d');
-                    \FedaPay\Fedapay::setEnvironment('sandbox');
-                    $transaction = \FedaPay\Transaction::retrieve($transaction_id);
+                    Fedapay::setApiKey('sk_sandbox_HrsJbuyRPcQImLZ521a9uj1d');
+                    Fedapay::setEnvironment('sandbox');
+                    $transaction = Transaction::retrieve($transaction_id);
                     if ($transaction) {
                         if ($transaction->status=='approved') {
                             $nbreTicket=$request->nbr;
