@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('LienUnique')->nullable();
             $table->string('transaction_id');
             $table->string('statut');
-            $table->text('signature');
+            $table->text('signature')->nullable();
             $table->unsignedBigInteger('type_ticket_id')->nullable();
             $table->foreign('type_ticket_id')->references('id')->on('type_tickets')->onDelete('cascade');
             $table->unsignedBigInteger('user_id')->nullable();

@@ -20,6 +20,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 use PhpParser\Node\Stmt\Foreach_;
 use FedaPay\FedaPay;
 use FedaPay\Transaction;
+use phpseclib3\Crypt\RSA;
 
 class TicketController extends Controller
 {
@@ -65,21 +66,27 @@ class TicketController extends Controller
                 $evenement_id=$evenement->id;
                 $promoteur_id=$evenement->profil_promoteur->id;
                 $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
+                $KeyDir=storage_path("app/keys/$keyRepoName/private_key.pem");
+                $privateKey=RSA::loadPrivateKey(file_get_contents($keyDir));
 
                 $ticket = new Ticket;
                 $ticket->transaction_id=$request->transaction_id;
                 $ticket->type_ticket_id=$request->id_type_ticket;
                 $ticket->statut="activé";
                 $ticket->user_id=$user;
-                $ticket->signature=file_get_contents(storage_path("app/keys/$keyRepoName/private_key.pem"));
-                $ticket->save();           
+                $ticket->save();  
+                $data=json_encode([
+                    "id_ticket"=>$ticket->id, 
+                    "user"=> $user, 
+                    "nom_user"=> $userdata->name, 
+                    "statut"=> $ticket->statut,
+                ]);
+                $ticket->update(['signature'=>base64_encode($privateKey->sign($data))]);         
                
                 if($type_ticket->evenement->type_lieu->nom_type =="physique"){
                     $codeQRContent = json_encode([
-                        "id_ticket"=>$ticket->id, 
-                        "user"=> $user, 
-                        "nom_user"=> $userdata->name, 
-                        "statut"=> $ticket->statut,
+                        "ticket_id"=>$ticket->id,
+                        "data_user"=>$data,
                         "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
                     ]);
                     
@@ -271,9 +278,13 @@ class TicketController extends Controller
     public function verifierTicket(Request $request){
        
         $id_ticket=$request->id_ticket;
-        $id_evenement=session('evenement_id');
+        // $user= auth()->user();
+        // $controleur=$user->Controleur;
+        // $id_evenement=$controleur->evenements()->wherePivot('statut_affection','affecté')->first->evenement_id;
         $ticket=ticket::find($id_ticket);
-        $evenement=evenement::find($id_evenement);
+        $signature=$ticket->signature;
+        
+        // $evenement=evenement::find($id_evenement);
         // dd($request,  $ticket->transaction_id, $ticket->statut, $evenement->nom_evenement,$request->date_heure_debut, $evenement->date_heure_debut, $request->date_heu:re_fin, $evenement->date_heure_fin);
         if ($request->transaction_id==$ticket->transaction_id && $request->statut=="activé" && $request->statut==$ticket->statut && $request->nom_evenement==$evenement->nom_evenement && date('d/m/Y h:i:s', strtotime($request->date_heure_debut)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_debut)) && date('d/m/Y h:i:s', strtotime($request->date_heure_fin)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_fin))) {
             $ticket->statut="vérifié";
