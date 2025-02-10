@@ -53,7 +53,7 @@ Route::post('/UpdaterHoraire',[EvenementController::class,'UpdateHoraire'])->nam
 Route::get('/scanTicket',[TicketController::class,'scanTicket'])->name('scanTicket')->middleware('auth','role:Promoteur');
 Route::get('/afficherProfil',[ProfileController::class,'afficherProfil'])->name('afficherProfil');
 Route::get('/afficherProfil/promoteur',[ProfileController::class,'afficherProfilPromoteur'])->name('afficherProfilPromoteur');
-Route::post('/verifierTicket', [TicketController::class,'verifierTicket'])->name('verifierTicket')->middleware('auth','role:Promoteur');
+Route::post('/verifierTicket', [TicketController::class,'verifierTicket'])->name('verifierTicket')->middleware('auth','role:Promoteur|Controleur');
 Route::get('/validTicket',[TicketController::class,'validTicket'])->name('validTicket')->middleware('auth','role:Promoteur');
 Route::get('/verifiedTicket',[TicketController::class,'verifiedTicket'])->name('verifiedTicket')->middleware('auth','role:Promoteur');
 Route::get('/invalidTicket',[TicketController::class,'invalidTicket'])->name('invalidTicket')->middleware('auth','role:Promoteur');
