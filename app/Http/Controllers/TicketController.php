@@ -277,15 +277,13 @@ class TicketController extends Controller
 
     public function verifierTicket(Request $request){
        
-        $id_ticket=$request->id_ticket;
-        // $user= auth()->user();
-        // $controleur=$user->Controleur;
-        // $id_evenement=$controleur->evenements()->wherePivot('statut_affection','affecté')->first->evenement_id;
-        $ticket=ticket::find($id_ticket);
-        $signature=$ticket->signature;
+       
+        $user=auth()->user();
+        $controleur=$user->Controleur; 
+        $evenement_id=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first()->pivot->evenement_id;
+        dd($evenement_id);
         
-        // $evenement=evenement::find($id_evenement);
-        // dd($request,  $ticket->transaction_id, $ticket->statut, $evenement->nom_evenement,$request->date_heure_debut, $evenement->date_heure_debut, $request->date_heu:re_fin, $evenement->date_heure_fin);
+        
         if ($request->transaction_id==$ticket->transaction_id && $request->statut=="activé" && $request->statut==$ticket->statut && $request->nom_evenement==$evenement->nom_evenement && date('d/m/Y h:i:s', strtotime($request->date_heure_debut)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_debut)) && date('d/m/Y h:i:s', strtotime($request->date_heure_fin)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_fin))) {
             $ticket->statut="vérifié";
             $ticket->save();
