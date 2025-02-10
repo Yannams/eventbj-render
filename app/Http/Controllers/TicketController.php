@@ -281,16 +281,19 @@ class TicketController extends Controller
         $user=auth()->user();
         $controleur=$user->Controleur; 
         $evenement_id=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first()->pivot->evenement_id;
-        return response()->json([
-            "qrcodevalidity"=>"valid",
-            "redirectTo"=>route('validTicket')
-       ]);
-        
+        $evenement=evenement::find($evenement_id);
+        $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
+        $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
+        $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
+        dd($publicKey);
         
         // if ($request->transaction_id==$ticket->transaction_id && $request->statut=="activé" && $request->statut==$ticket->statut && $request->nom_evenement==$evenement->nom_evenement && date('d/m/Y h:i:s', strtotime($request->date_heure_debut)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_debut)) && date('d/m/Y h:i:s', strtotime($request->date_heure_fin)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_fin))) {
         //     $ticket->statut="vérifié";
         //     $ticket->save();
-          
+        //    return response()->json([
+        //         "qrcodevalidity"=>"valid",
+        //         "redirectTo"=>route('validTicket')
+        //    ]);
         // }elseif($request->statut=="vérifié"){
         //     return response()->json([
         //         "qrcodevalidity"=>"verifiedTicket",
