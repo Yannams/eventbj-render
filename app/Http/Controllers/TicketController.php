@@ -285,7 +285,11 @@ class TicketController extends Controller
         $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
         $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
         $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
-        dd($publicKey);
+       
+        $ticket=Ticket::find($request->ticket_id);
+        $signature=$ticket->signature;
+        $data=$request->data_user;
+        dd($signature,$data);
         
         if ($publicKey->verify($data, $signature)) {
             $ticket->statut="vérifié";
