@@ -287,24 +287,24 @@ class TicketController extends Controller
         $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
         dd($publicKey);
         
-        // if ($request->transaction_id==$ticket->transaction_id && $request->statut=="activé" && $request->statut==$ticket->statut && $request->nom_evenement==$evenement->nom_evenement && date('d/m/Y h:i:s', strtotime($request->date_heure_debut)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_debut)) && date('d/m/Y h:i:s', strtotime($request->date_heure_fin)) == date('d/m/Y h:i:s', strtotime($evenement->date_heure_fin))) {
-        //     $ticket->statut="vérifié";
-        //     $ticket->save();
-        //    return response()->json([
-        //         "qrcodevalidity"=>"valid",
-        //         "redirectTo"=>route('validTicket')
-        //    ]);
-        // }elseif($request->statut=="vérifié"){
-        //     return response()->json([
-        //         "qrcodevalidity"=>"verifiedTicket",
-        //         "redirectTo"=>route('verifiedTicket')
-        //    ]);
-        // }else{
-        //     return response()->json([
-        //         "qrcodevalidity"=>"invalid ticket",
-        //         "redirectTo"=>route('invalidTicket')
-        //    ]);
-        // }
+        if ($publicKey->verify($data, $signature)) {
+            $ticket->statut="vérifié";
+            $ticket->save();
+           return response()->json([
+                "qrcodevalidity"=>"valid",
+                "redirectTo"=>route('validTicket')
+           ]);
+        }elseif($request->statut=="vérifié"){
+            return response()->json([
+                "qrcodevalidity"=>"verifiedTicket",
+                "redirectTo"=>route('verifiedTicket')
+           ]);
+        }else{
+            return response()->json([
+                "qrcodevalidity"=>"invalid ticket",
+                "redirectTo"=>route('invalidTicket')
+           ]);
+        }
     }
     public function validTicket(){
         return view('admin.ticket.validTicket');
