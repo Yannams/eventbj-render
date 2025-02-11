@@ -67,7 +67,7 @@ class TicketController extends Controller
                 $promoteur_id=$evenement->profil_promoteur->id;
                 $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
                 $KeyDir=storage_path("app/keys/$keyRepoName/private_key.pem");
-                $privateKey=RSA::loadPrivateKey(file_get_contents($keyDir));
+                $privateKey=RSA::loadPrivateKey(file_get_contents($KeyDir));
 
                 $ticket = new Ticket;
                 $ticket->transaction_id=$request->transaction_id;
@@ -81,7 +81,8 @@ class TicketController extends Controller
                     "nom_user"=> $userdata->name, 
                     "statut"=> $ticket->statut,
                 ]);
-                $ticket->update(['signature'=>base64_encode($privateKey->sign($data))]);         
+                $ticket->signature=base64_encode($privateKey->sign($data)); 
+                $ticket->save();          
                
                 if($type_ticket->evenement->type_lieu->nom_type =="physique"){
                     $codeQRContent = json_encode([
@@ -95,7 +96,7 @@ class TicketController extends Controller
                         mkdir($folderPath, 0777, true);
                     }
                     $fileName = uniqid() . '.svg';
-                    $filePath = $folderPath . '\\' . $fileName;
+                    $filePath = $folderPath . '/' . $fileName;
                     QrCode::format('svg')->generate($codeQRContent,$filePath);
                     $QrCodePath='code_QR/'.$fileName;
                     $ticket->code_QR = $QrCodePath; // Correction ici, utilisez $filePath au lieu de $qrCodePath
@@ -287,11 +288,10 @@ class TicketController extends Controller
         $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
        
         $ticket=Ticket::find($request->ticket_id);
-        $signature=$ticket->signature;
+        $signature=base64_decode($ticket->signature);
         $data=$request->data_user;
-        dd($signature,$data);
         
-        if ($publicKey->verify($data, $signature)) {
+        if ($publicKey->verify($data,$signature)) {
             $ticket->statut="vérifié";
             $ticket->save();
            return response()->json([
