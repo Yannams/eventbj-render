@@ -76,8 +76,6 @@ class TicketController extends Controller
                 $ticket->user_id=$user;
                 $ticket->save();  
                 $data=json_encode([
-                    "id_ticket"=>$ticket->id, 
-                    "user"=> $user, 
                     "nom_user"=> $userdata->name, 
                     "statut"=> $ticket->statut,
                 ]);
@@ -86,9 +84,9 @@ class TicketController extends Controller
                
                 if($type_ticket->evenement->type_lieu->nom_type =="physique"){
                     $codeQRContent = json_encode([
-                        "ticket_id"=>$ticket->id,
                         "data_user"=>$data,
                         "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
+                        "signature"=>$ticket->signature
                     ]);
                     
                     $folderPath = public_path('code_QR');
