@@ -292,11 +292,11 @@ class TicketController extends Controller
         ]);
         $user=auth()->user();
         $controleur=$user->Controleur;
-        $eventToControl=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first()->pivot->evenement_id;
+        $eventToControl=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first();
         $keyRepoName=hash('sha256',$eventToControl->id.'_'.$eventToControl->profil_promoteur->id.'_130125');
         $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
         $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
-        
+        $signature=base64_decode($signature);
         if ($publicKey->verify($data,$signature)) {
             if($ticket->statut=="vérifié"){
                 return response()->json([
