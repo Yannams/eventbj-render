@@ -78,14 +78,13 @@ class TicketController extends Controller
                 $data=json_encode([
                     "nom_user"=> $userdata->name, 
                     "statut"=> $ticket->statut,
+                    "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
                 ]);
                 $ticket->signature=base64_encode($privateKey->sign($data)); 
                 $ticket->save();          
                
                 if($type_ticket->evenement->type_lieu->nom_type =="physique"){
                     $codeQRContent = json_encode([
-                        "data_user"=>$data,
-                        "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
                         "signature"=>$ticket->signature
                     ]);
                     

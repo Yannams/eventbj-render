@@ -101,7 +101,7 @@
                 <span>Produced by</span> 
                 <img src="{{'data:image/png;base64,'.base64_encode(file_get_contents(public_path('image/WhatsApp_Image_2023-09-01_à_17.16.15-removebg-preview (1).png')))}}" alt="logo" width="80px">        
             </div>
-            <img src="{{'data:image/svg+xml;base64,'.base64_encode(file_get_contents(public_path($data->code_QR)))}}" alt="code QR" width="80px">
+            <img src="{{'data:image/svg+xml;base64,'.base64_encode(file_get_contents(public_path($data->code_QR)))}}" alt="code QR" width="100px">
         </div>
     </div>
 
