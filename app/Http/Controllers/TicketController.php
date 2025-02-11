@@ -297,6 +297,7 @@ class TicketController extends Controller
         $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
         $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
         $signature=base64_decode($signature);
+        dd($signature);
         if ($publicKey->verify($data,$signature)) {
             if($ticket->statut=="vérifié"){
                 return response()->json([
