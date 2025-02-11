@@ -21,6 +21,7 @@ use PhpParser\Node\Stmt\Foreach_;
 use FedaPay\FedaPay;
 use FedaPay\Transaction;
 use phpseclib3\Crypt\RSA;
+use PHPUnit\Framework\Attributes\Ticket as AttributesTicket;
 
 class TicketController extends Controller
 {
@@ -76,9 +77,9 @@ class TicketController extends Controller
                 $ticket->user_id=$user;
                 $ticket->save();  
                 $data=json_encode([
-                    "nom_user"=> $userdata->name, 
-                    "statut"=> $ticket->statut,
-                    "nom_evenement"=>$ticket->type_ticket->evenement->nom_evenement,
+                    "ticket_id"=> $ticket->id,
+                    "user_id"=> $ticket->user_id, 
+                    "evenement_id"=>$ticket->type_ticket->evenement_id,
                 ]);
                 $ticket->signature=base64_encode($privateKey->sign($data)); 
                 $ticket->save();          
@@ -276,36 +277,41 @@ class TicketController extends Controller
     public function verifierTicket(Request $request){
        
        
-        $user=auth()->user();
-        $controleur=$user->Controleur; 
-        $evenement_id=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first()->pivot->evenement_id;
-        $evenement=evenement::find($evenement_id);
-        $keyRepoName=hash('sha256',$evenement->id.'_'.$evenement->profil_promoteur->id.'_130125');
-        $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
-        $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
-       
-        $ticket=Ticket::find($request->ticket_id);
-        $signature=base64_decode($ticket->signature);
-        $data=$request->data_user;
-        
-        if ($publicKey->verify($data,$signature)) {
-            $ticket->statut="vérifié";
-            $ticket->save();
-           return response()->json([
-                "qrcodevalidity"=>"valid",
-                "redirectTo"=>route('validTicket')
-           ]);
-        }elseif($request->statut=="vérifié"){
-            return response()->json([
-                "qrcodevalidity"=>"verifiedTicket",
-                "redirectTo"=>route('verifiedTicket')
-           ]);
-        }else{
+        $signature=$request->signature;
+        $ticket=ticket::where('signature',$signature)->first();
+        if (!$ticket) {
             return response()->json([
                 "qrcodevalidity"=>"invalid ticket",
                 "redirectTo"=>route('invalidTicket')
-           ]);
+            ]);
         }
+        $data=json_encode([
+            "ticket_id"=> $ticket->id,
+            "user_id"=> $ticket->user_id, 
+            "evenement_id"=>$ticket->type_ticket->evenement_id,
+        ]);
+        $user=auth()->user();
+        $controleur=$user->Controleur;
+        $eventToControl=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first()->pivot->evenement_id;
+        $keyRepoName=hash('sha256',$eventToControl->id.'_'.$eventToControl->profil_promoteur->id.'_130125');
+        $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
+        $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
+        
+        if ($publicKey->verify($data,$signature)) {
+            if($ticket->statut=="vérifié"){
+                return response()->json([
+                    "qrcodevalidity"=>"verifiedTicket",
+                    "redirectTo"=>route('verifiedTicket')
+                ]);
+            }
+            $ticket->statut="vérifié";
+            $ticket->save();
+            return response()->json([
+                    "qrcodevalidity"=>"valid",
+                    "redirectTo"=>route('validTicket')
+            ]);
+        }
+      
     }
     public function validTicket(){
         return view('admin.ticket.validTicket');
