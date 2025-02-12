@@ -279,8 +279,9 @@ class TicketController extends Controller
        
         $signature=$request->signature;
         $ticket=ticket::where('signature',$signature)->first();
+       
         if(session('evenement_id')){
-            $validRoute=route('validTicket');
+            $validRoute=route('val');
             $invalidRoute=route('invalidTicket');
             $verifiedRoute=route('verifiedTicket');
         }else{
