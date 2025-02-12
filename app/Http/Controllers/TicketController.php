@@ -279,10 +279,19 @@ class TicketController extends Controller
        
         $signature=$request->signature;
         $ticket=ticket::where('signature',$signature)->first();
+        if(session('evenement_id')){
+            $validRoute=route('validTicket');
+            $invalidRoute=route('invalidTicket');
+            $verifiedRoute=route('verifiedTicket');
+        }else{
+            $validRoute=route('validTicketControleur');
+            $invalidRoute=route('invalidTicketControleur');
+            $verifiedRoute=route('verifiedTicketControleur');
+        }
         if (!$ticket) {
             return response()->json([
                 "qrcodevalidity"=>"invalid ticket",
-                "redirectTo"=>route('invalidTicket')
+                "redirectTo"=>$invalidRoute
             ]);
         }
         $data=json_encode([
@@ -290,9 +299,13 @@ class TicketController extends Controller
             "user_id"=> $ticket->user_id, 
             "evenement_id"=>$ticket->type_ticket->evenement_id,
         ]);
-        $user=auth()->user();
-        $controleur=$user->Controleur;
-        $eventToControl=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first();
+        if(session('evenement_id')){
+            $eventToControl=evenement::find(session('evenement_id'));
+        }else {
+            $user=auth()->user();
+            $controleur=$user->Controleur;
+            $eventToControl=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first();
+        }
         $keyRepoName=hash('sha256',$eventToControl->id.'_'.$eventToControl->profil_promoteur->id.'_130125');
         $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
         $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
@@ -301,19 +314,19 @@ class TicketController extends Controller
             if($ticket->statut=="vérifié"){
                 return response()->json([
                     "qrcodevalidity"=>"verifiedTicket",
-                    "redirectTo"=>route('verifiedTicketControleur')
+                    "redirectTo"=>$verifiedRoute
                 ]);
             }
             $ticket->statut="vérifié";
             $ticket->save();
             return response()->json([
                     "qrcodevalidity"=>"valid",
-                    "redirectTo"=>route('validTicketControleur')
+                    "redirectTo"=>$validRoute
             ]);
         }else {
               return response()->json([
                 "qrcodevalidity"=>"invalid ticket",
-                "redirectTo"=>route('invalidTicketControleur')
+                "redirectTo"=>$invalidRoute
             ]);
         }
       
