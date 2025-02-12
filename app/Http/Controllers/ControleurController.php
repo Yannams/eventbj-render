@@ -93,4 +93,14 @@ class ControleurController extends Controller
         
         return view('admin.controleur.scanTicket');
     }
+
+    public function validTicket(){
+        return view('admin.controleur.validTicket');
+    }
+    public function verifiedTicket(){
+        return view('admin.controleur.verifiedTicket');
+    }
+    public function invalidTicket(){
+        return view('admin.controleur.invalidTicket');
+    }
 }

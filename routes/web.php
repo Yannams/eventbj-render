@@ -87,6 +87,9 @@ Route::post('/ExecuteReport',[EvenementController::class,'ExecuteReport'])->name
 Route::get('/CreateInvitation/{type_ticket}',[TicketController::class,'CreateInvitation'])->name('CreateInvitation')->middleware('auth','role:Promoteur');
 Route::get('/choiceProcess',[ControleurController::class,'choiceProcess'])->name('choiceProcess')->middleware('auth','role:Promoteur');
 Route::get('/controleurAccess',[ControleurController::class,'controleurAccess'])->name('controleurAcess')->middleware('auth','role:Controleur');
+Route::get('/validTicket',[ControleurController::class,'validTicket'])->name('validTicketControleur')->middleware('auth','role:Controleur');
+Route::get('/verifiedTicket',[ControleurController::class,'verifiedTicket'])->name('verifiedTicketControleur')->middleware('auth','role:Controleur');
+Route::get('/invalidTicket',[ControleurController::class,'invalidTicket'])->name('invalidTicketControleur')->middleware('auth','role:Controleur');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy'],'middleware'=>['auth','role:User|Promoteur']]);
