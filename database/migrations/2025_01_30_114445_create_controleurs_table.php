@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('controleurs', function (Blueprint $table) {
             $table->id();
             $table->string('ControleurId')->unique();
-            $table->string('statut')->default('désactivé');
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
              $table->unsignedBigInteger('profil_promoteur_id')->nullable();

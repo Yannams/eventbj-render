@@ -801,3 +801,61 @@ input::placeholder{
   font-style: italic;
 }
 
+#html5-qrcode-button-camera-permission{
+  background-color: #308747;
+  border-width: 0px;
+  padding: 8px;
+  border-radius: 20px;
+  color: white;
+  margin-bottom: 20px;
+}
+
+#html5-qrcode-button-camera-permission:hover{
+  background-color: #3a804c;
+  border-width: 0px;
+  padding: 8px;
+  border-radius: 20px;
+  color: white;
+  margin-bottom: 20px;
+
+}
+
+#html5-qrcode-anchor-scan-type-change {
+  text-decoration: none !important; /* Supprime le soulignement */
+  border: solid ;
+  border-color: #308747;
+  border-width: 2px;
+  padding: 8px;
+  border-radius: 20px;
+  color: #308747 ;
+}
+
+#html5-qrcode-anchor-scan-type-change:hover {
+  text-decoration: none !important; /* Supprime le soulignement */
+  border: solid ;
+  border-color: #308747;
+  border-width: 2px;
+  padding: 8px;
+  border-radius: 20px;
+  color: white  ;
+  background-color: #308747;
+}
+
+#html5-qrcode-button-file-selection{
+  background-color: #308747;
+  border-width: 0px;
+  padding: 8px;
+  border-radius: 20px;
+  color: white;
+  margin-bottom: 20px;
+ 
+}
+
+#html5-qrcode-button-file-selection:hover{
+  background-color: #3a804c;
+  border-width: 0px;
+  padding: 8px;
+  border-radius: 20px;
+  color: white;
+  margin-bottom: 20px;
+}

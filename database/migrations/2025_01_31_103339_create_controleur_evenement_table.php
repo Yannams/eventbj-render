@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('telephone')->nullable();
             $table->string('email')->nullable();
-            $table->string('statut_affectation')->default('non affecté');
+            $table->string('statut')->default('désactivé');
             $table->timestamps();
         });
     }

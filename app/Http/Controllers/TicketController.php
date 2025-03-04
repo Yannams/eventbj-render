@@ -7,6 +7,7 @@ use App\Models\ticket;
 use App\Http\Requests\StoreticketRequest;
 use App\Http\Requests\UpdateticketRequest;
 use App\Models\evenement;
+use App\Models\tickets_verifications;
 use App\Models\type_ticket;
 use App\Models\User;
 use Dompdf\Dompdf;
@@ -279,17 +280,43 @@ class TicketController extends Controller
        
         $signature=$request->signature;
         $ticket=ticket::where('signature',$signature)->first();
-       
+    
         if(session('evenement_id')){
-            $validRoute=route('val');
+            $validRoute=route('validTicket');
             $invalidRoute=route('invalidTicket');
             $verifiedRoute=route('verifiedTicket');
+            $eventToControl=evenement::find(session('evenement_id'));
         }else{
             $validRoute=route('validTicketControleur');
             $invalidRoute=route('invalidTicketControleur');
             $verifiedRoute=route('verifiedTicketControleur');
+            $user=auth()->user();
+            $controleur=$user->Controleur;
+            $eventToControl=$controleur->evenements()->wherePivot('statut','activé')->first();
         }
         if (!$ticket) {
+            if(session('evenement_id')){
+                tickets_verifications::create([
+                    "statut"=>"ticket invalide",
+                    "ticket_id"=>null,
+                    "nom_controleur"=>$eventToControl->profil_promoteur->pseudo,
+                    "num_controleur"=>$eventToControl->profil_promoteur->user->num_user,
+                    "mail_controleur"=>$eventToControl->profil_promoteur->user->email,
+                    "profil_promoteur_id"=>$eventToControl->profil_promoteur->id,
+                    "evenement_id"=>$eventToControl->id
+                ]);
+            }else{
+                tickets_verifications::create([
+                    "statut"=>"ticket invalide",
+                    "ticket_id"=>null,
+                    "nom_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->name,
+                    "num_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->telephone,
+                    "mail_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->email,
+                    "controleur_id"=>$controleur->id,
+                    "evenement_id"=>$eventToControl->pivot->evenement_id
+                ]);
+            }
+            
             return response()->json([
                 "qrcodevalidity"=>"invalid ticket",
                 "redirectTo"=>$invalidRoute
@@ -300,31 +327,89 @@ class TicketController extends Controller
             "user_id"=> $ticket->user_id, 
             "evenement_id"=>$ticket->type_ticket->evenement_id,
         ]);
-        if(session('evenement_id')){
-            $eventToControl=evenement::find(session('evenement_id'));
-        }else {
-            $user=auth()->user();
-            $controleur=$user->Controleur;
-            $eventToControl=$controleur->evenements()->wherePivot('statut_affectation','affecté')->first();
-        }
         $keyRepoName=hash('sha256',$eventToControl->id.'_'.$eventToControl->profil_promoteur->id.'_130125');
         $KeyDir=storage_path("app/keys/$keyRepoName/public_key.pem");
         $publicKey=RSA::loadPublicKey(file_get_contents($KeyDir));
         $signature=base64_decode($signature);
         if ($publicKey->verify($data,$signature)) {
             if($ticket->statut=="vérifié"){
+                if(session('evenement_id')){
+                     tickets_verifications::create([
+                        "statut"=>"ticket vérifié",
+                        "ticket_id"=>$ticket->id,
+                        "nom_controleur"=>$eventToControl->profil_promoteur->pseudo,
+                        "num_controleur"=>$eventToControl->profil_promoteur->user->num_user,
+                        "mail_controleur"=>$eventToControl->profil_promoteur->user->email,
+                        "profil_promoteur_id"=>$eventToControl->profil_promoteur->id,
+                        "evenement_id"=>$eventToControl->id
+                    ]);
+                }else{
+                    tickets_verifications::create([
+                        "statut"=>"ticket vérifié",
+                        "ticket_id"=>$ticket->id,
+                        "nom_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->name,
+                        "num_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->telephone,
+                        "mail_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->email,
+                        "controleur_id"=>$controleur->id,
+                        "evenement_id"=>$eventToControl->pivot->evenement_id
+                    ]);
+                }
                 return response()->json([
                     "qrcodevalidity"=>"verifiedTicket",
                     "redirectTo"=>$verifiedRoute
                 ]);
             }
+            if(session('evenement_id')){
+                tickets_verifications::create([
+                    "statut"=>"ticket valide",
+                    "ticket_id"=>$ticket->id,
+                    "nom_controleur"=>$eventToControl->profil_promoteur->pseudo,
+                    "num_controleur"=>$eventToControl->profil_promoteur->user->num_user,
+                    "mail_controleur"=>$eventToControl->profil_promoteur->user->email,
+                    "profil_promoteur_id"=>$eventToControl->profil_promoteur->id,
+                    "evenement_id"=>$eventToControl->id
+                ]);
+            }else{
+                tickets_verifications::create([
+                    "statut"=>"ticket valide",
+                    "ticket_id"=>$ticket->id,
+                    "nom_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->name,
+                    "num_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->telephone,
+                    "mail_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->email,
+                    "controleur_id"=>$controleur->id,
+                    "evenement_id"=>$eventToControl->pivot->evenement_id
+                ]);
+            }
             $ticket->statut="vérifié";
             $ticket->save();
             return response()->json([
-                    "qrcodevalidity"=>"valid",
-                    "redirectTo"=>$validRoute
+                "qrcodevalidity"=>"valid",
+                "redirectTo"=>$validRoute
             ]);
         }else {
+            if(session('evenement_id')){
+                tickets_verifications::create([
+                    "statut"=>"ticket invalide",
+                    "ticket_id"=>$ticket->id,
+                    "nom_controleur"=>$eventToControl->profil_promoteur->pseudo,
+                    "num_controleur"=>$eventToControl->profil_promoteur->user->num_user,
+                    "mail_controleur"=>$eventToControl->profil_promoteur->user->email,
+                    "profil_promoteur_id"=>$eventToControl->profil_promoteur->id,
+                    "evenement_id"=>$eventToControl->id
+                ]);
+            }else{
+
+                tickets_verifications::create([
+                    "statut"=>"ticket invalide",
+                    "ticket_id"=>$ticket->id,
+                    "nom_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->name,
+                    "num_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->telephone,
+                    "mail_controleur"=>$controleur->evenements()->wherePivot("evenement_id",$eventToControl->pivot->evenement_id)->first()->pivot->email,
+                    "controleur_id"=>$controleur->id,
+                    "evenement_id"=>$eventToControl->pivot->evenement_id
+
+                ]);
+            }
               return response()->json([
                 "qrcodevalidity"=>"invalid ticket",
                 "redirectTo"=>$invalidRoute

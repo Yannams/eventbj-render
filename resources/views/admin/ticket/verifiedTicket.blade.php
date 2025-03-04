@@ -15,6 +15,7 @@
                         <div class="w-100 d-flex justify-content-center">Ticket déjà vérifié</div>
                     </div>
                 </div>
+                <a href="{{route('scanTicket')}}" class="btn btn-success">Scanner ticket</a>
             </div>
         </div>
     </div>

@@ -54,4 +54,9 @@ class evenement extends Model
         return $this->belongsToMany(Controleur::class)->withPivot('name','telephone','email');
     }
 
+    public function verifications():HasMany
+    {
+        return $this->hasMany(tickets_verifications::class);
+    }
+
 }

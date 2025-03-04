@@ -27,4 +27,9 @@ class Profil_promoteur extends Model
     {
         return $this->hasMany(Controleur::class);
     }
+
+    public function verifications():HasMany
+    {
+        return $this->hasMany(tickets_verifications::class);
+    }
 }

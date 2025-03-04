@@ -16,6 +16,8 @@ use App\Http\Controllers\UsersoftdeleteController;
 use App\Http\Controllers\CentreInteretController;
 use App\Http\Controllers\ChronogrammeController as ControllersChronogrammeController;
 use App\Http\Controllers\ControleurController;
+use App\Http\Controllers\TicketsVerificationsController;
+use App\Models\tickets_verifications;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +92,14 @@ Route::get('/controleurAccess',[ControleurController::class,'controleurAccess'])
 Route::get('/controleur/validTicket',[ControleurController::class,'validTicket'])->name('validTicketControleur')->middleware('auth','role:Controleur');
 Route::get('/controleur/verifiedTicket',[ControleurController::class,'verifiedTicket'])->name('verifiedTicketControleur')->middleware('auth','role:Controleur');
 Route::get('/controleur/invalidTicket',[ControleurController::class,'invalidTicket'])->name('invalidTicketControleur')->middleware('auth','role:Controleur');
+Route::get('/edit/controle/{evenement}/{controleur}',[ControleurController::class,'editControl'])->name('editControl')->middleware('auth','role:Promoteur');
+Route::post('/update/control/{evenement}/{controleur}',[ControleurController::class,'updateControl'])->name('updateControle')->middleware('auth','role:Promoteur');
+Route::get('/activerControl/{evenement}/{controleur}',[ControleurController::class,'activerControl'])->name('activerControl')->middleware('auth','role:Promoteur');
+Route::post('/executeActivation',[ControleurController::class,'executeActivation'])->name('executeActivation')->middleware('auth','role:Promoteur');
+Route::get('/executeDesactivation/{evenement}/{controleur}',[ControleurController::class,'executeDesactivation'])->name('executeDesactivation')->middleware('auth','role:Promoteur');
+Route::get('/ControlHistoric/{evenement}/{controleur}',[ControleurController::class,'ControlHistoric'])->name('ControlHistoric')->middleware('auth','role:Promoteur');
+Route::get('/EventToControl',[TicketsVerificationsController::class,'AllEvents'])->name('EventToControl')->middleware('auth','role:Promoteur');
+Route::get('/verificationHistoric/{evenement}',[TicketsVerificationsController::class,'verificationHistoric'])->name('verificationHistoric')->middleware('auth','role:Promoteur');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy'],'middleware'=>['auth','role:User|Promoteur']]);
@@ -112,4 +122,3 @@ Route::get('/UserActivity/{user}',[AdminController::class,'UserActivity'])->name
 Route::get('/dashboard',[AdminController::class,'dashboard'])->name('dashboard')->middleware('auth','role:Admin');
 Route::get('/AdminShowEvent/{evenement}',[AdminController::class,'AdminShowEvent'])->name('AdminShowEvent');
 Route::post('/getChartsDataAdmin',[AdminController::class,'getChartsDataAdmin'])->name('getChartsDataAdmin');
-

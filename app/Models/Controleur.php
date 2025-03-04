@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Controleur extends Model
@@ -26,6 +27,11 @@ class Controleur extends Model
 
     public function evenements():BelongsToMany
     {
-        return $this->belongsToMany(evenement::class)->withPivot('name','telephone','email','statut_affectation','created_at','updated_at');
+        return $this->belongsToMany(evenement::class)->withPivot('name','telephone','email','statut','created_at','updated_at');
+    }
+
+    public function verifications():HasMany
+    {
+        return $this->hasMany(tickets_verifications::class);
     }
 }
