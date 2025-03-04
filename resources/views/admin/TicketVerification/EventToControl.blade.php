@@ -1,7 +1,8 @@
 @extends('layout.promoteur')
     @section('content')
         @foreach ( $evenements as $evenement)
-        <a href="{{route('verificationHistoric',$evenement->id)}}" class="link-underline link-underline-opacity-0 evenementAverifier" >
+        <a href="{{route('verificationHistoric',$evenement->id
+        )}}" class="link-underline link-underline-opacity-0 evenementAverifier" >
             <div class="card eventToVerify">
                 <div class="card-body">
                     <div class="row ">

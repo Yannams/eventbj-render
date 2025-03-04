@@ -69,7 +69,7 @@ class TicketsVerificationsController extends Controller
     public function AllEvents(){
         $promoteur_id=Auth::user()->Profil_promoteur->id;
         $evenements=evenement::where('profil_promoteur_id',$promoteur_id)->get();
-        return view('admin.ticketVerification.EventToControl',compact('evenements'));
+        return view('admin.TicketVerification.EventToControl',compact('evenements'));
     }
 
     public function VerificationHistoric(evenement $evenement){
