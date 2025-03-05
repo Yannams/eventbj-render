@@ -55,15 +55,14 @@
                * devices would be an array of objects of type:
                * { id: "id", label: "label" }
                */
-              console.log('1');
               if (devices && devices.length) {
                 var cameraId = devices[0].id;
-                
                 
               }
             }).catch(err => {
                console.log(err);
             });
+            console.log(cameraId);
 
             const html5QrCode = new Html5Qrcode(/* element id */ "reader");
             html5QrCode.start(
