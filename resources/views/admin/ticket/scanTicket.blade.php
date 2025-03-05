@@ -3,8 +3,8 @@
         {{--  --}}
         <div class="container mt-5">
           <div id="QRcodeScanner mt-5 p-5">
+            <div id="reader" width="600px"></div>
             <div class="row g-3 ">
-              <div id="reader" width="600px"></div>
                <div class="col-12 mt-5 d-flex justify-content-center w-100">
                  <button class="btn btn-success" id="cameraRequest">Scanner code QR</button>
                </div>
