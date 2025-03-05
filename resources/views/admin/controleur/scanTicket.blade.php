@@ -1,6 +1,6 @@
 @extends('layout.controleur')
     @section('content')
-        <div id="reader" width="600px"></div>
+        {{-- <div id="reader" width="600px"></div> --}}
                
         <div id="evenementAverifier" data-event-id="{{session('evenement_id')}}"></div>
  
@@ -36,11 +36,11 @@
             console.warn(`Code scan error = ${error}`);
           }
           
-          let html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: {width: 250, height: 250} },
-            /* verbose= */ false);
-          html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-          console.log($('#html5-qrcode-select-camera'));
+          // let html5QrcodeScanner = new Html5QrcodeScanner(
+          //   "reader",
+          //   { fps: 10, qrbox: {width: 250, height: 250} },
+          //   /* verbose= */ false);   
+          // html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+        
 </script>
 @endsection
