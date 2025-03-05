@@ -1,15 +1,26 @@
 @extends('layout.promoteur')
     @section('content')
-        {{--  --}}
-        <div class="container mt-5">
-          <div id="QRcodeScanner mt-5 p-5">
+    <div class="position-relative">
+      <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
+          <div id="liveToast" class="toast text-bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+              <div class="toast-body d-flex align-items-center">
+                  <div class="p-2">
+                      <svg class="bi bi-x-circle" fill="#fff" width="30" height="30">
+                          <use xlink:href="#error"></use>
+                      </svg>
+                  </div>
+                  <div class="p-2 fw-bold fs-5">Impossible d'accéder à la caméra </div>
+                  <button type="button" class="btn-close  btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+              </div>
+          </div>
+      </div>    
+  </div>
+        <div class="container my-5">
+          <div id="QRcodeScanner my-5 p-5">
             <div id="reader" width="600px"></div>
             <div class="row g-3 ">
                <div class="col-12 mt-5 d-flex justify-content-center w-100">
                  <button class="btn btn-success" id="cameraRequest">Scanner code QR</button>
-               </div>
-               <div class="col-12 d-flex justify-content-center w-100">
-                 <button class="btn btn-outline-success">Télecharger une image</button>
                </div>
             </div>
          </div>
@@ -22,28 +33,8 @@
      var evenementDiv=document.getElementById('evenementAverifier')
       var evenement_Id=evenementDiv.getAttribute('data-event-id')
         function onScanSuccess(decodedText, decodedResult) {
-          var evenementDiv=document.getElementById('evenementAverifier')
-          var evenement_Id=evenementDiv.getAttribute('data-event-id')
-          $.ajaxSetup(
-                  {
-                      headers:{
-                          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                      }
-                  }
-              )
-                $.ajax(
-                  {
-                      type:'POST',
-                      url: '/verifierTicket',
-                      data:JSON.parse(decodedText) ,
-                      dataType:'JSON',
-                      success: function(response){
-                         window.location.href=response.redirectTo
-                      }
-                  }
-              )
-          }
-          
+        
+        }
           function onScanFailure(error) {
             // handle scan failure, usually better to ignore and keep scanning.
             // for example:
@@ -68,7 +59,26 @@
                     qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
                   },
                   (decodedText, decodedResult) => {
-                    // do something when code is read
+                    var evenementDiv=document.getElementById('evenementAverifier')
+                    var evenement_Id=evenementDiv.getAttribute('data-event-id')
+                    $.ajaxSetup(
+                          {
+                              headers:{
+                                  'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                              }
+                          }
+                      )
+                        $.ajax(
+                          {
+                              type:'POST',
+                              url: '/verifierTicket',
+                              data:JSON.parse(decodedText) ,
+                              dataType:'JSON',
+                              success: function(response){
+                                window.location.href=response.redirectTo
+                              }
+                          }
+                        )
                   },
                   (errorMessage) => {
                     // parse error, ignore it.
@@ -78,12 +88,10 @@
                 });
               }
             }).catch(err => {
-               console.log(err);
-            });
-           
-
-           
-                      
+                const toastLiveExample = document.getElementById('liveToast');
+                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample);
+                toastBootstrap.show()
+            });           
           });
          
           // let html5QrcodeScanner = new Html5QrcodeScanner(
