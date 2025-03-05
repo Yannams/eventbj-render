@@ -42,6 +42,7 @@
           }
 
           $('#cameraRequest').on('click', function(e){
+            $("#reader").html('');
           
               Html5Qrcode.getCameras().then(devices => {
                console.log(devices);
@@ -77,6 +78,16 @@
                               success: function(response){
                                 if (response.qrcodevalidity=='invalid ticket') {
                                   $("#reader").html(`
+                                        <div class="circle-border-error"></div>
+                                        <div class="circle-error">
+                                            <div class="invalid-error"></div>
+                                        </div>
+                                  `)
+                                }
+                                 
+                                if (response.qrcodevalidity=='valid') {
+                                 
+                                  $("#reader").html(`
                                     <div class="success-checkmark">
                                         <div class="check-icon">
                                         <span class="icon-line line-tip"></span>
@@ -86,14 +97,7 @@
                                         </div>
                                     </div>
                                   `)
-                                }
-                                if (response.qrcodevalidity=='valid') {
-                                  $("#reader").html(`
-                                        <div class="circle-border-error"></div>
-                                        <div class="circle-error">
-                                            <div class="invalid-error"></div>
-                                        </div>
-                                  `)
+                                
                                 }
                                 if (response.qrcodevalidity=='verifiedTicket') {
                                   $("#reader").html(`
