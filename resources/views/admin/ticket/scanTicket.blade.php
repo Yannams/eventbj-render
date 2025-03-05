@@ -50,7 +50,9 @@
           }
 
           $('#cameraRequest').on('click', function(e){
+            console.log( Html5Qrcode.getCameras());
               Html5Qrcode.getCameras().then(devices => {
+               console.log(devices);
               /**
                * devices would be an array of objects of type:
                * { id: "id", label: "label" }
@@ -62,7 +64,7 @@
             }).catch(err => {
                console.log(err);
             });
-            console.log(cameraId);
+           
 
             const html5QrCode = new Html5Qrcode(/* element id */ "reader");
             html5QrCode.start(
