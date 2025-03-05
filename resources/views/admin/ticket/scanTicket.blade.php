@@ -32,20 +32,12 @@
   <script>
      var evenementDiv=document.getElementById('evenementAverifier')
       var evenement_Id=evenementDiv.getAttribute('data-event-id')
-        function onScanSuccess(decodedText, decodedResult) {
-        
-        }
-          function onScanFailure(error) {
-            // handle scan failure, usually better to ignore and keep scanning.
-            // for example:
-            console.warn(`Code scan error = ${error}`);
-          }
-
+       
           $('#cameraRequest').on('click', function(e){
             $("#reader").html('');
             $('#cameraRequest').attr('disabled',true);
               Html5Qrcode.getCameras().then(devices => {
-               console.log(devices);
+               
               /**
                * devices would be an array of objects of type:
                * { id: "id", label: "label" }
