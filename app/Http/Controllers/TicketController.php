@@ -282,14 +282,9 @@ class TicketController extends Controller
         $ticket=ticket::where('signature',$signature)->first();
     
         if(session('evenement_id')){
-            $validRoute=route('validTicket');
-            $invalidRoute=route('invalidTicket');
-            $verifiedRoute=route('verifiedTicket');
+           
             $eventToControl=evenement::find(session('evenement_id'));
         }else{
-            $validRoute=route('validTicketControleur');
-            $invalidRoute=route('invalidTicketControleur');
-            $verifiedRoute=route('verifiedTicketControleur');
             $user=auth()->user();
             $controleur=$user->Controleur;
             $eventToControl=$controleur->evenements()->wherePivot('statut','activé')->first();
@@ -319,7 +314,7 @@ class TicketController extends Controller
             
             return response()->json([
                 "qrcodevalidity"=>"invalid ticket",
-                "redirectTo"=>$invalidRoute
+                
             ]);
         }
         $data=json_encode([
@@ -356,7 +351,6 @@ class TicketController extends Controller
                 }
                 return response()->json([
                     "qrcodevalidity"=>"verifiedTicket",
-                    "redirectTo"=>$verifiedRoute
                 ]);
             }
             if(session('evenement_id')){
@@ -384,7 +378,6 @@ class TicketController extends Controller
             $ticket->save();
             return response()->json([
                 "qrcodevalidity"=>"valid",
-                "redirectTo"=>$validRoute
             ]);
         }else {
             if(session('evenement_id')){
@@ -412,7 +405,6 @@ class TicketController extends Controller
             }
               return response()->json([
                 "qrcodevalidity"=>"invalid ticket",
-                "redirectTo"=>$invalidRoute
             ]);
         }
       

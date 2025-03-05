@@ -75,7 +75,36 @@
                               data:JSON.parse(decodedText) ,
                               dataType:'JSON',
                               success: function(response){
-                                window.location.href=response.redirectTo
+                                if (response.qrcodevalidity=='invalid ticket') {
+                                  $("#reader").html(`
+                                    <div class="success-checkmark">
+                                        <div class="check-icon">
+                                        <span class="icon-line line-tip"></span>
+                                        <span class="icon-line line-long"></span>
+                                        <div class="icon-circle"></div>
+                                        <div class="icon-fix"></div>
+                                        </div>
+                                    </div>
+                                  `)
+                                }
+                                if (response.qrcodevalidity=='valid') {
+                                  $("#reader").html(`
+                                        <div class="circle-border-error"></div>
+                                        <div class="circle-error">
+                                            <div class="invalid-error"></div>
+                                        </div>
+                                  `)
+                                }
+                                if (response.qrcodevalidity=='verifiedTicket') {
+                                  $("#reader").html(`
+                                    <div class="f-modal-alert">
+                                        <div class="f-modal-icon f-modal-warning scaleWarning">
+                                            <span class="f-modal-body pulseWarningIns"></span>
+                                            <span class="f-modal-dot pulseWarningIns"></span>
+                                        </div>
+                                    </div> 
+                                  `)
+                                }
                               }
                           }
                         )
