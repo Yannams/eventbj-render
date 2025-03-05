@@ -76,7 +76,8 @@
                               data:JSON.parse(decodedText) ,
                               dataType:'JSON',
                               success: function(response){
-                                if (response.qrcodevalidity=='invalid ticket') {
+                                html5QrCode.stop().then((ignore) => {
+                                  if (response.qrcodevalidity=='invalid ticket') {
                                   $("#reader").html(`
                                         <div class="circle-border-error"></div>
                                         <div class="circle-error">
@@ -109,6 +110,10 @@
                                     </div> 
                                   `)
                                 }
+                              }).catch((err) => {
+                                // Stop failed, handle it.
+                              });
+                               
                               }
                           }
                         )
