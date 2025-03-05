@@ -41,5 +41,6 @@
             { fps: 10, qrbox: {width: 250, height: 250} },
             /* verbose= */ false);
           html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+          $('#html5-qrcode-select-camera').addClass('form-select');
 </script>
 @endsection

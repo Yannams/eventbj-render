@@ -130,7 +130,7 @@
                      </div>
                      <div class="col-12 mb-3">
                          <label for="type_evenement_id">Type de l'évènement</label>
-                         <select name="type_evenement_id" id="type_evenement_id" class="form-control @error('type_evenement_id') is-invalid @enderror">
+                         <select name="type_evenement_id" id="type_evenement_id" class="form-select @error('type_evenement_id') is-invalid @enderror">
                             @foreach ($type_evenement as $type_evenements )
                                  <option value="{{$type_evenements->id}}" @if ($evenement->type_evenement_id==$type_evenements->id) selected @endif>{{$type_evenements->nom_type_evenement}}</option>
                             @endforeach 
