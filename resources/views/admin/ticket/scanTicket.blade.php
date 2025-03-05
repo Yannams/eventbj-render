@@ -43,7 +43,7 @@
 
           $('#cameraRequest').on('click', function(e){
             $("#reader").html('');
-          
+            $('#cameraRequest').attr('disabled',true);
               Html5Qrcode.getCameras().then(devices => {
                console.log(devices);
               /**
@@ -60,6 +60,7 @@
                     qrbox: { width: 250, height: 250 }  // Optional, if you want bounded box UI
                   },
                   (decodedText, decodedResult) => {
+
                     var evenementDiv=document.getElementById('evenementAverifier')
                     var evenement_Id=evenementDiv.getAttribute('data-event-id')
                     $.ajaxSetup(
@@ -77,12 +78,19 @@
                               dataType:'JSON',
                               success: function(response){
                                 html5QrCode.stop().then((ignore) => {
+                                  $('#cameraRequest').attr('disabled',false);
                                   if (response.qrcodevalidity=='invalid ticket') {
                                   $("#reader").html(`
-                                        <div class="circle-border-error"></div>
-                                        <div class="circle-error">
-                                            <div class="invalid-error"></div>
+                                      <div class="w-100 d-flex justify-content-center">
+                                        <div>
+                                            <div class="circle-border-error"></div>
+                                            <div class="circle-error">
+                                                <div class="invalid-error"></div>
+                                            </div>
                                         </div>
+                                    </div>
+                                
+                                    <div class="w-100 d-flex justify-content-center mt-5">Ticket invalide</div>
                                   `)
                                 }
                                  
@@ -97,6 +105,8 @@
                                         <div class="icon-fix"></div>
                                         </div>
                                     </div>
+                                
+                                    <div class="w-100 d-flex justify-content-center">Ticket valide</div>
                                   `)
                                 
                                 }
@@ -107,7 +117,9 @@
                                             <span class="f-modal-body pulseWarningIns"></span>
                                             <span class="f-modal-dot pulseWarningIns"></span>
                                         </div>
-                                    </div> 
+                                    </div>    
+                                
+                                    <div class="w-100 d-flex justify-content-center">Ticket déjà vérifié</div>
                                   `)
                                 }
                               }).catch((err) => {
