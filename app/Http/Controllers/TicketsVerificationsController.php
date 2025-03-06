@@ -6,6 +6,7 @@ use App\Models\evenement;
 use App\Models\tickets_verifications;
 use App\Http\Requests\Storetickets_verificationsRequest;
 use App\Http\Requests\Updatetickets_verificationsRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TicketsVerificationsController extends Controller
@@ -73,23 +74,64 @@ class TicketsVerificationsController extends Controller
     }
 
     public function VerificationHistoric(evenement $evenement){
-       
         $controleurs=$evenement->profil_promoteur->controleurs;
-        if(isset($_GET['controleur'])){
-            if($_GET['controleur']=='promoteur'){
-                // dd($evenement->profil_promoteur_id);
-                $verifications=tickets_verifications::where('evenement_id',$evenement->id)
-                                ->where('profil_promoteur_id', $evenement->profil_promoteur_id)
-                                ->get();  
-                return view('admin.TicketVerification.verificationHistoric',compact('verifications','controleurs','evenement'));
-
-            }
-            $verifications=tickets_verifications::where('evenement_id',$evenement->id)
-                            ->where('controleur_id',$_GET['controleur'])
-                            ->get();
-            return view('admin.TicketVerification.verificationHistoric',compact('verifications','controleurs','evenement'));
-        }
         $verifications=tickets_verifications::where('evenement_id',$evenement->id)->get();
         return view('admin.TicketVerification.verificationHistoric',compact('verifications','controleurs','evenement'));
+    }
+
+    public function historicFilter(Request $request){
+        if($request->role=="controleur"){
+            $verifications=tickets_verifications::where('evenement_id',$request->evenement_id)->where('controleur_id',$request->id)->get()->map(function ($historic) {
+                $participant=$historic->ticket_id ? $historic->ticket->user->name : "";
+                $compte_controleur=$historic->controleur_id ? $historic->controleur->ControleurId : ($historic->profil_promoteur_id ? $historic->profil_promoteur->pseudo : "");
+                $role=$historic->controleur_id ? "Controleur" : ($historic->profil_promoteur_id ? "Promoteur" : "");
+                return [
+                    'participant' => $participant,
+                    'nom_controleur' => $historic->nom_controleur,
+                    'num_controleur' => $historic->num_controleur,
+                    'mail_controleur' => $historic->mail_controleur,
+                    'compte_controleur' => $compte_controleur,
+                    'role'=>$role,
+                    'statut' => $historic->statut,
+                    'created_at' => $historic->created_at->format('d/m/Y H:i'), // Format personnalisé    
+                ];
+            });
+        }
+        if($request->role=="promoteur"){
+            $verifications=tickets_verifications::where('evenement_id',$request->evenement_id)->where('profil_promoteur_id',$request->id)->get()->map(function ($historic) {
+                $participant=$historic->ticket_id ? $historic->ticket->user->name : "";
+                $compte_controleur=$historic->controleur_id ? $historic->controleur->ControleurId : ($historic->profil_promoteur_id ? $historic->profil_promoteur->pseudo : "");
+                $role=$historic->controleur_id ? "Controleur" : ($historic->profil_promoteur_id ? "Promoteur" : "");
+                return [
+                    'participant' => $participant,
+                    'nom_controleur' => $historic->nom_controleur,
+                    'num_controleur' => $historic->num_controleur,
+                    'mail_controleur' => $historic->mail_controleur,
+                    'compte_controleur' => $compte_controleur,
+                    'role'=>$role,
+                    'statut' => $historic->statut,
+                    'created_at' => $historic->created_at->format('d/m/Y H:i'), // Format personnalisé    
+                ];
+            });
+        }
+        if($request->role=="tout"){
+            $verifications=tickets_verifications::where('evenement_id',$request->evenement_id)->get()->map(function ($historic) {
+                $participant=$historic->ticket_id ? $historic->ticket->user->name : "";
+                $compte_controleur=$historic->controleur_id ? $historic->controleur->ControleurId : ($historic->profil_promoteur_id ? $historic->profil_promoteur->pseudo : "");
+                $role=$historic->controleur_id ? "Controleur" : ($historic->profil_promoteur_id ? "Promoteur" : "");
+                return [
+                    'participant' => $participant,
+                    'nom_controleur' => $historic->nom_controleur,
+                    'num_controleur' => $historic->num_controleur,
+                    'mail_controleur' => $historic->mail_controleur,
+                    'compte_controleur' => $compte_controleur,
+                    'role'=>$role,
+                    'statut' => $historic->statut,
+                    'created_at' => $historic->created_at->format('d/m/Y H:i'), // Format personnalisé    
+                ];
+            });
+        }
+
+        return response()->json($verifications);
     }
 }

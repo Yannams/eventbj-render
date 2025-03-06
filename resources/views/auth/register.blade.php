@@ -42,7 +42,7 @@
       </div>
         <div class="container-fluid">
                 <div class="row">
-                    <div class="col-md-6 " style="background-color: #C3E3CC">
+                    <div class="col-md-6 vh-100 " style="background-color: #C3E3CC">
                         <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
                             <div class="carousel-indicators">
                                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -53,46 +53,46 @@
                             </div>
                             <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <div class="p-5" style=" height:30em">
+                                <div class="p-5" style=" height:100%">
                                     <img src="{{asset('image/undraw_festivities_tvvj.svg')}}" class="d-block w-100" alt="...">
                                 </div>
-                                <div class="text-white text-center mb-5 d-none d-md-block">
+                                <div class="text-white text-center mb-5  d-md-block">
                                 <h5>Des évènements qui vous réunissent</h5>
                                 <p>Trouvez des évènements à vivre avec vos amis, autour de vos passions communes </p>
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <div class="p-5" style=" height:30em">
+                                <div class="p-5" style=" height:100%">
                                     <img src="{{asset('image/undraw_having_fun_re_vj4h.svg')}}" class="d-block w-100" alt="...">
                                 </div>
-                                <div class="text-white text-center mb-5 d-none d-md-block">
+                                <div class="text-white text-center mb-5  d-md-block">
                                 <h5>Rencontrez de nouvelles personnes !!</h5>
                                 <p>Profitez des évènements pour rencontrer des personnes partageant vos passions !!</p>
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <div class="p-5" style="height:30em">
+                                <div class="p-5" style="height:100%">
                                     <img src="{{asset('image/undraw_special_event_-4-aj8.svg')}}" class="d-block w-100" alt="...">
                                 </div>
-                                <div class="text-white text-center mb-5 d-none d-md-block">
+                                <div class="text-white text-center mb-5  d-md-block">
                                 <h5>Partagez des moments uniques!!</h5>
                                 <p>Que ce soit des chills, du networking ou des conférence, Partagez des moments inoubliables !!</p>
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <div class="p-5" style="height:30em">
+                                <div class="p-5" style="height:100%">
                                     <img src="{{asset('image/undraw_events_re_98ue.svg')}}" class="d-block w-100" alt="...">
                                 </div>
-                                <div class="text-white text-center mb-5 d-none d-md-block">
+                                <div class="text-white text-center mb-5  d-md-block">
                                 <h5>Votre passion ? Organisez des évènement ?</h5>
                                 <p>Choisissez une date et lancez-vous. Avec EventBJ, organiser des évènements n'a jamais été aussi simple au Bénin.</p>
                                 </div>
                             </div>
                             <div class="carousel-item">
-                                <div class="p-5" style="height:30em">
+                                <div class="p-5" style="height:100%">
                                     <img src="{{asset('image/undraw_investor_update_re_qnuu.svg')}}" class="d-block w-100" alt="...">
                                 </div>
-                                <div class="text-white text-center mb-5 d-none d-md-block">
+                                <div class="text-white text-center mb-5  d-md-block">
                                 <h5>Soyez des experts dans votre passion d'organiser</h5>
                                 <p>Suivez vos performances grâce à des statistiques détaillées et améliorez-vous chaque jour.</p>
                                 </div>

@@ -1,31 +1,17 @@
 @extends('layout.promoteur')
     @section('content')
         
-        <ul class="row row-cols-5 row-cols-lg-5 row-cols-md-5 nav nav-pills mb-4 mt-5" id="pillNav" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a href="{{route('verificationHistoric',$evenement->id)}}" class="d-flex align-items-center justify-content-center  h-100 fw-bold nav-link rounded @if (!isset($_GET['controleur']) && !isset($_GET['promoteur'])) checked-step @else unchecked-step @endif  me-3" dis role="tab" aria-selected="true" >
-                    <span class="d-none d-md-flex"> Tout </span>
-                </a>
-            </li>         
-            
-             @foreach ($controleurs as $controleur)
-                <li class="nav-item" role="presentation">
-                    <a href="{{route('verificationHistoric',['evenement'=>$evenement->id,'controleur'=>$controleur->id])}}"  class=" border-0 d-flex align-items-center justify-content-center h-100 fw-bold nav-link rounded me-3 {{isset($_GET['controleur']) ?($_GET['controleur']==$controleur->id ? "checked-step" : "unchecked-step"): "unchecked-step"}}" role="tab" aria-selected="true" >
-                        <span class="d-none d-md-flex"> {{$controleur->ControleurId}} </span>
-                    </a>
-                </li>   
-             @endforeach
-                                   
-            <li class="nav-item" role="presentation">
-                <a href="{{route('verificationHistoric',['evenement'=>$evenement->id,'controleur=promoteur'])}}" class="h-100 d-flex align-items-center justify-content-center fw-bold nav-link rounded {{isset($_GET['controleur']) ?($_GET['controleur']=='promoteur' ? "checked-step" : "unchecked-step"): "unchecked-step"}} me-3" role="tab" aria-selected="true"  >
-                     <span class="d-none d-md-flex">Moi-même</span>
-                </a>
-            </li> 
+       
 
-            
-        </ul>
+        <select name="historicFilter" id="historicFilter" class="form-select">
+            <option value="tout" data-role="tout" data-evenement-id="{{$evenement->id}}">Tout</option>
+          @foreach ($controleurs as $controleur)
+            <option value="{{$controleur->id}}" data-role="controleur" data-evenement-id="{{$evenement->id}}">{{$controleur->ControleurId}}</option>
+          @endforeach
+            <option value="{{$evenement->profil_promoteur_id}}" data-role="promoteur" data-evenement-id="{{$evenement->id}}">Moi-même</option>
+        </select>
         <div class="table-responsive">
-            <table class="table">
+            <table  id="historiqueTable" class="table">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
@@ -57,4 +43,78 @@
             </table>
         </div>
 
+       <script>
+          $('#historicFilter').on('input',function (e) {
+          
+            let selectedFilter= $('#historicFilter option:selected')
+           if (selectedFilter.data('role')=="controleur") {
+             var data= {
+                id: $('#historicFilter').val(),
+                role: "controleur",
+                evenement_id: selectedFilter.data('evenementId')
+             }
+           }
+           if (selectedFilter.data('role')=="promoteur") {
+             var data= {
+                id: $('#historicFilter').val(),
+                role: "promoteur",
+                evenement_id: selectedFilter.data('evenementId')
+             }
+           }
+           if (selectedFilter.data('role')=="tout") {
+             var data = {
+               role:'tout',
+               evenement_id: selectedFilter.data('evenementId')
+             }
+           }
+           
+            $.ajaxSetup(
+                {
+                    headers:{
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                }
+            )
+              $.ajax(
+                {
+                    type:'POST',
+                    url:'/historicFilter',
+                    data: data,
+                    dataType:'JSON',
+                    beforeSend:function () {
+                       $("#historiqueTable tbody").html(`
+                          <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                          </div>
+                       `)
+                    },
+                    success:function (response) {
+                      $("#historiqueTable tbody").empty();
+
+                      // Vérifier si on a des résultats
+                      if (response.length > 0) {
+                          $.each(response, function(index, item) {
+                              $("#historiqueTable tbody").append(`
+                                  <tr>
+                                      <th>${index + 1}</th>
+                                      <td>${item.participant}</td>
+                                      <td>${item.nom_controleur}</td>
+                                      <td>${item.num_controleur}</td>
+                                      <td>${item.mail_controleur}</td>
+                                      <td>${item.compte_controleur}</td>
+                                      <td>${item.role}</td>
+                                      <td><span class="p-1 rounded ${item.statut=="ticket valide" ? "checked-step" :(item.statut=="ticket invalide"? "unchecked-step":(item.statut=="ticket vérifié" ? "checking-step":""))}">${item.statut}</span></td>
+                                      <td>${item.created_at}</td>
+                                  </tr>
+                              `);
+                          });
+                      } else {
+                          $("#historiqueTable tbody").append('<tr><td colspan="4">Aucun historique trouvé</td></tr>');
+                      }
+
+                    }
+                })
+            
+          })
+       </script>
     @endsection

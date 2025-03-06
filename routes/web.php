@@ -100,6 +100,7 @@ Route::get('/executeDesactivation/{evenement}/{controleur}',[ControleurControlle
 Route::get('/ControlHistoric/{evenement}/{controleur}',[ControleurController::class,'ControlHistoric'])->name('ControlHistoric')->middleware('auth','role:Promoteur');
 Route::get('/EventToControl',[TicketsVerificationsController::class,'AllEvents'])->name('EventToControl')->middleware('auth','role:Promoteur');
 Route::get('/verificationHistoric/{evenement}',[TicketsVerificationsController::class,'verificationHistoric'])->name('verificationHistoric')->middleware('auth','role:Promoteur');
+Route::post('/historicFilter',[TicketsVerificationsController::class,'historicFilter'])->name('historicFilter');
 
 Route::resource('evenement', EvenementController::class,['middleware'=>['auth','role:Promoteur'],'except'=>['index','show','create']]);
 Route::resource('evenement', EvenementController::class,['except'=>['update','store','edit','create','destroy'],'middleware'=>['auth','role:User|Promoteur']]);

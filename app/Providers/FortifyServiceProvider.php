@@ -13,7 +13,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Fortify;
+
 
 class FortifyServiceProvider extends ServiceProvider
 {
@@ -60,19 +62,18 @@ class FortifyServiceProvider extends ServiceProvider
           });
        
           Fortify::authenticateUsing(function (Request $request) {
-            $validated=$request->validate([
-                'login'=>'required',
-                'password'=>'required'
-            ]);
             $user = User::where('email', $request->login)
-                        ->orWhere('username', $request->login)
+                        ->orWhere('username',$request->login)
                         ->first();
         
-            if ($user && Hash::check($request->password, $user->password)) {
-                return $user;
+            if (! $user || ! Hash::check($request->password, $user->password)) {
+               
+                throw ValidationException::withMessages([
+                    'login' => ['Les informations d’identification sont incorrectes.'],
+                ]);
             }
-            
-            return false;
+        
+            return $user;
         });
         
 
