@@ -673,7 +673,7 @@ class EvenementController extends Controller
                     $nombreVenduDuJourDeCeTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
                     $nombreVendusParSemaineDeCeTicket[]=$nombreVenduDuJourDeCeTicket;
                 }
-               dd($DatesVente); 
+              
             }
            
             
