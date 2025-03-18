@@ -664,6 +664,7 @@ class EvenementController extends Controller
             }elseif($nombreDejour=="billeterie"){
                 $Date_lancement=Carbon::parse($type_ticket->Date_heure_lancement);
                 $Date_fermeture=Carbon::parse($type_ticket->Date_heure_fermeture);
+                dd($Date_lancement,$Date_fermeture);
                 $nombreDejour= $Date_fermeture->day-$Date_lancement->day ;
                 $ecart=ceil($nombreDejour/7);
                 for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
