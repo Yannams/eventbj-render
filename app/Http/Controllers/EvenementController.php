@@ -671,6 +671,7 @@ class EvenementController extends Controller
                     $jourfin=Carbon::now()->parse($type_ticket->Date_heure_lancement)->subDays($i-($ecart-1))->endOfDay();
                     $DatesVente[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
                     $nombreVenduDuJourDeCeTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                    dd($nombreVenduDuJourDeCeTicket);
                     $nombreVendusParSemaineDeCeTicket[]=$nombreVenduDuJourDeCeTicket;
                 }
               
