@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Intervenant;
 use App\Http\Requests\StoreIntervenantRequest;
 use App\Http\Requests\UpdateIntervenantRequest;
+use App\Models\evenement;
 use Illuminate\Http\Request;
 use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\ImageManager;
@@ -14,9 +15,14 @@ class IntervenantController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {    
-        $evenement_id=$_GET['event'];
+        $data = $request->validate([
+            'event' => 'required|integer|exists:evenements,id',
+        ]);
+        $evenement_id=$data['event'];
+        $evenement=evenement::find($evenement_id);
+        $this->authorize('index',[Intervenant::class,$evenement]);
         $intervenants=Intervenant::where('promoteur_id',auth()->user()->Profil_promoteur->id)
         ->where('evenement_id',$evenement_id)
         ->get();
@@ -82,8 +88,11 @@ class IntervenantController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Intervenant $intervenant)
+    public function edit(Intervenant $intervenant, Request $request)
     {
+        $data = $request->validate([
+            'intervenant_id' => 'required|integer|exists:intervenants,id',
+        ]);
         $intervenant=Intervenant::find($_GET['intervenant_id']);
         return response()->json([
             'nom_intervenant'=>$intervenant->nom_intervenant,

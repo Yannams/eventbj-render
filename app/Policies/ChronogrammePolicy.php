@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\chronogramme;
+use App\Models\evenement;
 use Illuminate\Auth\Access\Response;
 
 class ChronogrammePolicy
@@ -27,14 +28,20 @@ class ChronogrammePolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, evenement $evenement): bool
     {
-        //
+       return $evenement->profil_promoteur_id==$user->Profil_promoteur->id;
     }
 
     /**
      * Determine whether the user can update the model.
      */
+
+    public function store(User $user, evenement $evenement):bool
+    {
+        return $evenement->profil_promoteur_id==$user->Profil_promoteur->id;
+    }
+
     public function update(User $user, chronogramme $chronogramme): bool
     {
         //

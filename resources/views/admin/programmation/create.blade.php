@@ -37,7 +37,7 @@
                                             <span class="text-warning fw-bold">{{ $chronogramme->nom_activite }}</span>
                                         </div>
                                         <div class="col-4">
-                                           <button class="btn btn-success editActivity" data-chronogramme-id="{{$chronogramme->id}}" data-heure-debut="{{$chronogramme->heure_debut}}" data-heure-fin="{{$chronogramme->heure_fin}}" data-nom-activite="{{$chronogramme->nom_activite}}" data-date-activity="{{$chronogramme->date_activite}}">Modifier</button>
+                                           <button class="btn btn-success editActivity" data-chronogramme-id="{{$chronogramme->id}}" data-heure-debut="{{$chronogramme->heure_debut}}" data-heure-fin="{{$chronogramme->heure_fin}}" data-nom-activite="{{$chronogramme->nom_activite}}" data-date-activity="{{$chronogramme->date_activite}}" data-evenement-id="{{$evenement->id}} ">Modifier</button>
                                         </div>
                                     </div>
                                 </div>
@@ -73,12 +73,17 @@
         $(document).ready(function() {
             function addActivityToDiv(date_activite, evenement_id, activityPlace, activityContainer, lastEndTime) {
                 let newEndTime = '';
+                let previousEndTime = '';
                 if (lastEndTime) {
                     const [hours, minutes] = lastEndTime.split(':').map(Number);
                     const endTimeDate = new Date();
-                    endTimeDate.setHours(hours + 1);
-                    endTimeDate.setMinutes(minutes);
+                    endTimeDate.setHours(0, 0, 0, 0);
+                    endTimeDate.setHours(hours);
+                    endTimeDate.setMinutes(minutes)
+                    previousEndTime=endTimeDate.toTimeString().substring(0, 5);
+                    endTimeDate.setMinutes(minutes + 60);
                     newEndTime = endTimeDate.toTimeString().substring(0, 5);
+                    
                 }
                 
                 var formHtml = `
@@ -91,7 +96,7 @@
                                 <div class="row g-3">
                                     <div class="col-6">
                                         <label for="heure_debut"> Heure début</label>
-                                        <input type="time" name="heure_debut" class="form-control  heure_debutInput" value="${lastEndTime ? lastEndTime : ''}" required>
+                                        <input type="time" name="heure_debut" class="form-control  heure_debutInput" value="${previousEndTime ? previousEndTime : ''}" required>
                                     </div>
                                     <div class="col-6">
                                         <label for="heure_fin"> Heure fin</label>
@@ -133,7 +138,8 @@
             }
             $('#activitiesContainer').on('click', '.editActivity', function(e) {
                 e.preventDefault();
-
+                const openedAddActivity=$(".AddActivityBtn").closest(".ActivityPlace"); 
+                const openedEditActivity=$(".EditActivityBtn").closest(".ActivityPlace"); 
                 const editButton = $(this);
                 const activityPlace = editButton.closest('.ActivityPlace');
                 const chronogrammeId = editButton.data('chronogramme-id');
@@ -141,9 +147,28 @@
                 const heureFin = editButton.data('heure-fin');
                 const nomActivite = editButton.data('nom-activite');
                 const dateActivite = editButton.data('date-activite');
+                const evenement_id = editButton.data('evenement-id');
+               
+                
+                if (openedAddActivity) {
+                    var newCardHtml = `                        
+                        <div class="col-8 col-md-10 fs-4 fw-bold">Ajouter une activité</div>
+                        <div class="col-4 col-md-2">
+                            <button class="btn btn-outline-danger addActivity" data-date-activity="${dateActivite}" data-evenement-id="${evenement_id}" data-last-end-time="${heureFin}">
+                                <svg class="bi bi-plus" fill="currentColor" width="30" height="30">
+                                    <use xlink:href="#plus"></use>
+                                </svg>
+                            </button>
+                        </div>                   
+                    `;
+                    openedAddActivity.html(newCardHtml);
+            
+                }
+                if (openedEditActivity) {
+                    
+                }
 
                 const formHtml = `
-                    
                         <input type="hidden" class="chronogrammeToModify" name="chronogramme_id" value="${chronogrammeId}">
                         <input type="hidden" class="DateActivityToModify" name="date_activite" value="${dateActivite}">
                         <div class="row">
@@ -250,7 +275,11 @@
                                     </div>
                                 </div>
                             `);
+
+                            $(".addActivity").attr('data-last-end-time',data.heure_fin)
+
                         }
+
                     },
                     complete: function() {
                         $('.addActivity').prop("disabled",false);
@@ -375,6 +404,8 @@
                                  
                                 </div>
                             `);
+
+                            $(".addActivity").attr('data-last-end-time',data.heure_fin)
                         }
                     },
                     complete: function() {

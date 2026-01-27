@@ -148,7 +148,7 @@ class EvenementController extends Controller
      */
     public function edit(evenement $evenement, Request $request){
         
-       
+        $this->authorize('edit',$evenement);
         if(session('evenement_id')&& session('TypeLieu')){
             $typeLieuId = session('TypeLieu');
             $evenement_id=session('evenement_id');
@@ -156,13 +156,10 @@ class EvenementController extends Controller
             $promoteur=auth()->user()->profil_promoteur->id;
             $EventInterest=$evenement->centre_interets()->pluck('centre_interet_id');
             $EventInterestArray=$EventInterest->toArray();
-            if($evenement->profil_promoteur_id==$promoteur){
-                $type_evenement=type_evenement::all();
-                $interests=Centre_interet::all();
-                return view('admin.evenement.edit', compact('evenement','type_evenement', 'typeLieuId','interests','EventInterestArray'));
-            }else{
-                return redirect()->route('UnauthorizedUser');
-            }
+            $type_evenement=type_evenement::all();
+            $interests=Centre_interet::all();
+            return view('admin.evenement.edit', compact('evenement','type_evenement', 'typeLieuId','interests','EventInterestArray'));
+        
         }else{
             return redirect()->route('Create_event');
         }
@@ -174,7 +171,8 @@ class EvenementController extends Controller
      */
     public function update(UpdateevenementRequest $request, evenement $evenement)
     {
-        
+        $this->authorize('update',$evenement);
+
         $evenement=evenement::find($evenement->id);
         $rules=[
             'nom_evenement'=>'required|min:1|max:100',
@@ -273,9 +271,10 @@ class EvenementController extends Controller
      */
     public function destroy(evenement $evenement, Request $request)
     {
-       $validatedData=$request->validate([
-            'raison'=>'required'
-       ]);
+        $this->authorize('delete',$evenement);
+        $validatedData=$request->validate([
+                'raison'=>'required'
+        ]);
         if ($evenement->type_tickets()->whereHas('tickets')->exists()) {
             $subscribers = $evenement->type_tickets()
                 ->with('tickets.user')
@@ -345,6 +344,7 @@ class EvenementController extends Controller
     }
 
     public function annulation(evenement $evenement){
+        $this->authorize('delete',$evenement);
         return view('admin.evenement.annulerEvent',compact('evenement'));
     }
     public function MyEvents(){
@@ -668,10 +668,9 @@ class EvenementController extends Controller
                 $ecart=ceil($nombreDejour/7);
                 for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
                     $jourDebut=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i)->startOfDay();
-                    $jourfin=Carbon::now()->parse($type_ticket->Date_heure_lancement)->subDays($i-($ecart-1))->endOfDay();
+                    $jourfin=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i-($ecart-1))->endOfDay();
                     $DatesVente[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
                     $nombreVenduDuJourDeCeTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
-                    dd($nombreVenduDuJourDeCeTicket);
                     $nombreVendusParSemaineDeCeTicket[]=$nombreVenduDuJourDeCeTicket;
                 }
               
@@ -723,6 +722,18 @@ class EvenementController extends Controller
                 $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
                 $revenuPourCeTicket[]=$nombreTicket*$type_ticket->prix_ticket;
            }
+        }elseif($periode_revenu=="billeterie"){
+            $Date_lancement=Carbon::parse($type_ticket->Date_heure_lancement);
+            $Date_fermeture=Carbon::parse($type_ticket->Date_heure_fermeture);
+            $nombreDejour= $Date_lancement->diffInDays( $Date_fermeture) ;
+            $ecart=ceil($nombreDejour/7);
+            for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
+                $jourDebut=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i)->startOfDay();
+                $jourfin=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i-($ecart-1))->endOfDay();
+                $Date_Revenus[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                $revenuPourCeTicket[]=$nombreTicket*$type_ticket->prix_ticket;
+            }
         }
         $revenuParTicket[]=$revenuPourCeTicket;
        }
@@ -739,25 +750,37 @@ class EvenementController extends Controller
        $Date_click=array();
        $NbrClickParDate=array();
        if ($periode_click==7) {
-        for ($i=$periode_click-1; $i>=0 ; $i--) { 
-            $jour=Carbon::now()->today()->subDays($i);
-            $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
-            $finjour=Carbon::now()->today()->subDays($i)->endOfDay();
-            $NombreClickAcetteDate = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
-            $Date_click[]=date('d/m/Y',strtotime($jour));
-            $NbrClickParDate[]=$NombreClickAcetteDate;
-        }
+            for ($i=$periode_click-1; $i>=0 ; $i--) { 
+                $jour=Carbon::now()->today()->subDays($i);
+                $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
+                $finjour=Carbon::now()->today()->subDays($i)->endOfDay();
+                $NombreClickAcetteDate = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
+                $Date_click[]=date('d/m/Y',strtotime($jour));
+                $NbrClickParDate[]=$NombreClickAcetteDate;
+            }
        }elseif ($periode_click==30) {
-        for ($i=27; $i>=0 ; $i-=4) { 
-            //$jour=Carbon::now()->today()->subDays($i);
-            $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
-            $finjour=Carbon::now()->today()->subDays($i-3)->endOfDay();
-            $NombreClickAcetteDate = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
-            $Date_click[]=date('d/m/Y',strtotime($debutjour))."-".date('d/m/Y',strtotime($finjour));
-            $NbrClickParDate[]=$NombreClickAcetteDate;
-           
+            for ($i=27; $i>=0 ; $i-=4) { 
+                //$jour=Carbon::now()->today()->subDays($i);
+                $debutjour=Carbon::now()->today()->subDays($i)->startOfDay();
+                $finjour=Carbon::now()->today()->subDays($i-3)->endOfDay();
+                $NombreClickAcetteDate = $evenement->users()->wherePivot('Date_click','>=',$debutjour)->wherePivot('Date_click','<=',$finjour)->count();
+                $Date_click[]=date('d/m/Y',strtotime($debutjour))."-".date('d/m/Y',strtotime($finjour));
+                $NbrClickParDate[]=$NombreClickAcetteDate;
+            
+            }
+        }elseif($periode_click=="billeterie"){
+            $Date_lancement=Carbon::parse($type_ticket->Date_heure_lancement);
+            $Date_fermeture=Carbon::parse($type_ticket->Date_heure_fermeture);
+            $nombreDejour= $Date_lancement->diffInDays( $Date_fermeture) ;
+            $ecart=ceil($nombreDejour/7);
+            for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
+                $jourDebut=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i)->startOfDay();
+                $jourfin=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i-($ecart-1))->endOfDay();
+                $NombreClickAcetteDate = $evenement->users()->wherePivot('Date_click','>=',$jourDebut)->wherePivot('Date_click','<=',$jourfin)->count();
+                $Date_click[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                $NbrClickParDate[]=$NombreClickAcetteDate;
+            }
         }
-    }
        
       
 
@@ -778,6 +801,18 @@ class EvenementController extends Controller
             for($i=27 ; $i>=0 ;$i-=4){
                 $jourDebut=Carbon::now()->today()->subDays($i)->startOfDay();
                 $jourfin=Carbon::now()->today()->subDays($i-3 )->endOfDay();
+                $Date_inscription[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                $NbrInscriptionPourCeTicket[]=$nombreTicket;
+            }
+        }elseif($periode_inscription=="billeterie"){
+            $Date_lancement=Carbon::parse($type_ticket->Date_heure_lancement);
+            $Date_fermeture=Carbon::parse($type_ticket->Date_heure_fermeture);
+            $nombreDejour= $Date_lancement->diffInDays( $Date_fermeture) ;
+            $ecart=ceil($nombreDejour/7);
+            for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
+                $jourDebut=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i)->startOfDay();
+                $jourfin=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i-($ecart-1))->endOfDay();
                 $Date_inscription[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
                 $nombreTicket=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
                 $NbrInscriptionPourCeTicket[]=$nombreTicket;
@@ -818,6 +853,18 @@ class EvenementController extends Controller
                 $nombreTicketConversion=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
                 $NbrInscriptionPourCeTicketConversion[]=$nombreTicketConversion;
             }
+        }elseif($periode_conversion=="billeterie"){
+            $Date_lancement=Carbon::parse($type_ticket->Date_heure_lancement);
+            $Date_fermeture=Carbon::parse($type_ticket->Date_heure_fermeture);
+            $nombreDejour= $Date_lancement->diffInDays( $Date_fermeture) ;
+            $ecart=ceil($nombreDejour/7);
+            for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
+                $jourDebut=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i)->startOfDay();
+                $jourfin=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i-($ecart-1))->endOfDay();
+                $Date_conversion[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+                $nombreTicketConversion=$type_ticket->tickets->where('created_at','>=',$jourDebut)->where('created_at','<=',$jourfin)->count();
+                $NbrInscriptionPourCeTicketConversion[]=$nombreTicketConversion;
+            }
         }
         
         $NombreInscriptionParTicketConversion[]=$NbrInscriptionPourCeTicketConversion;
@@ -851,8 +898,20 @@ class EvenementController extends Controller
             $Date_conversion[]=date('d/m/Y',strtotime($debutjour))."-".date('d/m/Y',strtotime($finjour));
             $NbrClickParDateConversion[]=$NombreClickAcetteDateConversion;
         }
+    }elseif($periode_conversion=="billeterie"){
+        $Date_lancement=Carbon::parse($type_ticket->Date_heure_lancement);
+        $Date_fermeture=Carbon::parse($type_ticket->Date_heure_fermeture);
+        $nombreDejour= $Date_lancement->diffInDays( $Date_fermeture) ;
+        $ecart=ceil($nombreDejour/7);
+        for ($i=$nombreDejour; $i >=0; $i-=$ecart) { 
+            $jourDebut=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i)->startOfDay();
+            $jourfin=Carbon::now()->parse($type_ticket->Date_heure_fermeture)->subDays($i-($ecart-1))->endOfDay();
+            $NombreClickAcetteDateConversion = $evenement->users()->wherePivot('Date_click','>=',$jourDebut)->wherePivot('Date_click','<=',$jourfin)->count();
+            $Date_conversion[]=date('d/m/Y',strtotime($jourDebut))."-".date('d/m/Y',strtotime($jourfin));
+            $NbrClickParDateConversion[]=$NombreClickAcetteDateConversion;
+        }
     }
-    
+
    
 
         $TauxConversionParJour=array();
@@ -952,12 +1011,9 @@ class EvenementController extends Controller
         if(session('evenement_id') && session('TypeLieu') && session('evenement_nom')){
             $evenement_id=session('evenement_id');
             $evenement = evenement::find($evenement_id);
-            $promoteur=auth()->user()->profil_promoteur->id;
-            if($evenement->profil_promoteur_id==$promoteur){
-                return view('admin.evenement.localisation',compact('evenement'));
-            }else{
-                return redirect()->route('UnauthorizedUser');
-            }
+            $this->authorize('edit',$evenement);
+            return view('admin.evenement.localisation',compact('evenement'));
+            
         }else{
             return redirect()->route('Create_event');
         }
@@ -1000,8 +1056,8 @@ class EvenementController extends Controller
                       Bonjour,
     
                       Nous venons par ce mail vous informer du changement lieu de l'événement \"{$evenement->nom_evenement}\", 
-                      initié par le promoteur \"{$evenement->profil_promoteur->nom}\" initialement prévu à $previousLocalisation.
-                      Le lieu a été déplacé pour celui ci {$evenement->localisation}.
+                      initié par le promoteur \"{$evenement->profil_promoteur->pseudo}\" initialement prévu à \" {$previousLocalisation}\".
+                      Le lieu a été déplacé pour celui ci \"{$evenement->localisation}\".
     
                       Cordialement,
                       L'équipe EventBJ
@@ -1025,28 +1081,24 @@ class EvenementController extends Controller
     }
 
     public function EditEvent (evenement $evenement){
+        $this->authorize('EditEvent',$evenement);
         $evenement=evenement::find($evenement->id);
         $promoteur=auth()->user()->profil_promoteur->id;
         $EventInterest=$evenement->centre_interets()->pluck('centre_interet_id');
         $EventInterestArray=$EventInterest->toArray();
-        if($evenement->profil_promoteur_id==$promoteur){
-            $type_evenement=type_evenement::all();
-            $interests=Centre_interet::all();
-            return view('admin.evenement.editEvent', compact('evenement','type_evenement','interests','EventInterestArray'));
-        }else{
-            return redirect()->route('UnauthorizedUser');
-        }
+        $type_evenement=type_evenement::all();
+        $interests=Centre_interet::all();
+        return view('admin.evenement.editEvent', compact('evenement','type_evenement','interests','EventInterestArray'));
+       
     }
 
     public function LocalisationEdit(evenement $evenement){
+        $this->authorize('edit',$evenement);
         $promoteur_id=auth()->user()->profil_promoteur->id;
-        if($evenement->profil_promoteur_id==$promoteur_id){
-            session(['evenement_id'=> $evenement->id]);
-            return view('admin.evenement.localisationEdit',compact('evenement'));
-        }
-        else{
-            return redirect()->route('UnauthorizedUser');
-        }
+        session(['evenement_id'=> $evenement->id]);
+        return view('admin.evenement.localisationEdit',compact('evenement'));
+    
+        
     }
 
     public function eventRedirecting(type_ticket $type_ticket, $token){
@@ -1060,10 +1112,13 @@ class EvenementController extends Controller
     }
 
     public function ReportEvent(evenement $evenement){
+        $this->authorize('edit',$evenement);
         return view('admin.evenement.ReportEvent',compact('evenement'));
     }
 
     public function ExecuteReport(Request $request){
+    
+      
         $validatedData=$request->validate([
             'evenement_id'=>'required',
             'date_heure_debut'=>'required|after:today|before:date_heure_fin',
@@ -1071,6 +1126,7 @@ class EvenementController extends Controller
         ]);
         $evenement_id=$request->evenement_id;
         $evenement=evenement::find($evenement_id);
+        $this->authorize('update',$evenement);
         if($evenement->profil_promoteur_id==auth()->user()->Profil_promoteur->id){
             $previousStartDay= $evenement->date_heure_debut;
             $previousEndDay= $evenement->date_heure_fin;

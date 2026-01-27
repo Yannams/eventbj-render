@@ -56,7 +56,7 @@
                 <h1>Billeterie</h1>
                 <div class="d-flex"> 
                     <h2 class="p-2 w-75" id="nom_ticket">Ticket {{$type_ticket->nom_ticket}}</h2>
-                    <div class="p-2 fw-bold fs-3" id="prix_ticket">{{$type_ticket->prix_ticket}} XOF | Frais: {{($type_ticket->prix_ticket*1.8)/100}} XOF</div>
+                    <div class="p-2 fw-bold fs-3" >{{$type_ticket->prix_ticket}} XOF | Frais: {{($type_ticket->prix_ticket*1.8)/100}} XOF</div>
                 </div>
                 <div class="row">
                     <div class="col-md-2 col-6">
@@ -77,40 +77,43 @@
                        
                     </div>
                 </div>
+                <input type="hidden" name="prix_ticket" id="prix_ticket" value="{{$type_ticket->prix_ticket}}">
                 <input type="hidden" name="montant" id="montant" value="">
-                @if ($type_ticket->place_dispo > 0)
-                    @if ($type_ticket->format=="Ticket")
-                        <button type="submit" id="submitButton" 
-                            data-transaction-amount="{{$type_ticket->prix_ticket}}"
-                            data-transaction-description="Achat ticket {{$type_ticket->nom_ticket}} de {{$type_ticket->evenement->nom_evenement}}" 
-                            data-customer-email="{{auth()->user()->email}}"
-                            data-customer-lastname="{{explode(" ",auth()->user()->name)[0]}}"
-                            data-customer-firstname="{{explode(" ",auth()->user()->name)[1]}}"
-                            data-customer-phone_number-number="{{auth()->user()->num_user}}"
-                            data-customer-phone_number-country='bj'
-                            data-environment="sandbox"
-                            data-type-ticket-id="{{$type_ticket->id}}"
-                            
-                            class="btn btn-success col-12">Obtenir</button>
-                    @elseif ($type_ticket->format=="Ticket gratuit")
-                        <button class="btn btn-success col-12" id="FreeSubmitButton"  data-type-ticket-id="{{$type_ticket->id}}">Obtenir</button>
+                <input type="hidden" name="format" id="format" value="{{$type_ticket->format}}">
+                <div id="submitSpace">
+                    @if ($type_ticket->place_dispo > 0)
+                        @if ($type_ticket->format=="Ticket")
+                            <button type="submit" id="submitButton" 
+                                data-transaction-amount=""
+                                data-transaction-description="Achat ticket {{$type_ticket->nom_ticket}} de {{$type_ticket->evenement->nom_evenement}}" 
+                                data-customer-email="{{auth()->user()->email}}"
+                                data-customer-lastname="{{explode(" ",auth()->user()->name)[0] ?? "" }}"
+                                data-customer-firstname="{{ explode(" ", auth()->user()->name)[1] ?? "" }}"
+                                data-customer-phone_number-number="{{auth()->user()->num_user}}"
+                                data-customer-phone_number-country='bj'
+                                data-environment="sandbox"
+                                data-type-ticket-id="{{$type_ticket->id}}"
+                                class="btn btn-success col-12 " disabled>Obtenir</button>
+                        @elseif ($type_ticket->format=="Ticket gratuit")
+                            <button class="btn btn-success col-12" id="FreeSubmitButton"  data-type-ticket-id="{{$type_ticket->id}}">Obtenir</button>
+                        @endif
+                    @else
+                        <div class="fw-bold fs-3 text-danger">Sold out </div>
                     @endif
-                @else
-                    <div class="fw-bold fs-3 text-danger">Sold out </div>
-                @endif
+                </div>
+               
                <div class="contentToSubmit"></div>
                 
 
                 <script>
                     function increaseValue() {
                         $('#submitButton').attr('disabled', false);
-                        var inputElement = document.getElementById('nombre_ticket');
-                        var maxTicket=$('#nombre_ticket').attr('max');
-                        
-                        if(inputElement.value < maxTicket){
-                            inputElement.value = parseInt(inputElement.value) + 1;
-                            var nbre_ticket = document.getElementById('nombre_ticket').value;
-                            var prix_ticket = parseInt(document.getElementById('prix_ticket').innerText);
+                        var inputElement =  parseInt($('#nombre_ticket').val());
+                        var maxTicket=parseInt($('#nombre_ticket').attr('max'));    
+                        if(inputElement < maxTicket){
+                             $('#nombre_ticket').val(inputElement + 1);
+                            var nbre_ticket =  $('#nombre_ticket').val();
+                            var prix_ticket = parseInt($('#prix_ticket').val());
                             var resumeDiv = document.getElementById('resume');
                             var total = nbre_ticket * prix_ticket;
                             var frais = (total * 1.8) / 100;
@@ -118,7 +121,22 @@
                             var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2" id="total">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2 id="netApayer"">' + NaP + '</span></div>';
                             resumeDiv.innerHTML = resume;
                             document.querySelector('input[name="montant"]').setAttribute('value', total);
-                            $('#submitButton').attr('data-transaction-amount', total);
+                           if ($('#format').val()=="Ticket") {
+                                submitButton=`<button type="submit" id="submitButton" 
+                                                    data-transaction-amount="${total}"
+                                                    data-transaction-description="${$("#submitButton").attr("data-transaction-description")}" 
+                                                    data-customer-email="${$("#submitButton").attr("data-customer-email")}"
+                                                    data-customer-lastname="${$("#submitButton").attr(" data-customer-lastname")}"
+                                                    data-customer-firstname="${$("#submitButton").attr("data-customer-firstname")} "
+                                                    data-customer-phone_number-number="${$("#submitButton").attr("data-customer-phone_number-number")}"
+                                                    data-customer-phone_number-country='bj'
+                                                    data-environment="sandbox"
+                                                    data-type-ticket-id="${$("#submitButton").attr("data-type-ticket-id")}"
+                                                    class="btn btn-success col-12">Obtenir
+                                                </button>`  
+                                $("#submitSpace").html(submitButton); 
+                            }
+                            
                         } else {
                             $('#AjaxMessage').html(`
                                 <div class="toast-container position-absolute top-0 start-50 translate-middle p-3">
@@ -149,23 +167,42 @@
                 
                     function decreaseValue() {
                         $('#submitButton').attr('disabled', false);
-                        var inputElement = document.getElementById('nombre_ticket');
-                        var currentValue = parseInt(inputElement.value);
+                        var currentValue = parseInt($('#nombre_ticket').val());
                         var resumeDiv = document.getElementById('resume');
+                        console.log(currentValue);
+                        
                         if (currentValue > 0) {
-                                inputElement.value = currentValue - 1;
-                                var nbre_ticket = document.getElementById('nombre_ticket').value;
-                                var prix_ticket = parseInt(document.getElementById('prix_ticket').innerText);                                    
+                                $('#nombre_ticket').val(currentValue - 1);
+                                var nbre_ticket = parseInt($('#nombre_ticket').val());
+                                var prix_ticket = parseInt($('#prix_ticket').val());                                    
                                 var total = nbre_ticket * prix_ticket;
                                 var frais = (total * 1.9) / 100;
                                 var NaP = total + frais;
                                 var resume = '<div class="col d-flex ms-3"><span class="fw-bold p-2 w-75" >' + nbre_ticket + 'x {{$type_ticket->nom_ticket}} :</span> <span class="p-2" id="total">' + total + '</div> <hr> <div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">Frais :</span><span class="p-2">' + frais + '</span> </div><hr><div class="col d-flex ms-3"><span class="fw-bold p-2 w-75">total :</span><span class="p-2" id="netApayer">' + NaP + '</span></div>';
                                 resumeDiv.innerHTML = resume;
                                 document.querySelector('input[name="montant"]').setAttribute('value', total);
+                                if ($('#format').val()=="Ticket") {
+                                    submitButton=`<button type="submit" id="submitButton" 
+                                                        data-transaction-amount="${total}"
+                                                        data-transaction-description="${$("#submitButton").attr("data-transaction-description")}" 
+                                                        data-customer-email="${$("#submitButton").attr("data-customer-email")}"
+                                                        data-customer-lastname="${$("#submitButton").attr(" data-customer-lastname")}"
+                                                        data-customer-firstname="${$("#submitButton").attr("data-customer-firstname")} "
+                                                        data-customer-phone_number-number="${$("#submitButton").attr("data-customer-phone_number-number")}"
+                                                        data-customer-phone_number-country='bj'
+                                                        data-environment="sandbox"
+                                                        data-type-ticket-id="${$("#submitButton").attr("data-type-ticket-id")}"
+                                                        class="btn btn-success col-12">Obtenir
+                                                    </button>`  
+                                    $("#submitSpace").html(submitButton);
+                                }
+                                console.log(nbre_ticket);
+                                
                             }
-                            else if(currentValue === 0){
+                            if(nbre_ticket == 0){
                                 resumeDiv.innerHTML = "";
                                 document.querySelector('input[name="montant"]').removeAttribute('value');
+                                $("#submitButton").attr("disabled", true);
                             }
                             
                     }
@@ -175,8 +212,11 @@
                    
                 </script>
                 <script type="text/javascript">
+                $("#submitSpace").on("click", "#submitButton", function () {
                     let btn = document.getElementById('submitButton');
                     let freeBtn=document.getElementById('FreeSubmitButton');
+                    console.log(btn);
+                    
                     if (btn) {
                         const amount = btn.getAttribute('data-transaction-amount');
                         const description = btn.getAttribute('data-transaction-description');
@@ -186,10 +226,7 @@
                         const customerPhone = btn.getAttribute('data-customer-phone_number');
                         const currency = btn.getAttribute('data-currency');
                         const type_ticket_id= btn.getAttribute('data-type-ticket-id');
-                   
-                   
-                  
-                    
+
                         let widget =  FedaPay.init({
                             public_key: 'pk_sandbox_xbkhgDVudRXjQwp9t1u8o4rN',
                             transaction: {
@@ -351,6 +388,8 @@
                         })
 
                     }
+                })
+                    
                   
                     document.addEventListener('DOMContentLoaded', function () {
                         const toastLiveExample = document.getElementById('liveToast');

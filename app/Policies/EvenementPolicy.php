@@ -21,7 +21,7 @@ class EvenementPolicy
      */
     public function view(User $user, evenement $evenement): bool
     {
-        //
+       
     }
 
     /**
@@ -29,7 +29,7 @@ class EvenementPolicy
      */
     public function create(User $user): bool
     {
-        //
+        
     }
 
     /**
@@ -37,15 +37,24 @@ class EvenementPolicy
      */
     public function update(User $user, evenement $evenement): bool
     {
-        //
+        return $evenement->profil_promoteur_id==$user->Profil_promoteur->id;
     }
 
+    public function edit(User $user, evenement $evenement): bool
+    {
+        return $evenement->profil_promoteur_id==$user->Profil_promoteur->id;
+    }
+    
+    public function EditEvent(User $user, evenement $evenement): bool
+    {
+        return $evenement->profil_promoteur_id==$user->Profil_promoteur->id;
+    }
     /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, evenement $evenement): bool
     {
-        //
+        return $evenement->profil_promoteur_id==$user->Profil_promoteur->id;
     }
 
     /**

@@ -59,4 +59,8 @@ class evenement extends Model
         return $this->hasMany(tickets_verifications::class);
     }
 
+    public function chronogrammes():HasMany
+     {
+        return $this->hasMany(chronogramme::class);
+     }
 }

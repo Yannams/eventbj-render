@@ -92,7 +92,7 @@
                             <li><i class="bi bi-1-circle me-2 text-success"></i> Allez sur <a href="https://www.google.com/maps" target="_blank" class="link-success">google maps</a>    </li>
                             <li><i class="bi bi-2-circle me-2 text-warning"></i> Recherchez le lieu en question</li>
                             <li><i class="bi bi-3-circle me-2 text-danger"></i> cliquer sur partager </li>
-                            <li><i class="bi bi-4-circle me-2 text-success"></i> cliquer sur inserer une carte</li>
+                            <li><i class="bi bi-4-circle me-2 text-success"></i> cliquer sur insérer une carte</li>
                             <li><i class="bi bi-5-circle me-2 text-warning"></i> cliquer sur copier le contenu html</li>
                             <li><i class="bi bi-6-circle me-2 text-danger"></i> Collez dans la zone de texte en bas</li>
                         </ul>

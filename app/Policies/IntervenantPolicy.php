@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\evenement;
 use App\Models\Intervenant;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -22,6 +23,11 @@ class IntervenantPolicy
     public function view(User $user, Intervenant $intervenant): bool
     {
         //
+    }
+
+    public function index(User $user, evenement $evenement)
+    {
+        return $evenement->profil_promoteur_id==$user->Profil_promoteur->id;
     }
 
     /**
